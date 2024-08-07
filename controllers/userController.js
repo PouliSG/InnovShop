@@ -1,6 +1,6 @@
 const User = require('../models/User')
 const Address = require('../models/Address')
-const bcrypt = require('bcryptjs')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 // Inscription d'un utilisateur
