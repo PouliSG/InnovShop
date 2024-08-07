@@ -6,9 +6,21 @@ const placeOrder = async (req, res) => {
   const { products, shippingAddressId } = req.body
 
   try {
-    const address = await Address.findById(shippingAddressId)
-    if (!address || address.user.toString() !== req.user.id) {
-      return res.status(400).json({ msg: 'Invalid address' })
+    let shippingAddress
+
+    if (shippingAddressId) {
+      shippingAddress = await Address.findById(shippingAddressId)
+      if (!shippingAddress || shippingAddress.user.toString() !== req.user.id) {
+        return res.status(400).json({ msg: 'Invalid address' })
+      }
+    } else {
+      shippingAddress = await Address.findOne({
+        user: req.user.id,
+        isDefault: true,
+      })
+      if (!shippingAddress) {
+        return res.status(400).json({ msg: 'No default address found' })
+      }
     }
 
     const totalPrice = products.reduce(
@@ -20,7 +32,7 @@ const placeOrder = async (req, res) => {
       user: req.user.id,
       products,
       totalPrice,
-      shippingAddress: address._id,
+      shippingAddress: shippingAddress._id,
     })
 
     await newOrder.save()

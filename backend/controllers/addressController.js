@@ -2,16 +2,33 @@ const Address = require('../models/Address')
 
 // Ajouter une adresse
 const addAddress = async (req, res) => {
-  const { street, city, state, zip, country } = req.body
+  const { number, street, additional, city, zip, country, label, isDefault } =
+    req.body
 
   try {
+    const userAddresses = await Address.find({ user: req.user.id })
+
+    // Set isDefault to true if this is the user's first address
+    if (userAddresses.length === 0) {
+      isDefault = true
+    } else if (isDefault) {
+      // Ensure only one address is marked as default
+      await Address.updateMany(
+        { user: req.user.id },
+        { $set: { isDefault: false } }
+      )
+    }
+
     const newAddress = new Address({
       user: req.user.id,
+      number,
       street,
+      additional,
       city,
-      state,
       zip,
       country,
+      label,
+      isDefault,
     })
 
     const address = await newAddress.save()

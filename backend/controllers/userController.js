@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 
 // Inscription d'un utilisateur
 const registerUser = async (req, res) => {
-  const { name, email, password } = req.body
+  const { firstname, lastname, email, password, gender, birthdate } = req.body
 
   try {
     let user = await User.findOne({ email })
@@ -14,9 +14,12 @@ const registerUser = async (req, res) => {
     }
 
     user = new User({
-      name,
+      firstname,
+      lastname,
       email,
       password,
+      gender,
+      birthdate,
     })
 
     const salt = await bcrypt.genSalt(10)
@@ -60,6 +63,10 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ msg: 'Invalid credentials' })
     }
 
+    // Update last login date
+    user.last_login_date = Date.now()
+    await user.save()
+
     const payload = {
       user: {
         id: user.id,
@@ -83,7 +90,7 @@ const loginUser = async (req, res) => {
 
 // Mise à jour des informations de profil
 const updateUserProfile = async (req, res) => {
-  const { name, email } = req.body
+  const { firstname, lastname, email, gender, birthdate } = req.body
 
   try {
     let user = await User.findById(req.user.id)
@@ -91,8 +98,11 @@ const updateUserProfile = async (req, res) => {
       return res.status(404).json({ msg: 'User not found' })
     }
 
-    user.name = name || user.name
+    user.firstname = firstname || user.firstname
+    user.lastname = lastname || user.lastname
     user.email = email || user.email
+    user.gender = gender || user.gender
+    user.birthdate = birthdate || user.birthdate
 
     await user.save()
 
@@ -105,16 +115,33 @@ const updateUserProfile = async (req, res) => {
 
 // Ajouter une adresse
 const addAddress = async (req, res) => {
-  const { street, city, state, zip, country } = req.body
+  const { number, street, additional, city, zip, country, label, isDefault } =
+    req.body
 
   try {
+    const userAddresses = await Address.find({ user: req.user.id })
+
+    // Set isDefault to true if this is the user's first address
+    if (userAddresses.length === 0) {
+      isDefault = true
+    } else if (isDefault) {
+      // Ensure only one address is marked as default
+      await Address.updateMany(
+        { user: req.user.id },
+        { $set: { isDefault: false } }
+      )
+    }
+
     const newAddress = new Address({
       user: req.user.id,
+      number,
       street,
+      additional,
       city,
-      state,
       zip,
       country,
+      label,
+      isDefault,
     })
 
     const address = await newAddress.save()

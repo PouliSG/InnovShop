@@ -29,6 +29,14 @@ const AddressSchema = new mongoose.Schema({
     type: String,
     default: 'France',
   },
+  label: {
+    type: String,
+    default: 'Home',
+  },
+  isDefault: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 module.exports = mongoose.model('Address', AddressSchema)
