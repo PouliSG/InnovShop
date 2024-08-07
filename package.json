@@ -6,11 +6,20 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "PouliSG <80863210+PouliSG@users.noreply.github.com>",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "eslint": "^9.8.0",
+    "eslint-config-airbnb": "^19.0.4",
     "express": "^4.19.2",
-    "mongoose": "^8.5.1"
-  }
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.2",
+    "multer": "^1.4.5-lts.1",
+    "prettier": "^3.3.3"
+  },
+  "repository": "https://github.com/PouliSG/InnovShop.git"
 }
