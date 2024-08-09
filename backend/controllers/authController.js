@@ -119,11 +119,11 @@ const forgotPassword = async (req, res) => {
     const mailOptions = {
       to: user.email,
       from: process.env.EMAIL,
-      subject: 'Password Reset',
-      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
-      Please click on the following link, or paste this into your browser to complete the process:\n\n
+      subject: 'InnovShop: Réinitialisation de votre mot de passe',
+      text: `Vous recevez cet e-mail car vous (ou quelqu'un d'autre) avez demandé la réinitialisation du mot de passe de votre compte.\n\n
+      Veuillez cliquer sur le lien suivant ou le copier-coller dans votre navigateur pour terminer le processus:\n\n
       http://${req.headers.host}/reset/${token}\n\n
-      If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+      Si vous n'avez pas effectué cette demande, veuillez ignorer cet e-mail et votre mot de passe restera inchangé.\n`,
     }
 
     await transporter.sendMail(mailOptions)
