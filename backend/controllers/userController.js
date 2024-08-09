@@ -47,7 +47,7 @@ const addUser = async (req, res) => {
 
 // Mise à jour des informations de profil
 const updateUserProfile = async (req, res) => {
-  const { firstname, lastname, email, gender, birthdate } = req.body
+  const { firstname, lastname, gender, birthdate } = req.body
 
   try {
     let user = await User.findById(req.user.id)
@@ -57,7 +57,6 @@ const updateUserProfile = async (req, res) => {
 
     user.firstname = firstname || user.firstname
     user.lastname = lastname || user.lastname
-    user.email = email || user.email
     user.gender = gender || user.gender
     user.birthdate = birthdate || user.birthdate
 
@@ -102,6 +101,65 @@ const selfDeleteUser = async (req, res) => {
     res.status(500).send('Server error')
   }
 }
+
+// Promote a user to admin
+const promoteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' })
+    }
+
+    user.role = req.body.role || 'admin' // Allow role assignment
+    await user.save()
+
+    res.json({ msg: 'User role updated successfully', user })
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
+// Update user role
+const updateUserRole = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' })
+    }
+
+    user.role = req.body.role
+    await user.save()
+
+    res.json({ msg: 'User role updated successfully', user })
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
+// Update user settings
+const updateUserSettings = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' })
+    }
+
+    user.settings = req.body.settings || user.settings // Add new settings fields as needed
+    await user.save()
+
+    res.json({
+      msg: 'User settings updated successfully',
+      settings: user.settings,
+    })
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
+module.exports = { updateUserSettings }
 
 // Ajouter une adresse
 const addAddress = async (req, res) => {
@@ -159,6 +217,9 @@ module.exports = {
   getUsers,
   deleteUser,
   selfDeleteUser,
+  promoteUser,
+  updateUserRole,
+  updateUserSettings,
   addAddress,
   getAddresses,
 }

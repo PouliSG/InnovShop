@@ -5,23 +5,37 @@ const Product = require('../models/Product')
 const addItemToCart = async (req, res) => {
   const { productId, quantity } = req.body
   try {
+    console.log('product id:', productId)
     const product = await Product.findById(productId)
     if (!product) {
       return res.status(404).json({ msg: 'Product not found' })
     }
 
-    let cart = await Cart.findOne({ user: req.user.id })
+    console.log('product:', product)
+    console.log('user:', req.user)
+    let user_id
+    let cart
+    if (req.user) {
+      cart = await Cart.findOne({ user: req.user.id })
+      user_id = req.user.id
+    }
     if (!cart) {
-      cart = new Cart({ user: req.user.id, items: [] })
+      const cart_obj = { products: [] }
+      if (user_id) {
+        cart_obj.user = user_id
+      }
+      cart = new Cart(cart_obj)
     }
 
-    const itemIndex = cart.items.findIndex(
-      (item) => item.product.toString() === productId
+    console.log('cart:', cart)
+
+    const productIndex = cart.products.findIndex(
+      (product) => product.id === productId
     )
-    if (itemIndex > -1) {
-      cart.items[itemIndex].quantity += quantity
+    if (productIndex > -1) {
+      cart.products[productIndex].quantity += quantity
     } else {
-      cart.items.push({ product: productId, quantity })
+      cart.products.push({ product: productId, quantity })
     }
 
     await cart.save()

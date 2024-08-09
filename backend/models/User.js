@@ -1,5 +1,21 @@
 const mongoose = require('mongoose')
 
+// Define the Settings Schema
+const SettingsSchema = new mongoose.Schema({
+  notifications: {
+    type: Boolean,
+    default: true,
+  },
+  theme: {
+    type: String,
+    default: 'light', // or 'dark'
+  },
+  language: {
+    type: String,
+    default: 'fr',
+  },
+})
+
 const UserSchema = new mongoose.Schema({
   firstname: {
     type: String,
@@ -50,6 +66,10 @@ const UserSchema = new mongoose.Schema({
   },
   resetPasswordExpires: {
     type: Date,
+  },
+  settings: {
+    type: SettingsSchema, // Embed the settings schema
+    default: () => ({}), // Initialize with default settings
   },
 })
 

@@ -2,13 +2,14 @@ const Product = require('../models/Product')
 
 // Add a product
 const addProduct = async (req, res) => {
-  const { name, description, price, category } = req.body
+  const { name, description, price, category, stock } = req.body
   try {
     const newProduct = new Product({
       name,
       description,
       price,
       category,
+      stock,
     })
     const product = await newProduct.save()
     res.status(201).json(product)
@@ -32,7 +33,7 @@ const getProducts = async (req, res) => {
 // Update Product
 const updateProduct = async (req, res) => {
   const { id } = req.params
-  const { name, description, price, category, featured } = req.body
+  const { name, description, price, category, stock, featured } = req.body
 
   try {
     let product = await Product.findById(id)
@@ -44,6 +45,7 @@ const updateProduct = async (req, res) => {
     product.description = description || product.description
     product.price = price || product.price
     product.category = category || product.category
+    product.stock = stock || product.stock
     product.featured = featured !== undefined ? featured : product.featured
 
     await product.save()

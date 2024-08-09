@@ -8,6 +8,9 @@ const {
   getUsers,
   deleteUser,
   selfDeleteUser,
+  promoteUser,
+  updateUserRole,
+  updateUserSettings,
 } = require('../controllers/userController')
 const auth = require('../middleware/auth')
 const checkRole = require('../middleware/role')
@@ -32,5 +35,14 @@ router.post('/address', auth, addAddress)
 
 // Obtenir les adresses de l'utilisateur
 router.get('/addresses', auth, getAddresses)
+
+// Update User Role
+router.put('/:id/role', auth, checkRole(['admin']), updateUserRole)
+
+// Promote a user to admin
+router.put('/:id/promote', auth, checkRole(['admin']), promoteUser)
+
+// Update User Settings
+router.put('/:id/settings', auth, updateUserSettings)
 
 module.exports = router
