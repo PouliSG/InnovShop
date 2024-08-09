@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken')
+const User = require('../models/User')
 
-module.exports = function (req, res, next) {
+module.exports = async function (req, res, next) {
   // Obtenir le jeton du header
-  const token = req.header('x-auth-token')
+  const token = req.header('Authorization') || req.header('x-auth-token')
 
   // Vérifier s'il n'y a pas de jeton
   if (!token) {
@@ -11,10 +12,22 @@ module.exports = function (req, res, next) {
 
   // Vérifier le jeton
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
-    req.user = decoded.user
+    // Decode the token to get the user ID
+    const decoded = jwt.verify(
+      token.split(' ')[1] || token,
+      process.env.JWT_SECRET
+    )
+    const user = await User.findById(decoded.user.id).select('-password') // Fetch user details, excluding the password
+
+    if (!user) {
+      return res.status(401).json({ msg: 'User not found' })
+    }
+
+    // Attach full user object to req, including the role
+    req.user = user
     next()
   } catch (err) {
+    console.error('Auth Middleware Error: ', err)
     res.status(401).json({ msg: 'Token is not valid' })
   }
 }

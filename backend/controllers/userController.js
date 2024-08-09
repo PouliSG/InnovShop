@@ -3,12 +3,22 @@ const Address = require('../models/Address')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
-// Inscription d'un utilisateur
-const registerUser = async (req, res) => {
-  const { firstname, lastname, email, password, gender, birthdate } = req.body
+// Ajouter un utilisateur
+const addUser = async (req, res) => {
+  const {
+    firstname,
+    lastname,
+    email,
+    password,
+    role = 'user',
+    gender = null,
+    birthdate = null,
+  } = req.body
 
   try {
-    let user = await User.findOne({ email })
+    let user = await User.findOne({
+      email,
+    })
     if (user) {
       return res.status(400).json({ msg: 'User already exists' })
     }
@@ -20,6 +30,7 @@ const registerUser = async (req, res) => {
       password,
       gender,
       birthdate,
+      role,
     })
 
     const salt = await bcrypt.genSalt(10)
@@ -27,61 +38,7 @@ const registerUser = async (req, res) => {
 
     await user.save()
 
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    }
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: 360000 },
-      (err, token) => {
-        if (err) throw err
-        res.json({ token })
-      }
-    )
-  } catch (err) {
-    console.error(err.message)
-    res.status(500).send('Server error')
-  }
-}
-
-// Connexion d'un utilisateur
-const loginUser = async (req, res) => {
-  const { email, password } = req.body
-
-  try {
-    let user = await User.findOne({ email })
-    if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' })
-    }
-
-    const isMatch = await bcrypt.compare(password, user.password)
-    if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' })
-    }
-
-    // Update last login date
-    user.last_login_date = Date.now()
-    await user.save()
-
-    const payload = {
-      user: {
-        id: user.id,
-      },
-    }
-
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: 360000 },
-      (err, token) => {
-        if (err) throw err
-        res.json({ token })
-      }
-    )
+    res.json(user)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Server error')
@@ -107,6 +64,39 @@ const updateUserProfile = async (req, res) => {
     await user.save()
 
     res.json(user)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
+// Get all users
+const getUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+    res.json(users)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
+// Delete a user
+const deleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id)
+    res.json({ msg: 'User deleted' })
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
+// Self Delete User
+const selfDeleteUser = async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.user.id)
+    res.json({ msg: 'User deleted' })
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Server error')
@@ -164,9 +154,11 @@ const getAddresses = async (req, res) => {
 }
 
 module.exports = {
-  registerUser,
-  loginUser,
+  addUser,
   updateUserProfile,
+  getUsers,
+  deleteUser,
+  selfDeleteUser,
   addAddress,
   getAddresses,
 }

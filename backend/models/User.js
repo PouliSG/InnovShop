@@ -40,6 +40,17 @@ const UserSchema = new mongoose.Schema({
   birthdate: {
     type: Date,
   },
+  role: {
+    type: String,
+    enum: ['user', 'employee', 'admin'],
+    default: 'user',
+  },
+  resetPasswordToken: {
+    type: String,
+  },
+  resetPasswordExpires: {
+    type: Date,
+  },
 })
 
 module.exports = mongoose.model('User', UserSchema)

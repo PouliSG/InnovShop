@@ -29,6 +29,31 @@ const getProducts = async (req, res) => {
   }
 }
 
+// Update Product
+const updateProduct = async (req, res) => {
+  const { id } = req.params
+  const { name, description, price, category, featured } = req.body
+
+  try {
+    let product = await Product.findById(id)
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' })
+    }
+
+    product.name = name || product.name
+    product.description = description || product.description
+    product.price = price || product.price
+    product.category = category || product.category
+    product.featured = featured !== undefined ? featured : product.featured
+
+    await product.save()
+    res.json(product)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
 // Delete a product
 const deleteProduct = async (req, res) => {
   try {
@@ -47,5 +72,6 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   addProduct,
   getProducts,
+  updateProduct,
   deleteProduct,
 }
