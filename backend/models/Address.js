@@ -31,7 +31,7 @@ const AddressSchema = new mongoose.Schema({
   },
   label: {
     type: String,
-    default: 'Home',
+    default: 'Domicile',
   },
   isDefault: {
     type: Boolean,

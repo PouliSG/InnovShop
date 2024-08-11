@@ -57,9 +57,6 @@ const removeItemFromCart = async (req, res) => {
       return res.status(404).json({ msg: 'Cart not found' })
     }
 
-    console.log('cart products', cart.products)
-    console.log('id', id)
-
     cart.products = cart.products.filter((product) => product.id !== id)
     await cart.save()
     res.status(200).json(cart)

@@ -1,28 +1,24 @@
 const Address = require('../models/Address')
 
-// Ajouter une adresse
-const addAddress = async (req, res) => {
-  let { number, street, additional, city, zip, country, label, isDefault } =
+// Ajouter une adresse pour un utilisateur
+const addUserAddress = async (req, res) => {
+  const { userId } = req.params
+  const { number, street, additional, city, zip, country, label, isDefault } =
     req.body
 
   try {
-    const userAddresses = await Address.find({ user: req.user.id })
+    const userAddresses = await Address.find({ user: userId })
 
     // Determine the final value of isDefault
     const finalIsDefault = userAddresses.length === 0 ? true : isDefault
 
     if (finalIsDefault) {
       // Ensure only one address is marked as default
-      await Address.updateMany(
-        { user: req.user.id },
-        { $set: { isDefault: false } }
-      )
+      await Address.updateMany({ user: userId }, { $set: { isDefault: false } })
     }
 
-    console.log('Final isDefault:', finalIsDefault)
-
     const newAddress = new Address({
-      user: req.user.id,
+      user: userId,
       number,
       street,
       additional,
@@ -41,33 +37,52 @@ const addAddress = async (req, res) => {
   }
 }
 
-// Obtenir les adresses d'un utilisateur
-const getAddresses = async (req, res) => {
+// Obtenir les addresses d'un utilisateur
+const getUserAddresses = async (req, res) => {
+  const { userId } = req.params
   try {
-    const addresses = await Address.find({ user: req.user.id })
+    const addresses = await Address.find({ user: userId })
     res.json(addresses)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Server error')
   }
 }
+
+// Obtenir toutes les adresses
+const getAddresses = async (req, res) => {
+  try {
+    const addresses = await Address.find()
+    res.json(addresses)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Server error')
+  }
+}
+
 // Update an address
 const updateAddress = async (req, res) => {
   const { id } = req.params
-  const { number, street, additional, city, zip, country, label, isDefault } =
-    req.body
+  const {
+    user,
+    number,
+    street,
+    additional,
+    city,
+    zip,
+    country,
+    label,
+    isDefault,
+  } = req.body
 
   try {
     // Ensure only one address is marked as default
     if (isDefault) {
-      await Address.updateMany(
-        { user: req.user.id },
-        { $set: { isDefault: false } }
-      )
+      await Address.updateMany({ user: user }, { $set: { isDefault: false } })
     }
 
     const address = await Address.findOneAndUpdate(
-      { _id: id, user: req.user.id },
+      { _id: id, user: user },
       {
         number,
         street,
@@ -99,7 +114,6 @@ const deleteAddress = async (req, res) => {
   try {
     const address = await Address.findOneAndDelete({
       _id: id,
-      user: req.user.id,
     })
 
     if (!address) {
@@ -113,4 +127,10 @@ const deleteAddress = async (req, res) => {
   }
 }
 
-module.exports = { addAddress, getAddresses, updateAddress, deleteAddress }
+module.exports = {
+  addUserAddress,
+  getUserAddresses,
+  getAddresses,
+  updateAddress,
+  deleteAddress,
+}

@@ -1,23 +1,29 @@
 const express = require('express')
 const router = express.Router()
 const {
-  addAddress,
+  addUserAddress,
+  getUserAddresses,
   getAddresses,
   updateAddress,
   deleteAddress,
 } = require('../controllers/addressController')
-const auth = require('../middleware/auth')
 
-// Route pour ajouter une adresse
-router.post('/', auth, addAddress)
+const auth = require('../middleware/auth')
+const checkRole = require('../middleware/role')
+
+// Route pour ajouter une adresse à un utilisateur
+router.post('/:userId', auth, checkRole(['employee', 'admin']), addUserAddress)
 
 // Route pour obtenir les adresses d'un utilisateur
-router.get('/', auth, getAddresses)
+router.get('/:userId', auth, checkRole(['employee', 'admin']), getUserAddresses)
 
-// Update an address
-router.put('/:id', auth, updateAddress)
+// Obtenir toutes les adresses
+router.get('/', auth, checkRole(['employee', 'admin']), getAddresses)
 
-// Add the delete route after the update route
-router.delete('/:id', auth, deleteAddress)
+// Mettre à jour une adresse
+router.put('/:id', auth, checkRole(['employee', 'admin']), updateAddress)
+
+// Supprimer une adresse
+router.delete('/:id', auth, checkRole(['employee', 'admin']), deleteAddress)
 
 module.exports = router
