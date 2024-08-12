@@ -1,4 +1,6 @@
 const express = require('express')
+const auth = require('../middleware/auth')
+
 const router = express.Router()
 const {
   addItemToCart,
@@ -9,24 +11,22 @@ const {
   deleteCartUser,
 } = require('../controllers/cartController')
 
-const auth = require('../middleware/auth')
-
-// Add item to cart
+// Ajouter un article au panier
 router.post('/', auth, addItemToCart)
 
-// Get cart
+// Obtenir le panier
 router.get('/', auth, getCart)
 
-// Remove item from cart
+// Supprimer un article du panier
 router.put('/:id', auth, removeItemFromCart)
 
-// Save cart
+// Enregistrer le panier
 router.post('/save', auth, saveCart)
 
-// Delete the cart
+// Supprimer le panier
 router.delete('/', auth, deleteCart)
 
-// Delete cart from user
+// Supprimer le panier d'un utilisateur
 router.delete('/:userId', auth, deleteCartUser)
 
 module.exports = router

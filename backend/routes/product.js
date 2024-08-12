@@ -9,16 +9,16 @@ const {
 const auth = require('../middleware/auth')
 const checkRole = require('../middleware/role')
 
-// Get all products
+// Obtenir tous les produits
 router.get('/', getProducts)
 
-// Add product (employee and admin only)
+// Ajouter un produit (employé et administrateur uniquement)
 router.post('/', auth, checkRole(['employee', 'admin']), addProduct)
 
-// Update product (employee and admin only)
+// Mettre à jour un produit (employé et administrateur uniquement)
 router.put('/:id', auth, checkRole(['employee', 'admin']), updateProduct)
 
-// Delete product (employee and admin only)
+// Supprimer un produit (employé et administrateur uniquement)
 router.delete('/:id', auth, checkRole(['employee', 'admin']), deleteProduct)
 
 module.exports = router

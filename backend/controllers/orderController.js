@@ -1,123 +1,126 @@
 const Order = require('../models/Order')
+const Cart = require('../models/Cart')
 const Address = require('../models/Address')
 
 // Passer une commande
 const placeOrder = async (req, res) => {
-  const { products, shippingAddressId } = req.body
+  const { cartId, shippingAddressId } = req.body
 
   try {
-    let shippingAddress
+    // Récupérer le panier et l'adresse de livraison
+    const cart = await Cart.findById(cartId).populate('products.product')
+    const shippingAddress = await Address.findById(shippingAddressId)
 
-    if (shippingAddressId) {
-      shippingAddress = await Address.findById(shippingAddressId)
-      if (!shippingAddress || shippingAddress.user.toString() !== req.user.id) {
-        return res.status(400).json({ msg: 'Invalid address' })
-      }
-    } else {
-      shippingAddress = await Address.findOne({
-        user: req.user.id,
-        isDefault: true,
-      })
-      if (!shippingAddress) {
-        return res.status(400).json({ msg: 'No default address found' })
-      }
+    if (!cart || !shippingAddress) {
+      return res
+        .status(404)
+        .json({ msg: 'Panier ou adresse de livraison non trouvés' })
     }
 
-    const totalPrice = products.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    )
-
-    const newOrder = new Order({
+    // Créer une nouvelle commande
+    const order = new Order({
       user: req.user.id,
-      products,
-      totalPrice,
+      products: cart.products,
       shippingAddress: shippingAddress._id,
+      totalPrice: cart.products.reduce(
+        (acc, item) => acc + item.product.price * item.quantity,
+        0
+      ),
     })
 
-    await newOrder.save()
-    res.json(newOrder)
+    await order.save()
+
+    // Vider le panier après la commande
+    cart.products = []
+    await cart.save()
+
+    res.status(201).json(order)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
 // Obtenir les commandes de l'utilisateur
-const getOrders = async (req, res) => {
+const getUserOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id })
-      .populate('products.product')
-      .populate('shippingAddress')
-    res.json(orders)
+    const orders = await Order.find({ user: req.user.id }).populate(
+      'products.product shippingAddress'
+    )
+    res.status(200).json(orders)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Get All Orders (for employees and admins)
+// Obtenir toutes les commandes (pour les employés et admins)
 const getAllOrders = async (req, res) => {
   try {
-    const orders = await Order.find().populate('items.productId')
-    res.json(orders)
+    const orders = await Order.find().populate(
+      'user products.product shippingAddress'
+    )
+    res.status(200).json(orders)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Get Order by ID
+// Obtenir une commande par ID
 const getOrderById = async (req, res) => {
   const { id } = req.params
   try {
-    const order = await Order.findById(id).populate('items.productId')
+    const order = await Order.findById(id).populate(
+      'user products.product shippingAddress'
+    )
     if (!order) {
-      return res.status(404).json({ message: 'Order not found' })
+      return res.status(404).json({ msg: 'Commande non trouvée' })
     }
-    res.json(order)
+    res.status(200).json(order)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Update Order Status
+// Mettre à jour le statut d'une commande
 const updateOrderStatus = async (req, res) => {
   const { id } = req.params
   const { status } = req.body
+
   try {
-    let order = await Order.findById(id)
+    const order = await Order.findByIdAndUpdate(id, { status }, { new: true })
+
     if (!order) {
-      return res.status(404).json({ message: 'Order not found' })
+      return res.status(404).json({ msg: 'Commande non trouvée' })
     }
-    order.status = status
-    await order.save()
-    res.json(order)
+
+    res.status(200).json(order)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Delete Order
+// Supprimer une commande
 const deleteOrder = async (req, res) => {
   const { id } = req.params
   try {
     await Order.findByIdAndDelete(id)
-    res.json({ message: 'Order deleted' })
+    res.json({ message: 'Commande supprimée' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Get Orders by User (for employees and admins)
+// Obtenir les commandes d'un utilisateur (pour employés et admins)
 const getOrdersByUser = async (req, res) => {
   const { id } = req.params
   try {
-    const orders = await Order.find({ user: id }).populate('items.productId')
-    res.json(orders)
+    const orders = await Order.find({ user: id }).populate('products.product')
+    res.status(200).json(orders)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Server error')
@@ -126,7 +129,7 @@ const getOrdersByUser = async (req, res) => {
 
 module.exports = {
   placeOrder,
-  getOrders,
+  getUserOrders,
   getAllOrders,
   getOrderById,
   updateOrderStatus,

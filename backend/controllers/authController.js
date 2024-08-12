@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
 const User = require('../models/User')
 
-// Register user
+// Inscription d'un nouvel utilisateur
 const registerUser = async (req, res) => {
   const {
     firstname,
@@ -15,11 +15,13 @@ const registerUser = async (req, res) => {
   } = req.body
 
   try {
+    // Vérification si l'utilisateur existe déjà
     let user = await User.findOne({ email })
     if (user) {
-      return res.status(400).json({ msg: 'User already exists' })
+      return res.status(400).json({ msg: "L'utilisateur existe déjà" })
     }
 
+    // Création d'un nouvel utilisateur
     user = new User({
       firstname,
       lastname,
@@ -27,59 +29,68 @@ const registerUser = async (req, res) => {
       password,
       gender,
       birthdate,
+      signup_date: Date.now(),
     })
 
+    // Hashage du mot de passe avant de l'enregistrer
     const salt = await bcrypt.genSalt(10)
     user.password = await bcrypt.hash(password, salt)
 
+    // Enregistrement de l'utilisateur dans la base de données
     await user.save()
 
+    // Génération du token JWT
     const payload = {
       user: {
         id: user.id,
+        role: user.role, // Ajout du rôle dans le token
       },
     }
 
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: 360000 },
+      { expiresIn: '24h' }, // Expiration du token après 24 heures
       (err, token) => {
         if (err) throw err
-        res.json({ token })
+        res.status(201).json({ token })
       }
     )
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Login user
+// Connexion d'un utilisateur
 const loginUser = async (req, res) => {
   const { email, password } = req.body
 
   try {
+    // Recherche de l'utilisateur par email
     let user = await User.findOne({ email })
     if (!user) {
-      return res.status(400).json({ msg: 'Invalid credentials' })
+      return res.status(400).json({ msg: 'Identifiants incorrects' })
     }
 
+    // Vérification du mot de passe
     const isMatch = await bcrypt.compare(password, user.password)
     if (!isMatch) {
-      return res.status(400).json({ msg: 'Invalid credentials' })
+      return res.status(400).json({ msg: 'Identifiants incorrects' })
     }
 
+    // Génération du token JWT
     const payload = {
       user: {
         id: user.id,
+        role: user.role, // Ajout du rôle dans le token
       },
     }
 
     jwt.sign(
       payload,
       process.env.JWT_SECRET,
-      { expiresIn: 360000 },
+      { expiresIn: '24h' }, // Expiration du token après 24 heures
       (err, token) => {
         if (err) throw err
         res.json({ token })
@@ -87,11 +98,11 @@ const loginUser = async (req, res) => {
     )
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Forgot Password
+// Mot de passe oublié
 const forgotPassword = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email })
@@ -99,15 +110,15 @@ const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: 'User not found' })
     }
 
-    // Generate reset token
+    // Générer un token de réinitialisation de mot de passe
     const token = crypto.randomBytes(20).toString('hex')
 
     user.resetPasswordToken = token
-    user.resetPasswordExpires = Date.now() + 3600000 // 1 hour
+    user.resetPasswordExpires = Date.now() + 3600000 * 24 // 24 heures
 
     await user.save()
 
-    // Send email
+    // Envoi de l'e-mail de réinitialisation
     const transporter = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
@@ -135,7 +146,7 @@ const forgotPassword = async (req, res) => {
   }
 }
 
-// Reset Password
+// Réinitialisation du mot de passe
 const resetPassword = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -144,9 +155,10 @@ const resetPassword = async (req, res) => {
     })
 
     if (!user) {
-      return res
-        .status(400)
-        .json({ message: 'Password reset token is invalid or has expired' })
+      return res.status(400).json({
+        message:
+          'Le token de réinitialisation du mot de pass est invalide ou a expiré',
+      })
     }
 
     const salt = await bcrypt.genSalt(10)
@@ -156,10 +168,10 @@ const resetPassword = async (req, res) => {
 
     await user.save()
 
-    res.status(200).json({ message: 'Password has been reset' })
+    res.status(200).json({ message: 'Le mot de passe a été réinitialisé' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 

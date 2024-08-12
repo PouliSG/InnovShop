@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const {
   placeOrder,
-  getOrders,
+  getUserOrders,
   getAllOrders,
   getOrderById,
   updateOrderStatus,
@@ -16,7 +16,7 @@ const checkRole = require('../middleware/role')
 router.post('/', auth, placeOrder)
 
 // Route pour obtenir les commandes de l'utilisateur
-router.get('/', auth, checkRole(['user']), getOrders)
+router.get('/', auth, checkRole(['user']), getUserOrders)
 
 // Route pour obtenir toutes les commandes (employee and admin only)
 router.get('/all', auth, checkRole(['employee', 'admin']), getAllOrders)

@@ -1,93 +1,93 @@
 const Cart = require('../models/Cart')
 const Product = require('../models/Product')
 
-// Add item to cart
+// Ajouter un article au panier
 const addItemToCart = async (req, res) => {
   const { productId, quantity } = req.body
   try {
+    // Recherche du produit par ID
     const product = await Product.findById(productId)
     if (!product) {
-      return res.status(404).json({ msg: 'Product not found' })
+      return res.status(404).json({ msg: 'Produit non trouvé' })
     }
 
+    // Recherche du panier de l'utilisateur
     let cart = await Cart.findOne({ user: req.user.id })
     if (!cart) {
+      // Création d'un nouveau panier si l'utilisateur n'en a pas encore
       cart = new Cart({ user: req.user.id, products: [] })
     }
 
+    // Vérification si le produit est déjà dans le panier
     const productIndex = cart.products.findIndex(
       (product) => product.id === productId
     )
     if (productIndex > -1) {
+      // Mise à jour de la quantité si le produit est déjà dans le panier
       cart.products[productIndex].quantity += quantity
     } else {
+      // Ajout du produit au panier
       cart.products.push({ product: productId, quantity })
     }
 
+    // Sauvegarde du panier
     await cart.save()
     res.status(200).json(cart)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Get cart
+// Obtenir le panier de l'utilisateur
 const getCart = async (req, res) => {
   try {
     const cart = await Cart.findOne({ user: req.user.id }).populate(
       'products.product'
     )
     if (!cart) {
-      return res.status(404).json({ msg: 'Cart not found' })
+      return res.status(404).json({ msg: 'Panier non trouvé' })
     }
     res.status(200).json(cart)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Remove item from cart
+// Supprimer un article du panier
 const removeItemFromCart = async (req, res) => {
   const { id } = req.params
   try {
-    let cart = await Cart.findOne({ user: req.user.id })
+    const cart = await Cart.findOne({ user: req.user.id })
     if (!cart) {
-      return res.status(404).json({ msg: 'Cart not found' })
+      return res.status(404).json({ msg: 'Panier non trouvé' })
     }
 
+    // Suppression du produit du panier
     cart.products = cart.products.filter((product) => product.id !== id)
+
     await cart.save()
     res.status(200).json(cart)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Enregistrer le panier
+// Sauvegarder le panier
 const saveCart = async (req, res) => {
   const { products } = req.body
 
   try {
-    // Vérifier si un panier existe déjà pour l'utilisateur
-    let cart = await Cart.findOne({ user: req.user.id })
+    // Mise à jour ou création du panier de l'utilisateur
+    let cart = await Cart.findOneAndUpdate(
+      { user: req.user.id },
+      { products },
+      { new: true, upsert: true }
+    )
 
-    if (!cart) {
-      // Si le panier n'existe pas, créer un nouveau panier
-      cart = new Cart({
-        user: req.user.id,
-        products: products,
-      })
-    } else {
-      // Si le panier existe, mettre à jour les articles
-      cart.products = products
-    }
-
-    // Sauvegarder le panier
-    await cart.save()
-    res.status(200).json({ message: 'Panier sauvegardé avec succès', cart })
+    res.status(200).json(cart)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Erreur serveur')

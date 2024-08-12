@@ -1,73 +1,77 @@
 const Product = require('../models/Product')
 
-// Add a product
+// Ajouter un produit
 const addProduct = async (req, res) => {
-  const { name, description, price, category, stock } = req.body
+  const { name, description, price, category, stock, image } = req.body
   try {
-    const newProduct = new Product({
+    // Création d'un nouveau produit
+    const product = new Product({
       name,
       description,
       price,
       category,
       stock,
+      image,
     })
-    const product = await newProduct.save()
+
+    await product.save()
     res.status(201).json(product)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Get all products
+// Obtenir tous les produits
 const getProducts = async (req, res) => {
   try {
-    const products = await Product.find()
+    const products = await Product.find().populate('category')
     res.status(200).json(products)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Update Product
+// Mettre à jour un produit
 const updateProduct = async (req, res) => {
   const { id } = req.params
-  const { name, description, price, category, stock, featured } = req.body
+  const { name, description, price, category, stock, featured, image } =
+    req.body
 
   try {
-    let product = await Product.findById(id)
+    // Mise à jour du produit existant
+    const product = await Product.findByIdAndUpdate(
+      id,
+      { name, description, price, category, stock, featured, image },
+      { new: true }
+    )
+
     if (!product) {
-      return res.status(404).json({ message: 'Product not found' })
+      return res.status(404).json({ msg: 'Produit non trouvé' })
     }
 
-    product.name = name || product.name
-    product.description = description || product.description
-    product.price = price || product.price
-    product.category = category || product.category
-    product.stock = stock || product.stock
-    product.featured = featured !== undefined ? featured : product.featured
-
-    await product.save()
-    res.json(product)
+    res.status(200).json(product)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Delete a product
+// Supprimer un produit
 const deleteProduct = async (req, res) => {
+  const { id } = req.params
+
   try {
-    const product = await Product.findById(req.params.id)
+    const product = await Product.findByIdAndDelete(id)
     if (!product) {
-      return res.status(404).json({ msg: 'Product not found' })
+      return res.status(404).json({ msg: 'Produit non trouvé' })
     }
-    await product.remove()
-    res.status(200).json({ msg: 'Product removed' })
+
+    res.status(200).json({ msg: 'Produit supprimé' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 

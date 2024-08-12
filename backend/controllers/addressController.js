@@ -1,22 +1,23 @@
 const Address = require('../models/Address')
 
-// Ajouter une adresse pour un utilisateur
+// Ajouter une adresse
 const addUserAddress = async (req, res) => {
   const { userId } = req.params
-  const { number, street, additional, city, zip, country, label, isDefault } =
+  let { number, street, additional, city, zip, country, label, isDefault } =
     req.body
 
   try {
     const userAddresses = await Address.find({ user: userId })
 
-    // Determine the final value of isDefault
-    const finalIsDefault = userAddresses.length === 0 ? true : isDefault
-
-    if (finalIsDefault) {
-      // Ensure only one address is marked as default
+    // Définir isDefault à true si c'est la première adresse de l'utilisateur
+    if (userAddresses.length === 0) {
+      isDefault = true
+    } else if (isDefault) {
+      // S'assurer qu'une seule adresse est définie par défaut
       await Address.updateMany({ user: userId }, { $set: { isDefault: false } })
     }
 
+    // Création d'une nouvelle adresse
     const newAddress = new Address({
       user: userId,
       number,
@@ -26,14 +27,15 @@ const addUserAddress = async (req, res) => {
       zip,
       country,
       label,
-      isDefault: finalIsDefault,
+      isDefault,
     })
 
+    // Enregistrement de l'adresse dans la base de données
     const address = await newAddress.save()
     res.json(address)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
@@ -56,11 +58,11 @@ const getAddresses = async (req, res) => {
     res.json(addresses)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Update an address
+// Mettre à jour une adresse
 const updateAddress = async (req, res) => {
   const { id } = req.params
   const {
@@ -76,11 +78,12 @@ const updateAddress = async (req, res) => {
   } = req.body
 
   try {
-    // Ensure only one address is marked as default
+    // S'assurer qu'une seule adresse est définie par défaut
     if (isDefault) {
       await Address.updateMany({ user: user }, { $set: { isDefault: false } })
     }
 
+    // Mise à jour de l'adresse existante
     const address = await Address.findOneAndUpdate(
       { _id: id, user: user },
       {
@@ -97,17 +100,17 @@ const updateAddress = async (req, res) => {
     )
 
     if (!address) {
-      return res.status(404).json({ msg: 'Address not found' })
+      return res.status(404).json({ msg: 'Adresse non trouvée' })
     }
 
     res.json(address)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 
-// Delete an address
+// Supprimer une adresse
 const deleteAddress = async (req, res) => {
   const { id } = req.params
 
@@ -117,13 +120,13 @@ const deleteAddress = async (req, res) => {
     })
 
     if (!address) {
-      return res.status(404).json({ msg: 'Address not found' })
+      return res.status(404).json({ msg: 'Adresse non trouvée' })
     }
 
-    res.json({ msg: 'Address deleted' })
+    res.json({ msg: 'Adresse supprimée' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur serveur')
   }
 }
 

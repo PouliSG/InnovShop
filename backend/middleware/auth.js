@@ -7,27 +7,27 @@ module.exports = async function (req, res, next) {
 
   // Vérifier s'il n'y a pas de jeton
   if (!token) {
-    return res.status(401).json({ msg: 'No token, authorization denied' })
+    return res.status(401).json({ msg: 'Aucun jeton, autorisation refusée' })
   }
 
   // Vérifier le jeton
   try {
-    // Decode the token to get the user ID
+    // Décoder le jeton pour obtenir l'ID de l'utilisateur
     const decoded = jwt.verify(
       token.split(' ')[1] || token,
       process.env.JWT_SECRET
     )
-    const user = await User.findById(decoded.user.id).select('-password') // Fetch user details, excluding the password
+    const user = await User.findById(decoded.user.id).select('-password') // Récupérer les détails de l'utilisateur, en excluant le mot de passe
 
     if (!user) {
-      return res.status(401).json({ msg: 'User not found' })
+      return res.status(401).json({ msg: 'Utilisateur non trouvé' })
     }
 
-    // Attach full user object to req, including the role
+    // Attacher l'objet utilisateur complet à la requête, y compris le rôle
     req.user = user
     next()
   } catch (err) {
-    console.error('Auth Middleware Error: ', err)
-    res.status(401).json({ msg: 'Token is not valid' })
+    console.error("Erreur du middleware d'authentification : ", err)
+    res.status(401).json({ msg: "Le jeton n'est pas valide" })
   }
 }

@@ -1,4 +1,5 @@
 const express = require('express')
+
 const router = express.Router()
 const {
   registerUser,
@@ -7,16 +8,16 @@ const {
   resetPassword,
 } = require('../controllers/authController')
 
-// Register user
+// Enregistrer un utilisateur
 router.post('/register', registerUser)
 
-// Login user
+// Connecter un utilisateur
 router.post('/login', loginUser)
 
-// Forgot Password
+// Mot de passe oublié
 router.post('/forgot', forgotPassword)
 
-// Reset Password
+// Réinitialiser le mot de passe
 router.post('/reset/:token', resetPassword)
 
 module.exports = router

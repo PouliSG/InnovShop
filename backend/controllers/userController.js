@@ -20,7 +20,7 @@ const addUser = async (req, res) => {
       email,
     })
     if (user) {
-      return res.status(400).json({ msg: 'User already exists' })
+      return res.status(400).json({ msg: "L'utilisateur existe déjà" })
     }
 
     user = new User({
@@ -38,10 +38,10 @@ const addUser = async (req, res) => {
 
     await user.save()
 
-    res.json(user)
+    res.status(200).json(user)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
@@ -52,7 +52,7 @@ const updateUserProfile = async (req, res) => {
   try {
     let user = await User.findById(req.user.id)
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' })
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
     }
 
     user.firstname = firstname || user.firstname
@@ -62,100 +62,104 @@ const updateUserProfile = async (req, res) => {
 
     await user.save()
 
-    res.json(user)
+    res.status(200).json(user)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Get all users
+// Obtenir tous les utilisateurs
 const getUsers = async (req, res) => {
   try {
     const users = await User.find()
-    res.json(users)
+    res.status(200).json(users)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Delete a user
+// Supprimer un utilisateur
 const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id)
-    res.json({ msg: 'User deleted' })
+    res.status(200).json({ msg: 'Utilisateur supprimé' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Self Delete User
+// Supprimer soi-même l'utilisateur
 const selfDeleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.user.id)
-    res.json({ msg: 'User deleted' })
+    res.status(200).json({ msg: 'Utilisateur supprimé' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Promote a user to admin
+// Promouvoir un utilisateur en administrateur
 const promoteUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' })
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
     }
 
-    user.role = req.body.role || 'admin' // Allow role assignment
+    user.role = req.body.role || 'admin' // Autoriser l'attribution de rôle
     await user.save()
 
-    res.json({ msg: 'User role updated successfully', user })
+    res
+      .status(200)
+      .json({ msg: "Rôle de l'utilisateur mis à jour avec succès", user })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Update user role
+// Mettre à jour le rôle de l'utilisateur
 const updateUserRole = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' })
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
     }
 
     user.role = req.body.role
     await user.save()
 
-    res.json({ msg: 'User role updated successfully', user })
+    res
+      .status(200)
+      .json({ msg: "Rôle de l'utilisateur mis à jour avec succès", user })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Update user settings
+// Mettre à jour les paramètres de l'utilisateur
 const updateUserSettings = async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
     if (!user) {
-      return res.status(404).json({ msg: 'User not found' })
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
     }
 
-    user.settings = req.body.settings || user.settings // Add new settings fields as needed
+    user.settings = req.body.settings || user.settings // Ajouter de nouveaux champs de paramètres si nécessaire
     await user.save()
 
-    res.json({
-      msg: 'User settings updated successfully',
+    res.status(200).json({
+      msg: "Paramètres de l'utilisateur mis à jour avec succès",
       settings: user.settings,
     })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
@@ -167,11 +171,11 @@ const addAddress = async (req, res) => {
   try {
     const userAddresses = await Address.find({ user: req.user.id })
 
-    // Determine the final value of isDefault
+    // Déterminer la valeur finale de isDefault
     const finalIsDefault = userAddresses.length === 0 ? true : isDefault
 
     if (finalIsDefault) {
-      // Ensure only one address is marked as default
+      // S'assurer qu'une seule adresse est marquée comme par défaut
       await Address.updateMany(
         { user: req.user.id },
         { $set: { isDefault: false } }
@@ -191,10 +195,10 @@ const addAddress = async (req, res) => {
     })
 
     const address = await newAddress.save()
-    res.json(address)
+    res.status(200).json(address)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
@@ -202,21 +206,21 @@ const addAddress = async (req, res) => {
 const getAddresses = async (req, res) => {
   try {
     const addresses = await Address.find({ user: req.user.id })
-    res.json(addresses)
+    res.status(200).json(addresses)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Update an address
+// Mettre à jour une adresse
 const updateAddress = async (req, res) => {
   const { id } = req.params
   const { number, street, additional, city, zip, country, label, isDefault } =
     req.body
 
   try {
-    // Ensure only one address is marked as default
+    // S'assurer qu'une seule adresse est marquée comme par défaut
     if (isDefault) {
       await Address.updateMany(
         { user: req.user.id },
@@ -240,17 +244,17 @@ const updateAddress = async (req, res) => {
     )
 
     if (!address) {
-      return res.status(404).json({ msg: 'Address not found' })
+      return res.status(404).json({ msg: 'Adresse introuvable' })
     }
 
-    res.json(address)
+    res.status(200).json(address)
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
-// Delete an address
+// Supprimer une adresse
 const deleteAddress = async (req, res) => {
   const { id } = req.params
 
@@ -261,13 +265,13 @@ const deleteAddress = async (req, res) => {
     })
 
     if (!address) {
-      return res.status(404).json({ msg: 'Address not found' })
+      return res.status(404).json({ msg: 'Adresse introuvable' })
     }
 
-    res.json({ msg: 'Address deleted' })
+    res.status(200).json({ msg: 'Adresse supprimée' })
   } catch (err) {
     console.error(err.message)
-    res.status(500).send('Server error')
+    res.status(500).send('Erreur du serveur')
   }
 }
 
