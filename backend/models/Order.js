@@ -31,6 +31,11 @@ const OrderSchema = new mongoose.Schema({
     enum: ['pending', 'shipped', 'delivered', 'cancelled'],
     default: 'pending',
   },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'paid', 'failed'],
+    default: 'pending',
+  },
   shippingAddress: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Address',

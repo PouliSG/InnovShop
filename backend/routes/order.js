@@ -6,6 +6,7 @@ const {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
+  updatePaymentStatus,
   deleteOrder,
   getOrdersByUser,
 } = require('../controllers/orderController')
@@ -26,6 +27,14 @@ router.get('/:id', auth, checkRole(['employee', 'admin']), getOrderById)
 
 // Route pour mettre à jour le statut de la commande (employee and admin only)
 router.put('/:id', auth, checkRole(['employee', 'admin']), updateOrderStatus)
+
+// Route pour mettre à jour le statut du paiement de la commande (employee and admin only)
+router.put(
+  '/:id/payment',
+  auth,
+  checkRole(['employee', 'admin']),
+  updatePaymentStatus
+)
 
 // Route pour supprimer une commande (employee and admin only)
 router.delete('/:id', auth, checkRole(['employee', 'admin']), deleteOrder)

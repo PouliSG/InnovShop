@@ -103,6 +103,29 @@ const updateOrderStatus = async (req, res) => {
   }
 }
 
+// Mettre à jour le statut de paiement d'une commande
+const updatePaymentStatus = async (req, res) => {
+  const { id } = req.params
+  const { paymentStatus } = req.body
+
+  try {
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { paymentStatus },
+      { new: true }
+    )
+
+    if (!order) {
+      return res.status(404).json({ msg: 'Commande non trouvée' })
+    }
+
+    res.status(200).json(order)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur serveur')
+  }
+}
+
 // Supprimer une commande
 const deleteOrder = async (req, res) => {
   const { id } = req.params
@@ -133,6 +156,7 @@ module.exports = {
   getAllOrders,
   getOrderById,
   updateOrderStatus,
+  updatePaymentStatus,
   deleteOrder,
   getOrdersByUser,
 }
