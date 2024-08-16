@@ -8,8 +8,8 @@ const {
   deleteAddress,
 } = require('../controllers/addressController')
 
-const auth = require('../middleware/auth')
-const checkRole = require('../middleware/role')
+const auth = require('../middlewares/auth')
+const checkRole = require('../middlewares/role')
 
 // Route pour ajouter une adresse à un utilisateur
 router.post('/:userId', auth, checkRole(['employee', 'admin']), addUserAddress)

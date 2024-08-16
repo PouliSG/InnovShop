@@ -10,8 +10,8 @@ const {
   deleteOrder,
   getOrdersByUser,
 } = require('../controllers/orderController')
-const auth = require('../middleware/auth')
-const checkRole = require('../middleware/role')
+const auth = require('../middlewares/auth')
+const checkRole = require('../middlewares/role')
 
 // Route pour passer une commande
 router.post('/', auth, placeOrder)

@@ -6,8 +6,8 @@ const {
   deleteCategory,
   updateCategory,
 } = require('../controllers/categoryController')
-const auth = require('../middleware/auth')
-const checkRole = require('../middleware/role')
+const auth = require('../middlewares/auth')
+const checkRole = require('../middlewares/role')
 
 // Route pour ajouter une catégorie
 router.post('/', auth, checkRole(['employee', 'admin']), addCategory)

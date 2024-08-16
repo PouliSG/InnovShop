@@ -6,8 +6,8 @@ const {
   deleteProduct,
   updateProduct,
 } = require('../controllers/productController')
-const auth = require('../middleware/auth')
-const checkRole = require('../middleware/role')
+const auth = require('../middlewares/auth')
+const checkRole = require('../middlewares/role')
 
 // Obtenir tous les produits
 router.get('/', getProducts)

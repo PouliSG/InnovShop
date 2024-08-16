@@ -14,8 +14,8 @@ const {
   updateAddress,
   deleteAddress,
 } = require('../controllers/userController')
-const auth = require('../middleware/auth')
-const checkRole = require('../middleware/role')
+const auth = require('../middlewares/auth')
+const checkRole = require('../middlewares/role')
 
 // Mettre à jour le profil de l'utilisateur
 router.put('/profile', auth, updateUserProfile)

@@ -25,6 +25,10 @@ app.use('/api/cart', require('./routes/cart'))
 
 const PORT = process.env.PORT || 5000
 
-app.listen(PORT, () =>
-  console.log(`Serveur en cours d'exécution sur le port ${PORT}`)
-)
+if (process.env.NODE_ENV === 'test') {
+  module.exports = app
+} else {
+  app.listen(PORT, () => {
+    console.log(`Serveur en cours d'exécution sur le port ${PORT}`)
+  })
+}
