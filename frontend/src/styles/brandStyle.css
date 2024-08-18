@@ -1,0 +1,95 @@
+/* brandStyles.css */
+:root {
+  /* Light Theme Colors */
+  --primary-color-light: #32383b;   /* Example Primary Color */
+  --secondary-color-light: #fbae5f; /* Example Secondary Color */
+  --accent-color-light: #c4884c;    /* Example Accent Color */
+  --background-color-light: #fcfced;/* Light Background Color */
+  --text-color-light: #32383b;      /* Light Text Color */
+
+  /* Dark Theme Colors */
+  --primary-color-dark: #32383b;    /* Example Primary Color */
+  --secondary-color-dark: #fbae5f;  /* Example Secondary Color */
+  --accent-color-dark: #c4884c;     /* Example Accent Color */
+  --background-color-dark: #1E1E1E; /* Dark Background Color */
+  --text-color-dark: #fcfced;       /* Dark Text Color */
+
+  /* Font Families */
+  --font-family: 'Montserrat', sans-serif;
+}
+
+/* Light Theme */
+.light-theme {
+  --primary-color: var(--primary-color-light);
+  --secondary-color: var(--secondary-color-light);
+  --accent-color: var(--accent-color-light);
+  --background-color: var(--background-color-light);
+  --text-color: var(--text-color-light);
+}
+
+/* Dark Theme */
+.dark-theme {
+  --primary-color: var(--primary-color-dark);
+  --secondary-color: var(--secondary-color-dark);
+  --accent-color: var(--accent-color-dark);
+  --background-color: var(--background-color-dark);
+  --text-color: var(--text-color-dark);
+}
+
+/* Apply Global Styles */
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family);
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+p, li, span, a {
+  font-family: var(--font-family);
+  font-weight: 400;
+  color: var(--text-color);
+}
+
+.heading {
+  font-size: 2rem; /* Example: 32px */
+  line-height: 1.2;
+  letter-spacing: 0.05em;
+}
+
+.subheading {
+  font-size: 1.5rem; /* Example: 24px */
+  line-height: 1.3;
+}
+
+.body-text {
+  font-size: 1rem; /* Example: 16px */
+  line-height: 1.5;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: #fcfced;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: var(--secondary-color);
+}
+
+a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+a:hover {
+  color: var(--secondary-color);
+  text-decoration: underline;
+}
