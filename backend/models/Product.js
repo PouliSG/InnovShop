@@ -22,7 +22,7 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  dateAdded: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },

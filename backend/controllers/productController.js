@@ -75,9 +75,33 @@ const deleteProduct = async (req, res) => {
   }
 }
 
+// Récupérer les derniers produits ajoutés
+const getLatestProducts = async (req, res) => {
+  try {
+    const products = await Product.find().sort({ createdAt: -1 }).limit(3)
+    res.status(200).json(products)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur serveur')
+  }
+}
+
+// Récupérer les produits à la une
+const getFeaturedProducts = async (req, res) => {
+  try {
+    const products = await Product.find({ featured: true }).limit(3)
+    res.status(200).json(products)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur serveur')
+  }
+}
+
 module.exports = {
   addProduct,
   getProducts,
   updateProduct,
   deleteProduct,
+  getLatestProducts,
+  getFeaturedProducts,
 }
