@@ -2,8 +2,9 @@ import React from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import Home from './pages/Home'
 import Product from './components/Product'
+import Error from './components/Error'
+import Home from './pages/Home'
 import Products from './pages/Products'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
@@ -36,6 +37,7 @@ function App() {
           <Route path="/admin/products" element={<ManageProducts />} />
           <Route path="/admin/orders" element={<ManageOrders />} />
           <Route path="/admin/users" element={<ManageUsers />} />
+          <Route path="*" element={<Error />} />
         </Routes>
         <Footer />
       </ThemeProvider>
