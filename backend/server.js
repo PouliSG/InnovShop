@@ -1,6 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const dotenv = require('dotenv')
+const cors = require('cors')
 const connectDB = require('./config/db')
 
 // Charger les variables d'environnement
@@ -13,6 +14,7 @@ const app = express()
 
 // Middleware
 app.use(bodyParser.json())
+app.use(cors())
 
 // Définir les routes
 app.use('/api/auth', require('./routes/auth'))
