@@ -40,9 +40,6 @@ const Home = () => {
 
   return (
     <div>
-      <h1>Bienvenue sur InnovShop</h1>
-      <p>Découvrez nos derniers produits innovants !</p>
-
       {/* Section pour les derniers produits */}
       <h2>Derniers produits</h2>
       <ProductList products={latestProducts} />
