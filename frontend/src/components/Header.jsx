@@ -1,12 +1,5 @@
 import { Link } from 'react-router-dom'
-import {
-  AppBar,
-  Toolbar,
-  Typography,
-  Button,
-  Box,
-  IconButton,
-} from '@mui/material'
+import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material'
 import { styled } from '@mui/system'
 import HomeIcon from '@mui/icons-material/Home'
 import StorefrontIcon from '@mui/icons-material/Storefront'
@@ -15,19 +8,26 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import darkLogo from '../assets/InnovShop_logo_dark.png'
 import lightLogo from '../assets/InnovShop_logo_light.png'
 import { useTheme } from '../utils/context'
+import { useTheme as useMUITheme } from '@mui/material/styles'
 
 const Logo = styled('img')({
-  height: '100px', // Ajustez selon votre design
+  height: '100px', // Adjust according to your design
 })
 
 function Header() {
   const { theme } = useTheme()
+  const logo = theme === 'dark' ? darkLogo : lightLogo
+
+  const muiTheme = useMUITheme()
 
   return (
-    <AppBar position="static" color="default">
+    <AppBar
+      position="static"
+      sx={{ backgroundColor: muiTheme.palette.background.default }}
+    >
       <Toolbar sx={{ flexDirection: 'column', alignItems: 'center' }}>
-        <Logo src={theme === 'dark' ? darkLogo : lightLogo} alt="Logo" />
-        <Typography variant="subtitle1" sx={{ color: 'text.secondary', mt: 1 }}>
+        <Logo src={logo} alt="Logo" />
+        <Typography variant="body2">
           InnovShop - Explorez l'innovation, chaque jour.
         </Typography>
         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
@@ -36,7 +36,7 @@ function Header() {
             to="/"
             startIcon={<HomeIcon />}
             variant="text"
-            color="inherit"
+            sx={{ color: muiTheme.palette.text.primary }}
           >
             Accueil
           </Button>
@@ -45,7 +45,7 @@ function Header() {
             to="/products/1"
             startIcon={<StorefrontIcon />}
             variant="text"
-            color="inherit"
+            sx={{ color: muiTheme.palette.text.primary }}
           >
             Nos Produits
           </Button>

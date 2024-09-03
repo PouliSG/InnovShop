@@ -15,13 +15,19 @@ import OrderHistory from './pages/OrderHistory'
 import ManageProducts from './pages/Admin/ManageProducts'
 import ManageOrders from './pages/Admin/ManageOrders'
 import ManageUsers from './pages/Admin/ManageUsers'
-import { ThemeProvider } from './utils/context'
+import { useTheme } from './utils/context'
 import ThemedGlobalStyle from './utils/style/GlobalStyle'
+import { ThemeProvider, CssBaseline } from '@mui/material'
+import { lightTheme, darkTheme } from './utils/theme'
 
 function App() {
+  const { theme } = useTheme()
+  const appliedTheme = theme === 'dark' ? darkTheme : lightTheme
+
   return (
-    <Router>
-      <ThemeProvider>
+    <ThemeProvider theme={appliedTheme}>
+      <Router>
+        <CssBaseline />
         <ThemedGlobalStyle />
         <Header />
         <Routes>
@@ -40,8 +46,8 @@ function App() {
           <Route path="*" element={<Error />} />
         </Routes>
         <Footer />
-      </ThemeProvider>
-    </Router>
+      </Router>
+    </ThemeProvider>
   )
 }
 
