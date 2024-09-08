@@ -36,7 +36,15 @@ function Header() {
             to="/"
             startIcon={<HomeIcon />}
             variant="text"
-            sx={{ color: muiTheme.palette.text.primary }}
+            sx={{
+              color: muiTheme.palette.text.primary,
+              '& .MuiButton-startIcon': {
+                color: muiTheme.palette.text.primary, // Color of the icon
+              },
+              '&:hover .MuiButton-startIcon': {
+                color: muiTheme.palette.text.secondary, // Icon color on hover
+              },
+            }}
           >
             Accueil
           </Button>
@@ -45,7 +53,15 @@ function Header() {
             to="/products/1"
             startIcon={<StorefrontIcon />}
             variant="text"
-            sx={{ color: muiTheme.palette.text.primary }}
+            sx={{
+              color: muiTheme.palette.text.primary,
+              '& .MuiButton-startIcon': {
+                color: muiTheme.palette.text.primary, // Color of the icon
+              },
+              '&:hover .MuiButton-startIcon': {
+                color: muiTheme.palette.text.secondary, // Icon color on hover
+              },
+            }}
           >
             Nos Produits
           </Button>
@@ -55,6 +71,15 @@ function Header() {
             startIcon={<LoginIcon />}
             variant="contained"
             color="primary"
+            sx={{
+              color: muiTheme.palette.text.third,
+              '& .MuiButton-startIcon': {
+                color: muiTheme.palette.text.third, // Color of the icon
+              },
+              '&:hover .MuiButton-startIcon': {
+                color: muiTheme.palette.text.secondary, // Icon color on hover
+              },
+            }}
           >
             Connexion
           </Button>
@@ -64,6 +89,15 @@ function Header() {
             startIcon={<PersonAddIcon />}
             variant="contained"
             color="primary"
+            sx={{
+              color: muiTheme.palette.text.third,
+              '& .MuiButton-startIcon': {
+                color: muiTheme.palette.text.third, // Color of the icon
+              },
+              '&:hover .MuiButton-startIcon': {
+                color: muiTheme.palette.text.secondary, // Icon color on hover
+              },
+            }}
           >
             Créer un compte
           </Button>

@@ -20,6 +20,8 @@ const lightTheme = createTheme({
     },
     text: {
       primary: getCSSVariable('--text-color-light'),
+      secondary: getCSSVariable('--secondary-color-light'),
+      third: getCSSVariable('--text-color-dark'),
     },
   },
   typography: {
@@ -41,6 +43,7 @@ const darkTheme = createTheme({
     },
     text: {
       primary: getCSSVariable('--text-color-dark'),
+      secondary: getCSSVariable('--secondary-color-dark'),
     },
   },
   typography: {
