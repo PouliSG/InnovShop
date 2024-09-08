@@ -26,10 +26,20 @@ function Header() {
       sx={{ backgroundColor: muiTheme.palette.background.default }}
     >
       <Toolbar sx={{ flexDirection: 'column', alignItems: 'center' }}>
-        <Logo src={logo} alt="Logo" />
-        <Typography variant="body2">
-          InnovShop - Explorez l'innovation, chaque jour.
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+          <Logo src={logo} alt="Logo" />
+          <Typography
+            variant="h6"
+            sx={{
+              color: muiTheme.palette.text.primary,
+              ml: 2,
+              pb: 2,
+              fontStyle: 'italic',
+            }}
+          >
+            Explorez l'innovation, chaque jour.
+          </Typography>
+        </Box>
         <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
           <Button
             component={Link}
