@@ -2,7 +2,8 @@ const Product = require('../models/Product')
 
 // Ajouter un produit
 const addProduct = async (req, res) => {
-  const { name, description, price, category, stock, image } = req.body
+  const { name, description, price, category, stock, featured, image } =
+    req.body
   try {
     // Création d'un nouveau produit
     const product = new Product({
@@ -11,6 +12,7 @@ const addProduct = async (req, res) => {
       price,
       category,
       stock,
+      featured,
       image,
     })
 
