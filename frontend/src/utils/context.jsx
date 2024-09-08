@@ -8,7 +8,7 @@ export const useTheme = () => useContext(ThemeContext)
 
 // Create a provider component
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState('light') // Default to light theme
+  const [theme, setTheme] = useState('dark') // Default to dark theme
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'))
