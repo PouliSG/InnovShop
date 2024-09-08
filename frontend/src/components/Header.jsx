@@ -33,7 +33,6 @@ function Header() {
             sx={{
               color: muiTheme.palette.text.primary,
               ml: 2,
-              pb: 2,
               fontStyle: 'italic',
             }}
           >

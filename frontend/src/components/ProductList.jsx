@@ -12,6 +12,7 @@ const ProductList = ({ products }) => {
         md: 'repeat(3, 1fr)',
       }}
       gap={4}
+      pb={2}
     >
       {products.map((product) => (
         <Card key={product.id}>

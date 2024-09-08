@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { NewReleases, Star } from '@mui/icons-material'
 import { getLatestProducts, getFeaturedProducts } from '../services/apiService'
 import ProductList from '../components/ProductList'
 import FeaturedProducts from '../components/FeaturedProducts'
@@ -41,11 +42,17 @@ const Home = () => {
   return (
     <div>
       {/* Section pour les derniers produits */}
-      <h2>Derniers produits</h2>
+      <h2>
+        <NewReleases sx={{ mr: 1, pb: 0.2 }} />
+        Derniers produits
+      </h2>
       <ProductList products={latestProducts} />
 
       {/* Section pour les produits à la une */}
-      <h2>Produits à la une</h2>
+      <h2>
+        <Star sx={{ mr: 1, pb: 0.2 }} />
+        Produits à la une
+      </h2>
       <FeaturedProducts products={featuredProducts} />
     </div>
   )
