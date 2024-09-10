@@ -44,7 +44,7 @@ const UserSchema = new mongoose.Schema({
   },
   verified: {
     type: Boolean,
-    default: false,
+    default: true,
   },
   active: {
     type: Boolean,
@@ -70,6 +70,10 @@ const UserSchema = new mongoose.Schema({
   settings: {
     type: SettingsSchema, // Embed the settings schema
     default: () => ({}), // Initialize with default settings
+  },
+  newsletter_optin: {
+    type: Boolean,
+    default: false,
   },
 })
 

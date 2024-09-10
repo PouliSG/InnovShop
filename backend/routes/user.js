@@ -2,7 +2,10 @@ const express = require('express')
 const router = express.Router()
 const {
   addUser,
+  getUserProfile,
   updateUserProfile,
+  getUser,
+  getUserRole,
   getUsers,
   deleteUser,
   selfDeleteUser,
@@ -34,6 +37,15 @@ router.put('/address/:id', auth, updateAddress)
 
 // Supprimer une adresse
 router.delete('/address/:id', auth, deleteAddress)
+
+// Obtenir l'utilisateur
+router.get('/:id', auth, getUser)
+
+// Obtenir l'utilisateur actuel (réservé aux utilisateurs)
+router.get('/profile', auth, getUserProfile)
+
+// Obtenir le rôle de l'utilisateur
+router.get('/:id/role', auth, getUserRole)
 
 // Supprimer l'utilisateur actuel (réservé aux utilisateurs)
 router.delete('/', auth, checkRole(['user']), selfDeleteUser)

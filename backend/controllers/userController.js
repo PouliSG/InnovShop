@@ -13,6 +13,7 @@ const addUser = async (req, res) => {
     role = 'user',
     gender = null,
     birthdate = null,
+    newsletter_optin = false,
   } = req.body
 
   try {
@@ -31,6 +32,7 @@ const addUser = async (req, res) => {
       gender,
       birthdate,
       role,
+      newsletter_optin,
     })
 
     const salt = await bcrypt.genSalt(10)
@@ -45,9 +47,24 @@ const addUser = async (req, res) => {
   }
 }
 
+// Obtenir le profil de l'utilisateur
+const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password')
+    if (!user) {
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
+    }
+
+    res.status(200).json(user)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur du serveur')
+  }
+}
+
 // Mise à jour des informations de profil
 const updateUserProfile = async (req, res) => {
-  const { firstname, lastname, gender, birthdate } = req.body
+  const { firstname, lastname, gender, birthdate, newsletter_optin } = req.body
 
   try {
     let user = await User.findById(req.user.id)
@@ -59,6 +76,7 @@ const updateUserProfile = async (req, res) => {
     user.lastname = lastname || user.lastname
     user.gender = gender || user.gender
     user.birthdate = birthdate || user.birthdate
+    user.newsletter_optin = newsletter_optin || user.newsletter
 
     await user.save()
 
@@ -74,6 +92,36 @@ const getUsers = async (req, res) => {
   try {
     const users = await User.find()
     res.status(200).json(users)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur du serveur')
+  }
+}
+
+// Obtenir un utilisateur
+const getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password')
+    if (!user) {
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
+    }
+
+    res.status(200).json(user)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur du serveur')
+  }
+}
+
+// Obtenir le rôle de l'utilisateur
+const getUserRole = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('role')
+    if (!user) {
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
+    }
+
+    res.status(200).json(user)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Erreur du serveur')
@@ -277,8 +325,11 @@ const deleteAddress = async (req, res) => {
 
 module.exports = {
   addUser,
+  getUserProfile,
   updateUserProfile,
   getUsers,
+  getUser,
+  getUserRole,
   deleteUser,
   selfDeleteUser,
   promoteUser,

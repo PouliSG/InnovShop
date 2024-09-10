@@ -11,6 +11,16 @@ export const getProducts = async () => {
   }
 }
 
+export const getLatestProducts = async () => {
+  const response = await axios.get(`${API_URL}/products/latest`)
+  return response.data
+}
+
+export const getFeaturedProducts = async () => {
+  const response = await axios.get(`${API_URL}/products/featured`)
+  return response.data
+}
+
 export const getProductById = async (id) => {
   try {
     const response = await axios.get(`${API_URL}/products/${id}`)
@@ -57,12 +67,16 @@ export const getUserProfile = async (token) => {
   }
 }
 
-export const getLatestProducts = async () => {
-  const response = await axios.get(`${API_URL}/products/latest`)
-  return response.data
-}
-
-export const getFeaturedProducts = async () => {
-  const response = await axios.get(`${API_URL}/products/featured`)
-  return response.data
+export const getUserRole = async (token) => {
+  try {
+    var user_id = JSON.parse(atob(token.split('.')[1])).id
+    const response = await axios.get(`${API_URL}/users/${user_id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
 }

@@ -15,9 +15,9 @@ router.post('/register', registerUser)
 router.post('/login', loginUser)
 
 // Mot de passe oublié
-router.post('/forgot', forgotPassword)
+router.post('/forgot-password', forgotPassword)
 
 // Réinitialiser le mot de passe
-router.post('/reset/:token', resetPassword)
+router.post('/reset-password/:token', resetPassword)
 
 module.exports = router
