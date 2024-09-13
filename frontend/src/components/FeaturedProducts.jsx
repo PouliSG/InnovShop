@@ -15,7 +15,7 @@ const FeaturedProducts = ({ products }) => {
       pb={2}
     >
       {products.map((product) => (
-        <Card key={product.id}>
+        <Card key={product._id}>
           <CardMedia
             component="img"
             height="140"
@@ -39,9 +39,9 @@ const FeaturedProducts = ({ products }) => {
 FeaturedProducts.propTypes = {
   products: PropTypes.arrayOf(
     PropTypes.shape({
-      id: PropTypes.string.isRequired,
+      _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      imageUrl: PropTypes.string.isRequired,
+      image: PropTypes.string.isRequired,
       price: PropTypes.number.isRequired,
     })
   ).isRequired,

@@ -3,8 +3,9 @@ import { Button, TextField, Box } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
 import { useTheme } from '@mui/material/styles'
 import { login } from '../services/authService'
+import { TOKEN_KEY } from '../constants'
 
-function Login() {
+function Login({ handleClose, onLoginSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -13,7 +14,11 @@ function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await login(email, password)
+      const response = await login(email, password)
+      const token = response.token
+      localStorage.setItem(TOKEN_KEY, token)
+      onLoginSuccess(token) // Send token up to parent
+      handleClose() // Close the popup
     } catch (err) {
       setError(err.message)
     }
@@ -23,7 +28,16 @@ function Login() {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        backgroundColor: 'background.paper',
+        padding: 4,
+        borderRadius: 2,
+        width: 400, // Control the width of the popup
+        margin: 'auto', // Center it horizontally
+      }}
     >
       <TextField
         label="Adresse email"
