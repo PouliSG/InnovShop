@@ -1,5 +1,7 @@
 import { React, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Error from './components/Error'
@@ -62,39 +64,43 @@ function App() {
     <ThemeProvider theme={appliedTheme}>
       <CssBaseline />
       <ThemedGlobalStyle />
-      <Router>
-        <Header
-          handleLoginOpen={handleLoginOpen}
-          handleRegisterOpen={handleRegisterOpen}
-          onLogout={handleLogout}
-          token={token}
-          setToken={setToken}
-        />
-        <Snackbar
-          open={showSuccess}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          autoHideDuration={3000} // Snackbar will disappear after 3 seconds
-          onClose={() => setShowSuccess(false)}
-        >
-          <Alert severity="success" onClose={() => setShowSuccess(false)}>
-            Connexion réussie !
-          </Alert>
-        </Snackbar>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <Router>
+          <Header
+            handleLoginOpen={handleLoginOpen}
+            handleRegisterOpen={handleRegisterOpen}
+            onLogout={handleLogout}
+            token={token}
+            setToken={setToken}
+          />
+          <Snackbar
+            open={showSuccess}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            autoHideDuration={3000}
+            onClose={() => setShowSuccess(false)}
+          >
+            <Alert severity="success" onClose={() => setShowSuccess(false)}>
+              Connexion réussie !
+            </Alert>
+          </Snackbar>
 
-        <Snackbar
-          open={showLogoutSuccess}
-          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          autoHideDuration={3000} // Snackbar will disappear after 3 seconds
-          onClose={() => setShowLogoutSuccess(false)}
-        >
-          <Alert severity="success" onClose={() => setShowLogoutSuccess(false)}>
-            Déconnexion réussie !
-          </Alert>
-        </Snackbar>
+          <Snackbar
+            open={showLogoutSuccess}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            autoHideDuration={3000}
+            onClose={() => setShowLogoutSuccess(false)}
+          >
+            <Alert
+              severity="success"
+              onClose={() => setShowLogoutSuccess(false)}
+            >
+              Déconnexion réussie !
+            </Alert>
+          </Snackbar>
 
-        <Routes>
-          <Route path="/" element={<Home />} />
-          {/* <Route path="/products/details/:id" element={<Product />} />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* <Route path="/products/details/:id" element={<Product />} />
           <Route path="/products/:page" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/checkout/:step" element={<Checkout />} />
@@ -103,43 +109,44 @@ function App() {
           <Route path="/admin/products" element={<ManageProducts />} />
           <Route path="/admin/orders" element={<ManageOrders />} />
           <Route path="/admin/users" element={<ManageUsers />} /> */}
-          <Route path="*" element={<Error />} />
-        </Routes>
-        <Footer />
+            <Route path="*" element={<Error />} />
+          </Routes>
+          <Footer />
 
-        {/* Login Modal */}
-        <Modal open={isLoginOpen} onClose={handleLoginClose}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)', // Darken the background
-            }}
-          >
-            <Login
-              handleClose={handleLoginClose}
-              onLoginSuccess={handleLoginSuccess}
-            />
-          </Box>
-        </Modal>
+          {/* Login Modal */}
+          <Modal open={isLoginOpen} onClose={handleLoginClose}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              }}
+            >
+              <Login
+                handleClose={handleLoginClose}
+                onLoginSuccess={handleLoginSuccess}
+              />
+            </Box>
+          </Modal>
 
-        {/* Register Modal */}
-        <Modal open={isRegisterOpen} onClose={handleRegisterClose}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              height: '100vh',
-              backgroundColor: 'rgba(0, 0, 0, 0.5)', // Darken the background
-            }}
-          >
-            <Register handleClose={handleRegisterClose} />
-          </Box>
-        </Modal>
-      </Router>
+          {/* Register Modal */}
+          <Modal open={isRegisterOpen} onClose={handleRegisterClose}>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              }}
+            >
+              <Register handleClose={handleRegisterClose} />
+            </Box>
+          </Modal>
+        </Router>
+      </LocalizationProvider>
     </ThemeProvider>
   )
 }
