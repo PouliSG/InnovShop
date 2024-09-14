@@ -49,8 +49,21 @@ function Header({
       position="static"
       sx={{ backgroundColor: muiTheme.palette.background.default }}
     >
-      <Toolbar sx={{ flexDirection: 'column', alignItems: 'center' }}>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+      <Toolbar
+        sx={{
+          pt: 1,
+          flexDirection: 'column',
+          alignItems: 'center',
+          width: '100%',
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'flex-end',
+            alignSelf: 'flex-start',
+          }}
+        >
           <Logo
             src={muiTheme.palette.mode === 'dark' ? darkLogo : lightLogo}
             alt="Logo"
@@ -66,7 +79,13 @@ function Header({
             Explorez l'innovation, chaque jour.
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            gap: 2,
+            mt: 2,
+          }}
+        >
           <Button
             component={Link}
             to="/"
@@ -74,6 +93,9 @@ function Header({
             variant="text"
             sx={{
               color: muiTheme.palette.text.primary,
+              '&:hover': {
+                color: muiTheme.palette.text.secondary, // Change text color on hover
+              },
               '& .MuiButton-startIcon': {
                 color: muiTheme.palette.text.primary, // Color of the icon
               },
@@ -91,6 +113,9 @@ function Header({
             variant="text"
             sx={{
               color: muiTheme.palette.text.primary,
+              '&:hover': {
+                color: muiTheme.palette.text.secondary, // Change text color on hover
+              },
               '& .MuiButton-startIcon': {
                 color: muiTheme.palette.text.primary, // Color of the icon
               },
@@ -111,6 +136,9 @@ function Header({
                 color="primary"
                 sx={{
                   color: muiTheme.palette.text.third,
+                  '&:hover': {
+                    color: muiTheme.palette.text.secondary, // Change text color on hover
+                  },
                   '& .MuiButton-startIcon': {
                     color: muiTheme.palette.text.third, // Color of the icon
                   },
@@ -128,6 +156,9 @@ function Header({
                 color="primary"
                 sx={{
                   color: muiTheme.palette.text.third,
+                  '&:hover': {
+                    color: muiTheme.palette.text.secondary, // Change text color on hover
+                  },
                   '& .MuiButton-startIcon': {
                     color: muiTheme.palette.text.third, // Color of the icon
                   },
@@ -151,6 +182,9 @@ function Header({
                 color="secondary"
                 sx={{
                   color: muiTheme.palette.text.third,
+                  '&:hover': {
+                    color: muiTheme.palette.text.secondary, // Change text color on hover
+                  },
                   '& .MuiButton-startIcon': {
                     color: muiTheme.palette.text.third, // Color of the icon
                   },
@@ -171,6 +205,9 @@ function Header({
                   color="secondary"
                   sx={{
                     color: muiTheme.palette.text.third,
+                    '&:hover': {
+                      color: muiTheme.palette.text.secondary, // Change text color on hover
+                    },
                     '& .MuiButton-startIcon': {
                       color: muiTheme.palette.text.third, // Color of the icon
                     },
@@ -189,6 +226,9 @@ function Header({
                 color="secondary"
                 sx={{
                   color: muiTheme.palette.text.third,
+                  '&:hover': {
+                    color: muiTheme.palette.text.secondary, // Change text color on hover
+                  },
                   '& .MuiButton-startIcon': {
                     color: muiTheme.palette.text.third, // Color of the icon
                   },

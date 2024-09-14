@@ -18,6 +18,9 @@ const lightTheme = createTheme({
     background: {
       default: getCSSVariable('--background-color-light'),
     },
+    third: {
+      main: getCSSVariable('--accent-color-light'),
+    },
     text: {
       primary: getCSSVariable('--text-color-light'),
       secondary: getCSSVariable('--secondary-color-light'),
@@ -40,6 +43,9 @@ const darkTheme = createTheme({
     },
     background: {
       default: getCSSVariable('--background-color-dark'),
+    },
+    third: {
+      main: getCSSVariable('--accent-color-dark'),
     },
     text: {
       primary: getCSSVariable('--text-color-dark'),

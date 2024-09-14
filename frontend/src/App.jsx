@@ -136,7 +136,7 @@ function App() {
               backgroundColor: 'rgba(0, 0, 0, 0.5)', // Darken the background
             }}
           >
-            <Register />
+            <Register handleClose={handleRegisterClose} />
           </Box>
         </Modal>
       </Router>
