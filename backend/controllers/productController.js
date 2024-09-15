@@ -2,7 +2,7 @@ const Product = require('../models/Product')
 
 // Ajouter un produit
 const addProduct = async (req, res) => {
-  const { name, description, price, category, stock, featured, image } =
+  const { name, description, price, brand, category, stock, featured, image } =
     req.body
   try {
     // Création d'un nouveau produit
@@ -11,6 +11,7 @@ const addProduct = async (req, res) => {
       description,
       price,
       category,
+      brand,
       stock,
       featured,
       image,
@@ -38,14 +39,14 @@ const getProducts = async (req, res) => {
 // Mettre à jour un produit
 const updateProduct = async (req, res) => {
   const { id } = req.params
-  const { name, description, price, category, stock, featured, image } =
+  const { name, description, brand, price, category, stock, featured, image } =
     req.body
 
   try {
     // Mise à jour du produit existant
     const product = await Product.findByIdAndUpdate(
       id,
-      { name, description, price, category, stock, featured, image },
+      { name, description, brand, price, category, stock, featured, image },
       { new: true }
     )
 
@@ -99,6 +100,19 @@ const getFeaturedProducts = async (req, res) => {
   }
 }
 
+// Récupérer les produits par catégorie
+const getProductsByCategory = async (req, res) => {
+  const { category_id } = req.params
+
+  try {
+    const products = await Product.find({ category: category_id })
+    res.status(200).json(products)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur serveur')
+  }
+}
+
 module.exports = {
   addProduct,
   getProducts,
@@ -106,4 +120,5 @@ module.exports = {
   deleteProduct,
   getLatestProducts,
   getFeaturedProducts,
+  getProductsByCategory,
 }

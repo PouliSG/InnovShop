@@ -7,6 +7,7 @@ const {
   updateProduct,
   getLatestProducts,
   getFeaturedProducts,
+  getProductsByCategory,
 } = require('../controllers/productController')
 const auth = require('../middlewares/auth')
 const checkRole = require('../middlewares/role')
@@ -19,6 +20,9 @@ router.get('/latest', getLatestProducts)
 
 // Route pour récupérer les produits à la une
 router.get('/featured', getFeaturedProducts)
+
+// Route pour récupérer les produits par catégorie
+router.get('/category/:category_id', getProductsByCategory)
 
 // Ajouter un produit (employé et administrateur uniquement)
 router.post('/', auth, checkRole(['employee', 'admin']), addProduct)
