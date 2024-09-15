@@ -68,6 +68,7 @@ function Login({ handleClose, onLoginSuccess }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         fullWidth
+        required
       />
       <TextField
         label="Mot de passe"
@@ -76,6 +77,7 @@ function Login({ handleClose, onLoginSuccess }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
+        required
       />
       {error && <Box sx={{ color: 'red' }}>{error}</Box>}
       <Button

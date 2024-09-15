@@ -179,7 +179,7 @@ function Header({
                 to="/account"
                 startIcon={<AccountCircleIcon />}
                 variant="contained"
-                color="secondary"
+                color="primary"
                 sx={{
                   color: muiTheme.palette.text.third,
                   '&:hover': {
@@ -202,7 +202,7 @@ function Header({
                   to="/admin"
                   startIcon={<AdminPanelSettingsIcon />}
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   sx={{
                     color: muiTheme.palette.text.third,
                     '&:hover': {
@@ -223,7 +223,7 @@ function Header({
                 onClick={handleLogoutOpen}
                 startIcon={<LogoutIcon />}
                 variant="contained"
-                color="secondary"
+                color="primary"
                 sx={{
                   color: muiTheme.palette.text.third,
                   '&:hover': {

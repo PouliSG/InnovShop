@@ -7,6 +7,7 @@ import {
   MenuItem,
   Checkbox,
   FormControlLabel,
+  Typography,
 } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
@@ -93,6 +94,7 @@ function Register({ handleClose }) {
         value={firstname}
         onChange={(e) => setFirstname(e.target.value)}
         fullWidth
+        required
       />
 
       {/* Lastname */}
@@ -102,6 +104,7 @@ function Register({ handleClose }) {
         value={lastname}
         onChange={(e) => setLastname(e.target.value)}
         fullWidth
+        required
       />
 
       {/* Gender */}
@@ -123,7 +126,7 @@ function Register({ handleClose }) {
         value={birthdate}
         onChange={(newValue) => setBirthdate(newValue)}
         inputFormat="dd/MM/yyyy" // Format the date as dd/MM/yyyy
-        renderInput={(params) => <TextField {...params} fullWidth />} // This renders the input field
+        renderInput={(params) => <TextField {...params} fullWidth />}
         views={['year', 'month', 'day']} // Allows selection by year first
       />
 
@@ -134,6 +137,7 @@ function Register({ handleClose }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         fullWidth
+        required
       />
 
       {/* Password */}
@@ -144,6 +148,7 @@ function Register({ handleClose }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         fullWidth
+        required
       />
 
       {/* Confirm Password */}
@@ -154,6 +159,7 @@ function Register({ handleClose }) {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         fullWidth
+        required
       />
 
       {/* Newsletter Opt-in */}
@@ -190,6 +196,11 @@ function Register({ handleClose }) {
       >
         S'enregistrer
       </Button>
+
+      {/* Légende pour les champs obligatoires */}
+      <Typography variant="caption" sx={{ color: 'gray', mt: 2 }}>
+        * Champs obligatoires
+      </Typography>
     </Box>
   )
 }
