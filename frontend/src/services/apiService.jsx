@@ -2,9 +2,11 @@ import axios from 'axios'
 import { API_URL } from '../constants'
 
 // Gestion des produits
-export const getProducts = async () => {
+export const getProducts = async (page, sort, filter) => {
   try {
-    const response = await axios.get(`${API_URL}/products`)
+    const response = await axios.get(`${API_URL}/products`, {
+      params: { page, sort, filter },
+    })
     return response.data
   } catch (error) {
     throw error.response.data
@@ -28,6 +30,13 @@ export const getProductById = async (id) => {
   } catch (error) {
     throw error.response.data
   }
+}
+
+export const getProductsByCategory = async (category, page) => {
+  const response = await axios.get(`${API_URL}/products/category/${category}`, {
+    params: { page },
+  })
+  return response.data
 }
 
 export const createProduct = async (productData, token) => {

@@ -108,7 +108,7 @@ function Header({
           </Button>
           <Button
             component={Link}
-            to="/products/1"
+            to="/products"
             startIcon={<StorefrontIcon />}
             variant="text"
             sx={{

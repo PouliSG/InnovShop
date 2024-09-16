@@ -26,6 +26,7 @@ const ProductList = ({ products }) => {
             <Typography variant="h6" component="div">
               {product.name}
             </Typography>
+            <Typography variant="body2">{product.brand}</Typography>
             <Typography variant="body2" color="text.secondary">
               {product.price} €
             </Typography>
@@ -41,6 +42,7 @@ ProductList.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
+      brand: PropTypes.string.isRequired,
       image: PropTypes.string.isRequired,
       price: PropTypes.number.isRequired,
     })

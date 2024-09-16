@@ -9,7 +9,7 @@ import Home from './pages/Home'
 import Login from './components/Login'
 import Register from './components/Register'
 // import Product from './components/Product'
-// import Products from './pages/Products'
+import Products from './pages/Products'
 // import Cart from './pages/Cart'
 // import Checkout from './pages/Checkout'
 // import Dashboard from './pages/Dashboard'
@@ -100,9 +100,9 @@ function App() {
 
           <Routes>
             <Route path="/" element={<Home />} />
-            {/* <Route path="/products/details/:id" element={<Product />} />
-          <Route path="/products/:page" element={<Products />} />
-          <Route path="/cart" element={<Cart />} />
+            {/* <Route path="/products/:id" element={<Product />} /> */}
+            <Route path="/products" element={<Products />} />
+            {/* <Route path="/cart" element={<Cart />} />
           <Route path="/checkout/:step" element={<Checkout />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/order-history" element={<OrderHistory />} />
