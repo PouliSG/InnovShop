@@ -1,15 +1,34 @@
 import React from 'react'
-import { Card, CardContent, CardMedia, Typography } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  CardMedia,
+  Typography,
+  IconButton,
+} from '@mui/material'
+import StarIcon from '@mui/icons-material/Star'
+import { useTheme } from '@mui/material/styles'
 
 const ProductItem = ({ product }) => {
+  const muiTheme = useTheme()
   return (
-    <Card>
+    <Card sx={{ position: 'relative' }}>
       <CardMedia
         component="img"
         height="140"
         image={product.image}
         alt={product.name}
       />
+      {product.featured && (
+        <StarIcon
+          sx={{
+            position: 'absolute',
+            top: 8,
+            right: 8,
+            color: muiTheme.palette.secondary.main,
+          }}
+        />
+      )}
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
           {product.name}
