@@ -1,6 +1,6 @@
 import React from 'react'
 import { createGlobalStyle } from 'styled-components'
-import { useTheme } from '../context'
+import { useTheme } from '../context/themeContext'
 
 const GlobalStyle = createGlobalStyle`
   body {

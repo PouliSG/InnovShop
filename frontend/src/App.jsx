@@ -8,7 +8,7 @@ import Error from './components/Error'
 import Home from './pages/Home'
 import Login from './components/Login'
 import Register from './components/Register'
-// import Product from './components/Product'
+import Product from './pages/Product'
 import Products from './pages/Products'
 // import Cart from './pages/Cart'
 // import Checkout from './pages/Checkout'
@@ -17,7 +17,7 @@ import Products from './pages/Products'
 // import ManageProducts from './pages/Admin/ManageProducts'
 // import ManageOrders from './pages/Admin/ManageOrders'
 // import ManageUsers from './pages/Admin/ManageUsers'
-import { useTheme } from './utils/context'
+import { useTheme } from './utils/context/themeContext'
 import ThemedGlobalStyle from './utils/style/GlobalStyle'
 import {
   ThemeProvider,
@@ -28,6 +28,7 @@ import {
   Snackbar,
 } from '@mui/material'
 import { lightTheme, darkTheme } from './utils/theme'
+import { CartProvider } from './utils/context/cartContext'
 import { TOKEN_KEY } from './constants'
 import { logout } from './services/authService'
 
@@ -62,91 +63,93 @@ function App() {
 
   return (
     <ThemeProvider theme={appliedTheme}>
-      <CssBaseline />
-      <ThemedGlobalStyle />
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <Router>
-          <Header
-            handleLoginOpen={handleLoginOpen}
-            handleRegisterOpen={handleRegisterOpen}
-            onLogout={handleLogout}
-            token={token}
-            setToken={setToken}
-          />
-          <Snackbar
-            open={showSuccess}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            autoHideDuration={3000}
-            onClose={() => setShowSuccess(false)}
-          >
-            <Alert severity="success" onClose={() => setShowSuccess(false)}>
-              Connexion réussie !
-            </Alert>
-          </Snackbar>
+      <CartProvider>
+        <CssBaseline />
+        <ThemedGlobalStyle />
+        <LocalizationProvider dateAdapter={AdapterDateFns}>
+          <Router>
+            <Header
+              handleLoginOpen={handleLoginOpen}
+              handleRegisterOpen={handleRegisterOpen}
+              onLogout={handleLogout}
+              token={token}
+              setToken={setToken}
+            />
+            <Snackbar
+              open={showSuccess}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              autoHideDuration={3000}
+              onClose={() => setShowSuccess(false)}
+            >
+              <Alert severity="success" onClose={() => setShowSuccess(false)}>
+                Connexion réussie !
+              </Alert>
+            </Snackbar>
 
-          <Snackbar
-            open={showLogoutSuccess}
-            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-            autoHideDuration={3000}
-            onClose={() => setShowLogoutSuccess(false)}
-          >
-            <Alert
-              severity="success"
+            <Snackbar
+              open={showLogoutSuccess}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              autoHideDuration={3000}
               onClose={() => setShowLogoutSuccess(false)}
             >
-              Déconnexion réussie !
-            </Alert>
-          </Snackbar>
+              <Alert
+                severity="success"
+                onClose={() => setShowLogoutSuccess(false)}
+              >
+                Déconnexion réussie !
+              </Alert>
+            </Snackbar>
 
-          <Routes>
-            <Route path="/" element={<Home />} />
-            {/* <Route path="/products/:id" element={<Product />} /> */}
-            <Route path="/products" element={<Products />} />
-            {/* <Route path="/cart" element={<Cart />} />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/products/:id" element={<Product />} />
+              <Route path="/products" element={<Products />} />
+              {/* <Route path="/cart" element={<Cart />} />
           <Route path="/checkout/:step" element={<Checkout />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/admin/products" element={<ManageProducts />} />
           <Route path="/admin/orders" element={<ManageOrders />} />
           <Route path="/admin/users" element={<ManageUsers />} /> */}
-            <Route path="*" element={<Error />} />
-          </Routes>
-          <Footer />
+              <Route path="*" element={<Error />} />
+            </Routes>
+            <Footer />
 
-          {/* Login Modal */}
-          <Modal open={isLoginOpen} onClose={handleLoginClose}>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              }}
-            >
-              <Login
-                handleClose={handleLoginClose}
-                onLoginSuccess={handleLoginSuccess}
-              />
-            </Box>
-          </Modal>
+            {/* Login Modal */}
+            <Modal open={isLoginOpen} onClose={handleLoginClose}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100vh',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                <Login
+                  handleClose={handleLoginClose}
+                  onLoginSuccess={handleLoginSuccess}
+                />
+              </Box>
+            </Modal>
 
-          {/* Register Modal */}
-          <Modal open={isRegisterOpen} onClose={handleRegisterClose}>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)',
-              }}
-            >
-              <Register handleClose={handleRegisterClose} />
-            </Box>
-          </Modal>
-        </Router>
-      </LocalizationProvider>
+            {/* Register Modal */}
+            <Modal open={isRegisterOpen} onClose={handleRegisterClose}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  height: '100vh',
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                }}
+              >
+                <Register handleClose={handleRegisterClose} />
+              </Box>
+            </Modal>
+          </Router>
+        </LocalizationProvider>
+      </CartProvider>
     </ThemeProvider>
   )
 }

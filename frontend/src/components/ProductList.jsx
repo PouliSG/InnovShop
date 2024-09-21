@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Box, Card, CardMedia, CardContent, Typography } from '@mui/material'
+import { Box } from '@mui/material'
+import ProductItem from './ProductItem'
 
 const ProductList = ({ products }) => {
   return (
@@ -15,23 +16,7 @@ const ProductList = ({ products }) => {
       pb={2}
     >
       {products.map((product) => (
-        <Card key={product._id}>
-          <CardMedia
-            component="img"
-            height="140"
-            image={product.image}
-            alt={product.name}
-          />
-          <CardContent>
-            <Typography variant="h6" component="div">
-              {product.name}
-            </Typography>
-            <Typography variant="body2">{product.brand}</Typography>
-            <Typography variant="body2" color="text.secondary">
-              {product.price} €
-            </Typography>
-          </CardContent>
-        </Card>
+        <ProductItem key={product._id} product={product} />
       ))}
     </Box>
   )
@@ -42,7 +27,7 @@ ProductList.propTypes = {
     PropTypes.shape({
       _id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      brand: PropTypes.string.isRequired,
+      brand: PropTypes.string,
       image: PropTypes.string.isRequired,
       price: PropTypes.number.isRequired,
     })

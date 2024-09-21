@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import { AppBar, Toolbar, Typography, Button, Box, Modal } from '@mui/material'
 import { styled } from '@mui/system'
@@ -35,6 +35,7 @@ function Header({
   const userRole = isLoggedIn ? decodedToken.user.role : null
 
   const [isLogoutOpen, setLogoutOpen] = useState(false)
+  const location = useLocation()
 
   const handleLogoutOpen = () => setLogoutOpen(true)
   const handleLogoutClose = () => setLogoutOpen(false)
@@ -43,6 +44,25 @@ function Header({
     onLogout()
     handleLogoutClose()
   }
+
+  const getButtonStyles = (path) => ({
+    color:
+      location.pathname === path
+        ? muiTheme.palette.text.secondary
+        : muiTheme.palette.text.primary,
+    '&:hover': {
+      color: muiTheme.palette.text.secondary,
+    },
+    '& .MuiButton-startIcon': {
+      color:
+        location.pathname === path
+          ? muiTheme.palette.text.secondary
+          : muiTheme.palette.text.primary,
+    },
+    '&:hover .MuiButton-startIcon': {
+      color: muiTheme.palette.text.secondary,
+    },
+  })
 
   return (
     <AppBar
@@ -91,18 +111,7 @@ function Header({
             to="/"
             startIcon={<HomeIcon />}
             variant="text"
-            sx={{
-              color: muiTheme.palette.text.primary,
-              '&:hover': {
-                color: muiTheme.palette.text.secondary, // Change text color on hover
-              },
-              '& .MuiButton-startIcon': {
-                color: muiTheme.palette.text.primary, // Color of the icon
-              },
-              '&:hover .MuiButton-startIcon': {
-                color: muiTheme.palette.text.secondary, // Icon color on hover
-              },
-            }}
+            sx={getButtonStyles('/')}
           >
             Accueil
           </Button>
@@ -111,18 +120,7 @@ function Header({
             to="/products"
             startIcon={<StorefrontIcon />}
             variant="text"
-            sx={{
-              color: muiTheme.palette.text.primary,
-              '&:hover': {
-                color: muiTheme.palette.text.secondary, // Change text color on hover
-              },
-              '& .MuiButton-startIcon': {
-                color: muiTheme.palette.text.primary, // Color of the icon
-              },
-              '&:hover .MuiButton-startIcon': {
-                color: muiTheme.palette.text.secondary, // Icon color on hover
-              },
-            }}
+            sx={getButtonStyles('/products')}
           >
             Nos Produits
           </Button>
@@ -180,18 +178,7 @@ function Header({
                 startIcon={<AccountCircleIcon />}
                 variant="contained"
                 color="primary"
-                sx={{
-                  color: muiTheme.palette.text.third,
-                  '&:hover': {
-                    color: muiTheme.palette.text.secondary, // Change text color on hover
-                  },
-                  '& .MuiButton-startIcon': {
-                    color: muiTheme.palette.text.third, // Color of the icon
-                  },
-                  '&:hover .MuiButton-startIcon': {
-                    color: muiTheme.palette.text.secondary, // Icon color on hover
-                  },
-                }}
+                sx={getButtonStyles('/account')}
               >
                 Mon Compte
               </Button>
@@ -203,18 +190,7 @@ function Header({
                   startIcon={<AdminPanelSettingsIcon />}
                   variant="contained"
                   color="primary"
-                  sx={{
-                    color: muiTheme.palette.text.third,
-                    '&:hover': {
-                      color: muiTheme.palette.text.secondary, // Change text color on hover
-                    },
-                    '& .MuiButton-startIcon': {
-                      color: muiTheme.palette.text.third, // Color of the icon
-                    },
-                    '&:hover .MuiButton-startIcon': {
-                      color: muiTheme.palette.text.secondary, // Icon color on hover
-                    },
-                  }}
+                  sx={getButtonStyles('/admin')}
                 >
                   Administration
                 </Button>

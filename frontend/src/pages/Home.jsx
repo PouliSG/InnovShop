@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
+import { Box, Typography } from '@mui/material'
 import { NewReleases, Star } from '@mui/icons-material'
+import { useTheme } from '@mui/material/styles'
 import { getLatestProducts, getFeaturedProducts } from '../services/apiService'
 import ProductList from '../components/ProductList'
-import FeaturedProducts from '../components/FeaturedProducts'
 
 const Home = () => {
   const [latestProducts, setLatestProducts] = useState([])
   const [featuredProducts, setFeaturedProducts] = useState([])
+  const muiTheme = useTheme()
 
   useEffect(() => {
     // Charger les 3 derniers produits ajoutés
@@ -42,18 +44,31 @@ const Home = () => {
   return (
     <div>
       {/* Section pour les derniers produits */}
-      <h2>
-        <NewReleases sx={{ mr: 1, pb: 0.2 }} />
-        Derniers produits
-      </h2>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+        <NewReleases sx={{ mr: 1, pb: 0.2 }} /> {/* Icône avec style */}
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{ fontWeight: 'bold', color: muiTheme.palette.text.primary }}
+        >
+          Derniers produits
+        </Typography>
+      </Box>
       <ProductList products={latestProducts} />
 
       {/* Section pour les produits à la une */}
-      <h2>
+      <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
         <Star sx={{ mr: 1, pb: 0.2 }} />
-        Produits à la une
-      </h2>
-      <FeaturedProducts products={featuredProducts} />
+        {/* Icône avec style */}
+        <Typography
+          variant="h4"
+          component="h2"
+          sx={{ fontWeight: 'bold', color: muiTheme.palette.text.primary }}
+        >
+          Produits à la une
+        </Typography>
+      </Box>
+      <ProductList products={featuredProducts} />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { Button } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import {
   getProducts,
@@ -53,14 +53,12 @@ const Products = () => {
     fetchCategories()
   }, [])
   return (
-    <div>
-      <h1>Nos Produits</h1>
-
+    <Box sx={{ position: 'relative' }}>
       {/* Bouton de filtre */}
       <Button
         variant="contained"
         startIcon={<FilterListIcon />}
-        sx={{ position: 'fixed', bottom: 16, right: 16 }}
+        sx={{ position: 'fixed', bottom: 16, right: 16, zIndex: 1000 }}
         onClick={toggleFilters}
       >
         Filtrer/Trier
@@ -81,7 +79,7 @@ const Products = () => {
         page={page}
         setPage={setPage}
       />
-    </div>
+    </Box>
   )
 }
 

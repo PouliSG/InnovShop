@@ -25,6 +25,21 @@ const addProduct = async (req, res) => {
   }
 }
 
+// Obtenir un produit par son ID
+const getProductById = async (req, res) => {
+  const { id } = req.params
+  try {
+    const product = await Product.findById(id)
+    if (!product) {
+      return res.status(404).json({ msg: 'Produit non trouvé' })
+    }
+    res.status(200).json(product)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur serveur')
+  }
+}
+
 // Obtenir tous les produits
 const getProducts = async (req, res) => {
   try {
@@ -115,6 +130,7 @@ const getProductsByCategory = async (req, res) => {
 
 module.exports = {
   addProduct,
+  getProductById,
   getProducts,
   updateProduct,
   deleteProduct,
