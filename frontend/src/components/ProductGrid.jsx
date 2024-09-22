@@ -1,7 +1,7 @@
 import { Grid2 as Grid, Box, Pagination } from '@mui/material'
 import ProductItem from './ProductItem' // Un composant pour afficher un produit
 
-const ProductGrid = ({ products, page, setPage }) => {
+const ProductGrid = ({ products, page, setPage, category, filter, sort }) => {
   const itemsPerPage = 10
 
   // Calculer le nombre total de pages
@@ -48,7 +48,13 @@ const ProductGrid = ({ products, page, setPage }) => {
             lg={3} // 4 produits par ligne sur les grands écrans
             key={product._id}
           >
-            <ProductItem product={product} />
+            <ProductItem
+              product={product}
+              category={category}
+              page={page}
+              filter={filter}
+              sort={sort}
+            />
           </Grid>
         ))}
       </Grid>

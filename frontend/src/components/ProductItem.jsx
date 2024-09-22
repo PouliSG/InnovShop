@@ -4,13 +4,15 @@ import { Card, CardContent, CardMedia, Typography, Box } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star'
 import { useTheme } from '@mui/material/styles'
 
-const ProductItem = ({ product }) => {
+const ProductItem = ({ product, category, page, filter, sort }) => {
   const muiTheme = useTheme()
   const navigate = useNavigate()
   const [isHovered, setIsHovered] = useState(false)
 
   const handleClick = () => {
-    navigate(`/products/${product._id}`)
+    navigate(`/products/${product._id}`, {
+      state: { category, page, filter, sort },
+    })
   }
 
   const handleMouseEnter = () => {

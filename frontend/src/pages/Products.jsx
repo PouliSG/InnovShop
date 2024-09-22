@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
+import { useLocation } from 'react-router-dom'
 import { Box, Button } from '@mui/material'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import {
@@ -10,14 +11,18 @@ import ProductFilters from '../components/ProductFilters'
 import ProductGrid from '../components/ProductGrid'
 
 const Products = () => {
+  const location = useLocation()
+
   const [products, setProducts] = useState([])
   const [page, setPage] = useState(1)
   const [categories, setCategories] = useState([])
   // State pour gérer l'affichage des filtres
   const [showFilters, setShowFilters] = useState(false)
-  const [category, setCategory] = useState('all')
-  const [sort, setSort] = useState('')
-  const [filter, setFilter] = useState({ priceRange: [0, 1000] })
+  const [category, setCategory] = useState(location.state?.category || 'all')
+  const [sort, setSort] = useState(location.state?.sort || '')
+  const [filter, setFilter] = useState(
+    location.state?.filter || { priceRange: [0, 100000] }
+  )
 
   const loadProducts = useCallback(async () => {
     let result
@@ -36,9 +41,12 @@ const Products = () => {
   }
 
   useEffect(() => {
-    // Charger les produits à chaque modification des filtres ou tri
     loadProducts()
-  }, [category, sort, filter, loadProducts])
+    console.log('Category:', category)
+    console.log('Filter:', filter)
+    console.log('Sort:', sort)
+    // Charger les produits à chaque modification des filtres ou tri
+  }, [category, page, sort, filter, loadProducts])
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -78,6 +86,9 @@ const Products = () => {
         loadProducts={loadProducts}
         page={page}
         setPage={setPage}
+        category={category}
+        filter={filter}
+        sort={sort}
       />
     </Box>
   )
