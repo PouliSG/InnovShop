@@ -42,11 +42,9 @@ const Products = () => {
 
   useEffect(() => {
     loadProducts()
-    console.log('Category:', category)
-    console.log('Filter:', filter)
-    console.log('Sort:', sort)
     // Charger les produits à chaque modification des filtres ou tri
-  }, [category, page, sort, filter, loadProducts])
+    // }, [category, page, sort, filter, loadProducts])
+  }, [category, loadProducts])
 
   useEffect(() => {
     const fetchCategories = async () => {
