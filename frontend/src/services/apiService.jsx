@@ -101,13 +101,15 @@ export const getUserRole = async (token) => {
 // Ajouter un produit au panier (pour les utilisateurs connectés)
 export const addItemToCart = async (token, productId, quantity) => {
   try {
-    const response = await axios.post(`${API_URL}/cart`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      productId,
-      quantity,
-    })
+    const response = await axios.post(
+      `${API_URL}/cart`,
+      { productId, quantity }, // Données à envoyer dans le corps de la requête
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Authentification via token
+        },
+      }
+    )
     return response.data
   } catch (error) {
     console.error("Erreur lors de l'ajout au panier:", error)
@@ -133,11 +135,15 @@ export const getCart = async (token) => {
 // Supprimer un produit du panier
 export const removeItemFromCart = async (token, productId) => {
   try {
-    const response = await axios.put(`${API_URL}/cart/${productId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    const response = await axios.put(
+      `${API_URL}/cart/${productId}`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Authentification via token
+        },
+      }
+    )
     return response.data
   } catch (error) {
     console.error('Erreur lors de la suppression du panier:', error)
