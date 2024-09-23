@@ -1,10 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react'
-import {
-  addItemToCart,
-  removeItemFromCart,
-  getCart,
-  saveCart,
-} from '../../services/apiService'
+import { getCart, saveCart } from '../../services/apiService'
 import { isAuthenticated } from '../../services/authService'
 import { TOKEN_KEY } from '../../constants'
 

@@ -3,7 +3,7 @@ const User = require('../models/User')
 
 module.exports = async function (req, res, next) {
   // Obtenir le jeton du header
-  const token = req.header('Authorization') || req.header('x-auth-token')
+  var token = req.header('Authorization') || req.header('x-auth-token')
 
   // Vérifier s'il n'y a pas de jeton
   if (!token) {
