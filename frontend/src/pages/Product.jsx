@@ -2,18 +2,28 @@ import React, { useEffect, useState, useContext } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { getProductById } from '../services/apiService'
 import { CartContext } from '../utils/context/cartContext'
-import { Typography, Box, Button, CardMedia, Chip } from '@mui/material'
+import {
+  Typography,
+  Box,
+  Button,
+  CardMedia,
+  Chip,
+  MenuItem,
+  Select,
+} from '@mui/material'
 import Alert from '@mui/material/Alert'
 import StarIcon from '@mui/icons-material/Star'
 
 const Product = () => {
   const { id } = useParams()
-  const { addToCart } = useContext(CartContext)
+  const { cart, addToCart } = useContext(CartContext)
   const [product, setProduct] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [quantity, setQuantity] = useState(1) // Quantité initiale
+  const [isInCart, setIsInCart] = useState(false) // État pour vérifier si le produit est dans le panier
   const navigate = useNavigate()
-  const location = useLocation() // Récupère les informations sur la page précédente
+  const location = useLocation()
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -29,11 +39,24 @@ const Product = () => {
     fetchProduct()
   }, [id])
 
+  useEffect(() => {
+    // Vérifie si le produit est déjà dans le panier
+    const productInCart = cart?.products.find((p) => p.product._id === id)
+    if (productInCart) {
+      setIsInCart(true)
+      setQuantity(productInCart.quantity)
+    }
+  }, [cart, id])
+
   const handleAddToCart = () => {
-    addToCart(product)
+    addToCart(product, quantity)
+    setIsInCart(true)
   }
 
-  // Fonction pour gérer le retour en arrière, en gardant les filtres et l'état de la page précédente
+  const handleQuantityChange = (event) => {
+    setQuantity(event.target.value)
+  }
+
   const handleBackClick = () => {
     if (location.state) {
       const { category, page, filter, sort } = location.state
@@ -102,16 +125,36 @@ const Product = () => {
               <Chip label="En stock" color="success" sx={{ margin: 2 }} />
             )}
 
-            {/* Bouton ajouter au panier */}
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={product.stock === 0}
-              onClick={handleAddToCart}
-              sx={{ margin: 2, fontWeight: 'bold' }}
+            {/* Dropdown pour la quantité */}
+            <Select
+              value={quantity}
+              onChange={handleQuantityChange}
+              sx={{ mb: 2 }}
+              disabled={isInCart} // Désactivé si le produit est déjà dans le panier
             >
-              Ajouter au panier
-            </Button>
+              {Array.from({ length: Math.min(product.stock, 10) }, (_, i) => (
+                <MenuItem key={i + 1} value={i + 1}>
+                  {i + 1}
+                </MenuItem>
+              ))}
+            </Select>
+
+            {/* Bouton ajouter au panier */}
+            {isInCart ? (
+              <Button variant="contained" disabled sx={{ margin: 2 }}>
+                Déjà ajouté
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={product.stock === 0}
+                onClick={handleAddToCart}
+                sx={{ margin: 2, fontWeight: 'bold' }}
+              >
+                Ajouter au panier
+              </Button>
+            )}
           </Box>
         </Box>
       </Box>

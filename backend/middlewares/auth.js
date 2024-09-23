@@ -13,10 +13,8 @@ module.exports = async function (req, res, next) {
   // Vérifier le jeton
   try {
     // Décoder le jeton pour obtenir l'ID de l'utilisateur
-    const decoded = jwt.verify(
-      token.split(' ')[1] || token,
-      process.env.JWT_SECRET
-    )
+    token = token.split(' ')[1] || token
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const user = await User.findById(decoded.user.id).select('-password') // Récupérer les détails de l'utilisateur, en excluant le mot de passe
 
     if (!user) {
