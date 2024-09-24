@@ -1,7 +1,18 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
-import { AppBar, Toolbar, Typography, Button, Box, Modal } from '@mui/material'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button,
+  Box,
+  Modal,
+  IconButton,
+  Badge,
+  Menu,
+  MenuItem,
+} from '@mui/material'
 import { styled } from '@mui/system'
 import HomeIcon from '@mui/icons-material/Home'
 import StorefrontIcon from '@mui/icons-material/Storefront'
@@ -10,10 +21,13 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import LogoutIcon from '@mui/icons-material/Logout'
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
 import darkLogo from '../assets/InnovShop_logo_dark.png'
 import lightLogo from '../assets/InnovShop_logo_light.png'
 import { useTheme as useMUITheme } from '@mui/material/styles'
 import { isAuthenticated } from '../services/authService'
+import { CartContext } from '../utils/context/cartContext'
 import { TOKEN_KEY } from '../constants'
 
 const Logo = styled('img')({
@@ -33,8 +47,9 @@ function Header({
   const isLoggedIn = isAuthenticated()
   const decodedToken = token ? jwtDecode(token) : null
   const userRole = isLoggedIn ? decodedToken.user.role : null
-
+  const { cart, totalQuantity } = useContext(CartContext) // Utiliser le contexte du panier
   const [isLogoutOpen, setLogoutOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
   const location = useLocation()
 
   const handleLogoutOpen = () => setLogoutOpen(true)
@@ -43,6 +58,14 @@ function Header({
   const handleConfirmLogout = () => {
     onLogout()
     handleLogoutClose()
+  }
+
+  const handleCartClick = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleCartClose = () => {
+    setAnchorEl(null)
   }
 
   const getButtonStyles = (path) => ({
@@ -58,6 +81,25 @@ function Header({
         location.pathname === path
           ? muiTheme.palette.text.secondary
           : muiTheme.palette.text.primary,
+    },
+    '&:hover .MuiButton-startIcon': {
+      color: muiTheme.palette.text.secondary,
+    },
+  })
+
+  const getContainedButtonStyles = (path) => ({
+    color:
+      location.pathname === path
+        ? muiTheme.palette.text.secondary
+        : muiTheme.palette.text.third,
+    '&:hover': {
+      color: muiTheme.palette.text.secondary,
+    },
+    '& .MuiButton-startIcon': {
+      color:
+        location.pathname === path
+          ? muiTheme.palette.text.secondary
+          : muiTheme.palette.text.third,
     },
     '&:hover .MuiButton-startIcon': {
       color: muiTheme.palette.text.secondary,
@@ -125,6 +167,78 @@ function Header({
             Nos Produits
           </Button>
 
+          {/* Bouton Panier avec badge pour le nombre d'articles */}
+          <IconButton
+            onClick={handleCartClick} // Ouvrir le menu au clic
+            color="inherit"
+            sx={{ borderRadius: muiTheme.shape.borderRadius }}
+          >
+            <Badge badgeContent={totalQuantity} color="secondary">
+              <ShoppingCartIcon />
+            </Badge>
+          </IconButton>
+
+          {/* Menu pour afficher le contenu du panier */}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCartClose}
+            // anchorOrigin={{
+            //   vertical: 'bottom',
+            //   horizontal: 'center',
+            // }}
+            // transformOrigin={{
+            //   vertical: 'top',
+            //   horizontal: 'center',
+            // }}
+          >
+            {cart.products.length === 0 ? (
+              <MenuItem>Votre panier est vide</MenuItem>
+            ) : (
+              <>
+                <Button
+                  component={Link}
+                  startIcon={<ShoppingCartIcon />}
+                  color="secondary"
+                  to="/cart"
+                  onClick={handleCartClose}
+                  sx={{
+                    '& .MuiButton-startIcon': {
+                      color: muiTheme.palette.text.secondary, // Color of the icon
+                    },
+                  }}
+                >
+                  Votre panier
+                </Button>
+                {cart.products.map((item) => (
+                  <MenuItem
+                    component={Link}
+                    to={`/products/${item.product._id}`}
+                    key={item.product._id}
+                  >
+                    {item.quantity}x - {item.product.name}
+                  </MenuItem>
+                ))}
+                <Button
+                  component={Link}
+                  startIcon={<ShoppingCartCheckoutIcon />}
+                  color="secondary"
+                  to="/checkout"
+                  onClick={handleCartClose}
+                  sx={{
+                    width: '100%',
+                    textAlign: 'center',
+                    '& .MuiButton-startIcon': {
+                      color: muiTheme.palette.text.secondary, // Color of the icon
+                    },
+                  }}
+                >
+                  Valider le panier
+                </Button>
+              </>
+            )}
+          </Menu>
+
           {!isLoggedIn && (
             <>
               <Button
@@ -178,7 +292,7 @@ function Header({
                 startIcon={<AccountCircleIcon />}
                 variant="contained"
                 color="primary"
-                sx={getButtonStyles('/account')}
+                sx={getContainedButtonStyles('/account')}
               >
                 Mon Compte
               </Button>
@@ -190,11 +304,12 @@ function Header({
                   startIcon={<AdminPanelSettingsIcon />}
                   variant="contained"
                   color="primary"
-                  sx={getButtonStyles('/admin')}
+                  sx={getContainedButtonStyles('/admin')}
                 >
                   Administration
                 </Button>
               )}
+
               <Button
                 onClick={handleLogoutOpen}
                 startIcon={<LogoutIcon />}

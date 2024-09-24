@@ -13,6 +13,7 @@ import {
 } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import StarIcon from '@mui/icons-material/Star'
+import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
 
 const Product = () => {
   const { id } = useParams()
@@ -149,6 +150,7 @@ const Product = () => {
             ) : (
               <Button
                 variant="contained"
+                startIcon={<AddShoppingCartIcon />}
                 color="secondary"
                 disabled={product.stock === 0}
                 onClick={handleAddToCart}

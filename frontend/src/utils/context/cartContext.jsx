@@ -11,6 +11,9 @@ export const CartProvider = ({ children }) => {
   })
   const token = localStorage.getItem(TOKEN_KEY)
 
+  // Quantité totale dans le panier (pour le badge de notification)
+  const [totalQuantity, setTotalQuantity] = useState(0)
+
   // Charger le panier depuis le localStorage ou l'API si l'utilisateur est connecté
   useEffect(() => {
     const loadCart = async () => {
@@ -33,6 +36,12 @@ export const CartProvider = ({ children }) => {
     loadCart()
   }, [token])
 
+  // Calculer la quantité totale des produits dans le panier
+  useEffect(() => {
+    const total = cart.products.reduce((acc, item) => acc + item.quantity, 0)
+    setTotalQuantity(total)
+  }, [cart])
+
   // Ajouter un produit au panier
   const addToCart = (product, quantity) => {
     const updatedCart = { ...cart }
@@ -54,7 +63,7 @@ export const CartProvider = ({ children }) => {
       // Si l'utilisateur est connecté, on sauvegarde le panier sur le backend
       saveCart(token, updatedCart.products)
     }
-    //on sauvegarde le panier dans le localStorage
+    // On sauvegarde le panier dans le localStorage
     localStorage.setItem('cart', JSON.stringify(updatedCart))
   }
 
@@ -71,12 +80,14 @@ export const CartProvider = ({ children }) => {
       // Si l'utilisateur est connecté, on sauvegarde le panier mis à jour sur le backend
       saveCart(token, updatedCart.products)
     }
-    // Sinon, on sauvegarde le panier dans le localStorage
+    // On sauvegarde le panier dans le localStorage
     localStorage.setItem('cart', JSON.stringify(updatedCart))
   }
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart }}>
+    <CartContext.Provider
+      value={{ cart, totalQuantity, addToCart, removeFromCart }}
+    >
       {children}
     </CartContext.Provider>
   )
