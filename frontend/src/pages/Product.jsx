@@ -60,7 +60,9 @@ const Product = () => {
   const handleBackClick = () => {
     if (location.state) {
       const { category, page, filter, sort } = location.state
-      navigate('/products', { state: { category, page, filter, sort } })
+      category
+        ? navigate('/products', { state: { category, page, filter, sort } })
+        : navigate('/')
     } else {
       navigate('/')
     }
