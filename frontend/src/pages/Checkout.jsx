@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
-import { Box, Typography, Divider } from '@mui/material'
+import React, { useState, useContext } from 'react'
+import { Box, Typography, Divider, Button } from '@mui/material'
 import { useTheme as useMUITheme } from '@mui/material/styles'
+import NextIcon from '@mui/icons-material/NavigateNext'
+import { CartContext } from '../utils/context/cartContext'
+import { placeOrder } from '../services/apiService'
 import CheckoutStepSummary from '../components/CheckoutStepSummary'
 import CheckoutStepShipping from '../components/CheckoutStepShipping'
 import CheckoutStepConfirm from '../components/CheckoutStepConfirm'
@@ -12,6 +15,7 @@ const Checkout = () => {
     paymentMethod: '',
     selectedAddressId: '',
   })
+  const { cart, clearCart } = useContext(CartContext)
   const muiTheme = useMUITheme()
 
   // Fonction pour passer à l'étape suivante
@@ -32,13 +36,61 @@ const Checkout = () => {
     }))
   }
 
+  const handleConfirmOrder = async () => {
+    try {
+      await placeOrder({
+        products: cart.products,
+        addressId: orderDetails.selectedAddressId,
+      })
+      clearCart()
+      // Redirection vers page de confirmation
+    } catch (error) {
+      console.error('Erreur lors de la commande', error)
+    }
+  }
+
   return (
     <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        {activeStep === 1 && 'Récapitulatif de la commande'}
-        {activeStep === 2 && 'Adresse de livraison'}
-        {activeStep === 3 && 'Confirmation de commande'}
-      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Typography variant="h4" gutterBottom>
+          {activeStep === 1 && 'Récapitulatif de la commande'}
+          {activeStep === 2 && 'Adresse de livraison'}
+          {activeStep === 3 && 'Confirmation de commande'}
+        </Typography>
+        {activeStep < 3 ? (
+          <Button
+            variant="contained"
+            onClick={handleNextStep}
+            color="primary"
+            endIcon={<NextIcon />}
+            sx={{
+              height: 50,
+              color: muiTheme.palette.text.secondary,
+              '&:hover': {
+                color: muiTheme.palette.text.secondary, // Change text color on hover
+              },
+              '& .MuiButton-endIcon': {
+                color: muiTheme.palette.text.secondary, // Color of the icon
+              },
+              '&:hover .MuiButton-endIcon': {
+                color: muiTheme.palette.text.secondary, // Icon color on hover
+              },
+            }}
+          >
+            Continuer
+          </Button>
+        ) : (
+          <Button variant="contained" onClick={handleConfirmOrder}>
+            Confirmer la commande
+          </Button>
+        )}
+      </Box>
       <Divider sx={{ mb: 4 }} />
 
       {/* Étapes du checkout */}

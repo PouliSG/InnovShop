@@ -40,7 +40,7 @@ const CheckoutStepSummary = ({ muiTheme, onNext }) => {
       <Grid container spacing={2} sx={{ mt: 1 }}>
         {cart.products.map((item) => (
           <Grid
-            item
+            item="true"
             xs={12}
             key={item.product._id}
             sx={{
@@ -118,30 +118,35 @@ const CheckoutStepSummary = ({ muiTheme, onNext }) => {
           €
         </Typography>
       </Box>
-      <Button
-        variant="contained"
-        onClick={onNext}
-        color="primary"
-        endIcon={<NextIcon />}
+      <Box
         sx={{
-          mt: 4,
-          height: 50,
-          // aligner le bouto à droite de l'espace
-          alignSelf: 'flex-end',
-          color: muiTheme.palette.text.third,
-          '&:hover': {
-            color: muiTheme.palette.text.secondary, // Change text color on hover
-          },
-          '& .MuiButton-endIcon': {
-            color: muiTheme.palette.text.third, // Color of the icon
-          },
-          '&:hover .MuiButton-endIcon': {
-            color: muiTheme.palette.text.secondary, // Icon color on hover
-          },
+          display: 'flex',
+          justifyContent: 'flex-end', // Aligner le bouton à droite
+          mt: 1,
         }}
       >
-        Continuer
-      </Button>
+        <Button
+          variant="contained"
+          onClick={onNext}
+          color="primary"
+          endIcon={<NextIcon />}
+          sx={{
+            height: 50,
+            color: muiTheme.palette.text.secondary,
+            '&:hover': {
+              color: muiTheme.palette.text.secondary, // Change text color on hover
+            },
+            '& .MuiButton-endIcon': {
+              color: muiTheme.palette.text.secondary, // Color of the icon
+            },
+            '&:hover .MuiButton-endIcon': {
+              color: muiTheme.palette.text.secondary, // Icon color on hover
+            },
+          }}
+        >
+          Continuer
+        </Button>
+      </Box>
     </Box>
   )
 }
