@@ -10,8 +10,9 @@ import Login from './components/Login'
 import Register from './components/Register'
 import Product from './pages/Product'
 import Products from './pages/Products'
-// import Cart from './pages/Cart'
-// import Checkout from './pages/Checkout'
+import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import OrderConfirmation from './pages/OrderConfirmation'
 // import Dashboard from './pages/Dashboard'
 // import OrderHistory from './pages/OrderHistory'
 // import ManageProducts from './pages/Admin/ManageProducts'
@@ -104,9 +105,13 @@ function App() {
               <Route path="/" element={<Home />} />
               <Route path="/products/:id" element={<Product />} />
               <Route path="/products" element={<Products />} />
-              {/* <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout/:step" element={<Checkout />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/checkout" element={<Checkout />} />
+              <Route
+                path="/order-confirmation"
+                element={<OrderConfirmation />}
+              />
+              {/* <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/order-history" element={<OrderHistory />} />
           <Route path="/admin/products" element={<ManageProducts />} />
           <Route path="/admin/orders" element={<ManageOrders />} />

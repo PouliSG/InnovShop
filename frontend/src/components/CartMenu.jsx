@@ -17,7 +17,7 @@ const CartMenu = ({
       {cart.products.length === 0 ? (
         <MenuItem>Votre panier est vide</MenuItem>
       ) : (
-        <>
+        [
           <Button
             component={Link}
             startIcon={<ShoppingCartIcon />}
@@ -31,12 +31,13 @@ const CartMenu = ({
                 color: muiTheme.palette.text.secondary, // Color of the icon
               },
             }}
+            key="open-cart"
           >
             Ouvrir mon panier
-          </Button>
+          </Button>,
 
-          {/* En-têtes des colonnes */}
           <Box
+            key="header"
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -55,10 +56,10 @@ const CartMenu = ({
             >
               Prix
             </Typography>
-          </Box>
+          </Box>,
 
-          {/* Produits dans le panier */}
-          {cart.products.map((item) => (
+          // Utilisez directement map ici sans les {}
+          ...cart.products.map((item) => (
             <MenuItem
               component={Link}
               to={`/products/${item.product._id}`}
@@ -90,10 +91,10 @@ const CartMenu = ({
                 {item.product.price} €
               </Typography>
             </MenuItem>
-          ))}
+          )),
 
-          {/* Total du panier */}
           <Box
+            key="total"
             sx={{
               display: 'flex',
               justifyContent: 'space-between',
@@ -115,9 +116,8 @@ const CartMenu = ({
               )}{' '}
               €
             </Typography>
-          </Box>
+          </Box>,
 
-          {/* Bouton de validation du panier */}
           <Button
             component={Link}
             startIcon={<ShoppingCartCheckoutIcon />}
@@ -131,10 +131,11 @@ const CartMenu = ({
                 color: muiTheme.palette.text.secondary, // Color of the icon
               },
             }}
+            key="validate-cart"
           >
             Valider le panier
-          </Button>
-        </>
+          </Button>,
+        ]
       )}
     </Menu>
   )

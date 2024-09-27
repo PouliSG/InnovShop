@@ -88,9 +88,14 @@ const getOrderById = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
   const { id } = req.params
   const { status } = req.body
+  const statusChangedAt = new Date() // Define the statusChangedAt variable
 
   try {
-    const order = await Order.findByIdAndUpdate(id, { status }, { new: true })
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { status, statusChangedAt },
+      { new: true }
+    )
 
     if (!order) {
       return res.status(404).json({ msg: 'Commande non trouvée' })
@@ -107,11 +112,12 @@ const updateOrderStatus = async (req, res) => {
 const updatePaymentStatus = async (req, res) => {
   const { id } = req.params
   const { paymentStatus } = req.body
+  const paymentStatusChangedAt = new Date()
 
   try {
     const order = await Order.findByIdAndUpdate(
       id,
-      { paymentStatus },
+      { paymentStatus, paymentStatusChangedAt },
       { new: true }
     )
 

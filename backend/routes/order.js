@@ -8,6 +8,7 @@ const {
   updateOrderStatus,
   updatePaymentStatus,
   deleteOrder,
+  cancelOrder,
   getOrdersByUser,
 } = require('../controllers/orderController')
 const auth = require('../middlewares/auth')

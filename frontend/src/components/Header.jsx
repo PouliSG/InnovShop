@@ -104,6 +104,17 @@ function Header({
     },
   })
 
+  const getIconButtonStyles = (path) => ({
+    color:
+      location.pathname === path
+        ? muiTheme.palette.text.secondary.main
+        : muiTheme.palette.text.primary.main,
+    '&:hover': {
+      color: muiTheme.palette.text.secondary,
+    },
+    borderRadius: muiTheme.shape.borderRadius,
+  })
+
   return (
     <AppBar
       position="static"
@@ -168,8 +179,7 @@ function Header({
           {/* Bouton Panier avec badge pour le nombre d'articles */}
           <IconButton
             onClick={handleCartClick} // Ouvrir le menu au clic
-            color="inherit"
-            sx={{ borderRadius: muiTheme.shape.borderRadius }}
+            sx={getIconButtonStyles('/cart')}
           >
             <Badge badgeContent={totalQuantity} color="secondary">
               <ShoppingCartIcon />

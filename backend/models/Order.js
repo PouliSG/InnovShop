@@ -22,7 +22,7 @@ const OrderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  date: {
+  createdAt: {
     type: Date,
     default: Date.now,
   },
@@ -31,10 +31,18 @@ const OrderSchema = new mongoose.Schema({
     enum: ['pending', 'shipped', 'delivered', 'cancelled'],
     default: 'pending',
   },
+  statusChangedAt: {
+    type: Date,
+    default: Date.now,
+  },
   paymentStatus: {
     type: String,
     enum: ['pending', 'paid', 'failed'],
     default: 'pending',
+  },
+  paymentStatusChangedAt: {
+    type: Date,
+    default: Date.now,
   },
   shippingAddress: {
     type: mongoose.Schema.Types.ObjectId,

@@ -170,3 +170,64 @@ export const saveCart = async (token, products) => {
     throw error
   }
 }
+
+export const placeOrder = async (token, cartId, shippingAddressId) => {
+  try {
+    const response = await axios.post(
+      `${API_URL}/orders`,
+      {
+        cartId,
+        shippingAddressId,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    console.error('Erreur lors de la commande :', error)
+    throw error.response.data || error.message
+  }
+}
+
+// Récupérer les adresses de l'utilisateur
+export const getUserAddresses = async (token) => {
+  try {
+    const response = await axios.get(`${API_URL}/user/addresses`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Ajouter une nouvelle adresse
+export const addUserAddress = async (token, addressData) => {
+  try {
+    const response = await axios.post(`${API_URL}/user/address`, addressData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour une adresse existante
+export const updateAddress = async (token, addressId, addressData) => {
+  try {
+    const response = await axios.put(
+      `${API_URL}/user/address/${addressId}`,
+      addressData,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}

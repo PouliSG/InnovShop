@@ -1,53 +1,46 @@
 import React, { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { CartContext } from '../utils/context/cartContext'
 import {
   Box,
   Typography,
-  Button,
   Divider,
-  Grid2 as Grid,
-  IconButton,
-  TextField,
+  Button,
   Avatar,
+  Grid2 as Grid,
 } from '@mui/material'
-import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
-import DeleteIcon from '@mui/icons-material/Delete'
-import { useTheme as useMUITheme } from '@mui/material/styles'
-import { CartContext } from '../utils/context/cartContext'
+import NextIcon from '@mui/icons-material/NavigateNext'
 
-const Cart = () => {
-  const { cart, removeFromCart, updateCartItemQuantity } =
-    useContext(CartContext)
-  const muiTheme = useMUITheme()
-
-  if (cart.products.length === 0) {
-    return (
-      <Box sx={{ p: 4, textAlign: 'center' }}>
-        <Typography variant="h5" gutterBottom>
-          Votre panier est vide
-        </Typography>
-        <Button
-          component={Link}
-          to="/products"
-          variant="contained"
-          color="primary"
-        >
-          Continuer vos achats
-        </Button>
-      </Box>
-    )
-  }
+const CheckoutStepSummary = ({ muiTheme, onNext }) => {
+  const { cart } = useContext(CartContext)
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Mon panier
-      </Typography>
-      <Divider />
-      <Grid container spacing={2} sx={{ mt: 2 }}>
+    <Box>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          p: 1,
+          backgroundColor: muiTheme.palette.background.paper,
+          fontWeight: 'bold',
+        }}
+      >
+        <Typography variant="body1" sx={{ width: '12%' }}>
+          Image
+        </Typography>
+        <Typography variant="body1" sx={{ width: '67%' }}>
+          Produit
+        </Typography>
+        <Typography variant="body1" sx={{ width: '6%' }}>
+          Qté
+        </Typography>
+        <Typography variant="body1" sx={{ width: '15%', textAlign: 'right' }}>
+          Prix
+        </Typography>
+      </Box>
+      <Grid container spacing={2} sx={{ mt: 1 }}>
         {cart.products.map((item) => (
           <Grid
-            item="true"
+            item
             xs={12}
             key={item.product._id}
             sx={{
@@ -58,7 +51,14 @@ const Cart = () => {
             }}
           >
             {/* Vignette de l'image du produit */}
-            <Box sx={{ width: '10%', display: 'flex', justifyContent: 'left' }}>
+            <Box
+              sx={{
+                width: '10%',
+                display: 'flex',
+                justifyContent: 'left',
+                pl: 1,
+              }}
+            >
               <Avatar
                 src={item.product.image}
                 alt={item.product.name}
@@ -81,7 +81,7 @@ const Cart = () => {
               </Typography>
             </Box>
 
-            {/* Quantité éditable, alignée à droite */}
+            {/* Quantité, alignée à droite */}
             <Box
               sx={{
                 width: '12%',
@@ -91,43 +91,22 @@ const Cart = () => {
               }}
             >
               <Typography variant="body2" sx={{ mr: 1 }}>
-                Qté:{' '}
+                {item.quantity}x
               </Typography>
-              <TextField
-                type="number"
-                value={item.quantity}
-                onChange={(e) =>
-                  updateCartItemQuantity(item.product._id, e.target.value)
-                }
-                inputProps={{ min: 1, max: item.product.stock }}
-                sx={{ ml: 1, width: 80 }}
-              />
             </Box>
 
             {/* Prix, aligné à droite */}
-            <Box sx={{ width: '15%', textAlign: 'right' }}>
+            <Box sx={{ width: '15%', textAlign: 'right', pr: 1 }}>
               <Typography variant="h6">
                 {item.product.price * item.quantity} €
               </Typography>
             </Box>
-
-            {/* Supprimer l'élément du panier */}
-            <Box
-              sx={{ width: '10%', display: 'flex', justifyContent: 'right' }}
-            >
-              <IconButton
-                color={muiTheme.palette.primary.main}
-                onClick={() => removeFromCart(item.product._id)}
-                sx={{ '&:hover': { color: muiTheme.palette.secondary.main } }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
           </Grid>
         ))}
       </Grid>
+      {/* Total de la commande */}
       <Divider sx={{ mt: 4 }} />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 2 }}>
         <Typography variant="h5" color="secondary">
           Total :
         </Typography>
@@ -140,30 +119,31 @@ const Cart = () => {
         </Typography>
       </Box>
       <Button
-        component={Link}
-        to="/checkout"
         variant="contained"
+        onClick={onNext}
         color="primary"
-        startIcon={<ShoppingCartCheckoutIcon />}
+        endIcon={<NextIcon />}
         sx={{
           mt: 4,
-          width: '100%',
+          height: 50,
+          // aligner le bouto à droite de l'espace
+          alignSelf: 'flex-end',
           color: muiTheme.palette.text.third,
           '&:hover': {
             color: muiTheme.palette.text.secondary, // Change text color on hover
           },
-          '& .MuiButton-startIcon': {
+          '& .MuiButton-endIcon': {
             color: muiTheme.palette.text.third, // Color of the icon
           },
-          '&:hover .MuiButton-startIcon': {
+          '&:hover .MuiButton-endIcon': {
             color: muiTheme.palette.text.secondary, // Icon color on hover
           },
         }}
       >
-        Valider le panier
+        Continuer
       </Button>
     </Box>
   )
 }
 
-export default Cart
+export default CheckoutStepSummary

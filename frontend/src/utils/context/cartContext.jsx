@@ -84,9 +84,46 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(updatedCart))
   }
 
+  // Mettre à jour la quantité d'un produit dans le panier
+  // Ajouter cette méthode dans le cartContext.jsx
+  const updateCartItemQuantity = (productId, newQuantity) => {
+    const updatedCart = { ...cart }
+    const productIndex = updatedCart.products.findIndex(
+      (p) => p.product._id === productId
+    )
+
+    if (productIndex > -1) {
+      updatedCart.products[productIndex].quantity = newQuantity
+      setCart(updatedCart)
+
+      if (isAuthenticated()) {
+        saveCart(token, updatedCart.products)
+      }
+      localStorage.setItem('cart', JSON.stringify(updatedCart))
+    }
+  }
+
+  // Vider le panier
+  const clearCart = () => {
+    const updatedCart = { products: [] }
+    setCart(updatedCart)
+
+    if (isAuthenticated()) {
+      saveCart(token, updatedCart.products)
+    }
+    localStorage.setItem('cart', JSON.stringify(updatedCart))
+  }
+
   return (
     <CartContext.Provider
-      value={{ cart, totalQuantity, addToCart, removeFromCart }}
+      value={{
+        cart,
+        totalQuantity,
+        addToCart,
+        removeFromCart,
+        updateCartItemQuantity,
+        clearCart,
+      }}
     >
       {children}
     </CartContext.Provider>
