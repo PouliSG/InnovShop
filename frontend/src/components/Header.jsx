@@ -10,8 +10,6 @@ import {
   Modal,
   IconButton,
   Badge,
-  Menu,
-  MenuItem,
 } from '@mui/material'
 import { styled } from '@mui/system'
 import HomeIcon from '@mui/icons-material/Home'
@@ -22,9 +20,9 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import LogoutIcon from '@mui/icons-material/Logout'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
-import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
 import darkLogo from '../assets/InnovShop_logo_dark.png'
 import lightLogo from '../assets/InnovShop_logo_light.png'
+import CartMenu from './CartMenu'
 import { useTheme as useMUITheme } from '@mui/material/styles'
 import { isAuthenticated } from '../services/authService'
 import { CartContext } from '../utils/context/cartContext'
@@ -179,65 +177,14 @@ function Header({
           </IconButton>
 
           {/* Menu pour afficher le contenu du panier */}
-          <Menu
+          <CartMenu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
             onClose={handleCartClose}
-            // anchorOrigin={{
-            //   vertical: 'bottom',
-            //   horizontal: 'center',
-            // }}
-            // transformOrigin={{
-            //   vertical: 'top',
-            //   horizontal: 'center',
-            // }}
-          >
-            {cart.products.length === 0 ? (
-              <MenuItem>Votre panier est vide</MenuItem>
-            ) : (
-              <>
-                <Button
-                  component={Link}
-                  startIcon={<ShoppingCartIcon />}
-                  color="secondary"
-                  to="/cart"
-                  onClick={handleCartClose}
-                  sx={{
-                    '& .MuiButton-startIcon': {
-                      color: muiTheme.palette.text.secondary, // Color of the icon
-                    },
-                  }}
-                >
-                  Votre panier
-                </Button>
-                {cart.products.map((item) => (
-                  <MenuItem
-                    component={Link}
-                    to={`/products/${item.product._id}`}
-                    key={item.product._id}
-                  >
-                    {item.quantity}x - {item.product.name}
-                  </MenuItem>
-                ))}
-                <Button
-                  component={Link}
-                  startIcon={<ShoppingCartCheckoutIcon />}
-                  color="secondary"
-                  to="/checkout"
-                  onClick={handleCartClose}
-                  sx={{
-                    width: '100%',
-                    textAlign: 'center',
-                    '& .MuiButton-startIcon': {
-                      color: muiTheme.palette.text.secondary, // Color of the icon
-                    },
-                  }}
-                >
-                  Valider le panier
-                </Button>
-              </>
-            )}
-          </Menu>
+            cart={cart}
+            handleCartClose={handleCartClose}
+            muiTheme={muiTheme}
+          />
 
           {!isLoggedIn && (
             <>
