@@ -195,7 +195,7 @@ export const placeOrder = async (token, cartId, shippingAddressId) => {
 // Récupérer les adresses de l'utilisateur
 export const getUserAddresses = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}/user/addresses`, {
+    const response = await axios.get(`${API_URL}/users/addresses`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     return response.data
@@ -207,7 +207,7 @@ export const getUserAddresses = async (token) => {
 // Ajouter une nouvelle adresse
 export const addUserAddress = async (token, addressData) => {
   try {
-    const response = await axios.post(`${API_URL}/user/address`, addressData, {
+    const response = await axios.post(`${API_URL}/users/address`, addressData, {
       headers: { Authorization: `Bearer ${token}` },
     })
     return response.data
@@ -220,7 +220,7 @@ export const addUserAddress = async (token, addressData) => {
 export const updateAddress = async (token, addressId, addressData) => {
   try {
     const response = await axios.put(
-      `${API_URL}/user/address/${addressId}`,
+      `${API_URL}/users/address/${addressId}`,
       addressData,
       {
         headers: { Authorization: `Bearer ${token}` },

@@ -1,15 +1,9 @@
-import React, { useContext } from 'react'
-import { CartContext } from '../utils/context/cartContext'
+import React from 'react'
 import { Box, Button } from '@mui/material'
 
-const CheckoutStepConfirm = ({
-  orderDetails,
-  onPrevious,
-  handleConfirmOrder,
-}) => {
+const CheckoutStepConfirm = ({ onPrevious, handleConfirmOrder }) => {
   return (
     <Box>
-      <Button onClick={onPrevious}>Retour</Button>
       <Button variant="contained" onClick={handleConfirmOrder}>
         Confirmer la commande
       </Button>

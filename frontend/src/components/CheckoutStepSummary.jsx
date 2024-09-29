@@ -1,16 +1,8 @@
 import React, { useContext } from 'react'
 import { CartContext } from '../utils/context/cartContext'
-import {
-  Box,
-  Typography,
-  Divider,
-  Button,
-  Avatar,
-  Grid2 as Grid,
-} from '@mui/material'
-import NextIcon from '@mui/icons-material/NavigateNext'
+import { Box, Typography, Divider, Avatar, Grid2 as Grid } from '@mui/material'
 
-const CheckoutStepSummary = ({ muiTheme, onNext }) => {
+const CheckoutStepSummary = ({ muiTheme }) => {
   const { cart } = useContext(CartContext)
 
   return (
@@ -117,35 +109,6 @@ const CheckoutStepSummary = ({ muiTheme, onNext }) => {
           )}{' '}
           €
         </Typography>
-      </Box>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'flex-end', // Aligner le bouton à droite
-          mt: 1,
-        }}
-      >
-        <Button
-          variant="contained"
-          onClick={onNext}
-          color="primary"
-          endIcon={<NextIcon />}
-          sx={{
-            height: 50,
-            color: muiTheme.palette.text.secondary,
-            '&:hover': {
-              color: muiTheme.palette.text.secondary, // Change text color on hover
-            },
-            '& .MuiButton-endIcon': {
-              color: muiTheme.palette.text.secondary, // Color of the icon
-            },
-            '&:hover .MuiButton-endIcon': {
-              color: muiTheme.palette.text.secondary, // Icon color on hover
-            },
-          }}
-        >
-          Continuer
-        </Button>
       </Box>
     </Box>
   )
