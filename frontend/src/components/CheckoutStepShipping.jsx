@@ -9,7 +9,7 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material'
-import { TOKEN_KEY } from '../constants'
+import { TOKEN_KEY } from '../utils/constants'
 
 const CheckoutStepShipping = ({
   selectedAddressId,

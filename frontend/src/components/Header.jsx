@@ -26,19 +26,13 @@ import CartMenu from './CartMenu'
 import { useTheme as useMUITheme } from '@mui/material/styles'
 import { isAuthenticated } from '../services/authService'
 import { CartContext } from '../utils/context/cartContext'
-import { TOKEN_KEY } from '../constants'
+import { TOKEN_KEY } from '../utils/constants'
 
 const Logo = styled('img')({
   height: '100px',
 })
 
-function Header({
-  handleLoginOpen,
-  handleRegisterOpen,
-  onLogout,
-  token,
-  setToken,
-}) {
+function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
   token ||= localStorage.getItem(TOKEN_KEY)
 
   const muiTheme = useMUITheme()

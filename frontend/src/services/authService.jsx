@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL, TOKEN_KEY } from '../constants'
+import { API_URL, TOKEN_KEY } from '../utils/constants'
 
 export const login = async (email, password) => {
   try {

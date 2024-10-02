@@ -30,7 +30,8 @@ import {
 } from '@mui/material'
 import { lightTheme, darkTheme } from './utils/theme'
 import { CartProvider } from './utils/context/cartContext'
-import { TOKEN_KEY } from './constants'
+import { useSessionManager } from './utils/hooks/useSessionManager'
+import { TOKEN_KEY } from './utils/constants'
 import { logout } from './services/authService'
 
 function App() {
@@ -40,8 +41,10 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem(TOKEN_KEY) || null)
   const [isLoginOpen, setLoginOpen] = useState(false)
   const [isRegisterOpen, setRegisterOpen] = useState(false)
+  const [sessionExpired, setSessionExpired] = useState(false)
   const [showSuccess, setShowSuccess] = useState(false)
   const [showLogoutSuccess, setShowLogoutSuccess] = useState(false)
+  const [showSessionExpired, setShowSessionExpired] = useState(false)
 
   const handleLoginOpen = () => setLoginOpen(true)
   const handleLoginClose = () => setLoginOpen(false)
@@ -62,6 +65,18 @@ function App() {
     setTimeout(() => setShowLogoutSuccess(false), 3000) // Hide the alert after 3 seconds
   }
 
+  // Fonction pour gérer la déconnexion si le token est expiré
+  const handleSessionExpiration = () => {
+    setShowSessionExpired(true) // Trigger the success alert
+    setTimeout(() => setShowSessionExpired(false), 3000) // Hide the alert after 3 seconds
+    // Supprimer le token du localStorage
+    localStorage.removeItem(TOKEN_KEY)
+    setSessionExpired(true)
+    setLoginOpen(true) // Ouvrir la popup de connexion
+  }
+
+  const { handleSessionExpired } = useSessionManager(handleLoginOpen)
+
   return (
     <ThemeProvider theme={appliedTheme}>
       <CartProvider>
@@ -74,7 +89,6 @@ function App() {
               handleRegisterOpen={handleRegisterOpen}
               onLogout={handleLogout}
               token={token}
-              setToken={setToken}
             />
             <Snackbar
               open={showSuccess}
@@ -101,12 +115,31 @@ function App() {
               </Alert>
             </Snackbar>
 
+            <Snackbar
+              open={showSessionExpired}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              autoHideDuration={3000}
+              onClose={() => setShowSessionExpired(false)}
+            >
+              <Alert
+                severity="warning"
+                onClose={() => setShowSessionExpired(false)}
+              >
+                Votre session a expiré. Veuillez vous reconnecter.
+              </Alert>
+            </Snackbar>
+
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products/:id" element={<Product />} />
               <Route path="/products" element={<Products />} />
               <Route path="/cart" element={<Cart />} />
-              <Route path="/checkout" element={<Checkout />} />
+              <Route
+                path="/checkout"
+                element={
+                  <Checkout handleSessionExpiration={handleSessionExpiration} />
+                }
+              />
               <Route
                 path="/order-confirmation"
                 element={<OrderConfirmation />}

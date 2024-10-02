@@ -24,9 +24,9 @@ import {
 import CheckoutStepSummary from '../components/CheckoutStepSummary'
 import CheckoutStepShipping from '../components/CheckoutStepShipping'
 import CheckoutStepConfirm from '../components/CheckoutStepConfirm'
-import { TOKEN_KEY } from '../constants'
+import { TOKEN_KEY } from '../utils/constants'
 
-const Checkout = () => {
+const Checkout = ({ handleSessionExpiration }) => {
   const token = localStorage.getItem(TOKEN_KEY)
   const navigate = useNavigate()
   const [activeStep, setActiveStep] = useState(1)
@@ -82,17 +82,29 @@ const Checkout = () => {
       // Redirection vers page de confirmation
       navigate('/order-confirmation')
     } catch (error) {
-      console.error('Erreur lors de la commande', error)
+      if (error.sessionExpired) {
+        handleSessionExpiration() // Gérer la session expirée
+      } else {
+        console.error('Erreur lors de la commande', error)
+      }
     }
   }
 
   const handleSaveAddress = async () => {
     if (isEditing) {
-      if (selectedAddressId === 'new') {
-        const savedAddress = await addUserAddress(token, newAddress)
-        setSelectedAddressId(savedAddress._id)
-      } else {
-        await updateAddress(token, selectedAddressId, newAddress)
+      try {
+        if (selectedAddressId === 'new') {
+          const savedAddress = await addUserAddress(token, newAddress)
+          setSelectedAddressId(savedAddress._id)
+        } else {
+          await updateAddress(token, selectedAddressId, newAddress)
+        }
+      } catch (error) {
+        if (error.sessionExpired) {
+          handleSessionExpiration() // Gérer la session expirée
+        } else {
+          console.error("Erreur lors de la sauvegarde de l'adresse", error)
+        }
       }
     } else {
       setShowConfirmDialog(true)

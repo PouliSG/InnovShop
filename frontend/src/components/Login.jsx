@@ -4,7 +4,7 @@ import LoginIcon from '@mui/icons-material/Login'
 import CloseIcon from '@mui/icons-material/Close'
 import { useTheme } from '@mui/material/styles'
 import { login } from '../services/authService'
-import { TOKEN_KEY } from '../constants'
+import { TOKEN_KEY } from '../utils/constants'
 
 function Login({ handleClose, onLoginSuccess }) {
   const [email, setEmail] = useState('')

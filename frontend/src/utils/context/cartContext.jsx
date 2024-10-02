@@ -1,7 +1,8 @@
 import React, { createContext, useState, useEffect } from 'react'
 import { getCart, saveCart } from '../../services/apiService'
 import { isAuthenticated } from '../../services/authService'
-import { TOKEN_KEY } from '../../constants'
+import { TOKEN_KEY } from '../constants'
+import { useSessionManager } from '../hooks/useSessionManager'
 
 export const CartContext = createContext()
 
@@ -14,27 +15,35 @@ export const CartProvider = ({ children }) => {
   // Quantité totale dans le panier (pour le badge de notification)
   const [totalQuantity, setTotalQuantity] = useState(0)
 
+  // Utiliser le hook pour gérer la session
+  const { handleSessionExpired } = useSessionManager()
+
   // Charger le panier depuis le localStorage ou l'API si l'utilisateur est connecté
   useEffect(() => {
     const loadCart = async () => {
-      const localCart = JSON.parse(localStorage.getItem('cart')) || {
-        products: [],
-      }
-      if (isAuthenticated()) {
+      const localCart = JSON.parse(localStorage.getItem('cart'))
+      if (isAuthenticated() && !localCart) {
         try {
           const userCart = await getCart(token)
           setCart(userCart)
           localStorage.setItem('cart', JSON.stringify(userCart))
         } catch (error) {
-          console.error('Erreur lors de la récupération du panier:', error)
-          setCart(localCart)
+          if (error.sessionExpired) {
+            handleSessionExpired() // Gérer la session expirée
+          } else {
+            console.error('Erreur lors de la récupération du panier:', error)
+          }
+          setCart({ products: [] })
         }
       } else {
-        setCart(localCart)
+        // Si l'utilisateur n'est pas connecté, on charge le panier depuis le localStorage
+        if (!isAuthenticated) {
+          localCart ? setCart(localCart) : setCart({ products: [] })
+        }
       }
     }
     loadCart()
-  }, [token])
+  }, [token, handleSessionExpired])
 
   // Calculer la quantité totale des produits dans le panier
   useEffect(() => {
@@ -61,7 +70,15 @@ export const CartProvider = ({ children }) => {
 
     if (isAuthenticated()) {
       // Si l'utilisateur est connecté, on sauvegarde le panier sur le backend
-      saveCart(token, updatedCart.products)
+      try {
+        saveCart(token, updatedCart.products)
+      } catch (error) {
+        if (error.sessionExpired) {
+          handleSessionExpired() // Gérer la session expirée
+        } else {
+          console.error('Erreur lors de la sauvegarde du panier:', error)
+        }
+      }
     }
     // On sauvegarde le panier dans le localStorage
     localStorage.setItem('cart', JSON.stringify(updatedCart))
@@ -78,7 +95,15 @@ export const CartProvider = ({ children }) => {
 
     if (isAuthenticated()) {
       // Si l'utilisateur est connecté, on sauvegarde le panier mis à jour sur le backend
-      saveCart(token, updatedCart.products)
+      try {
+        saveCart(token, updatedCart.products)
+      } catch (error) {
+        if (error.sessionExpired) {
+          handleSessionExpired() // Gérer la session expirée
+        } else {
+          console.error('Erreur lors de la sauvegarde du panier:', error)
+        }
+      }
     }
     // On sauvegarde le panier dans le localStorage
     localStorage.setItem('cart', JSON.stringify(updatedCart))
@@ -97,7 +122,15 @@ export const CartProvider = ({ children }) => {
       setCart(updatedCart)
 
       if (isAuthenticated()) {
-        saveCart(token, updatedCart.products)
+        try {
+          saveCart(token, updatedCart.products)
+        } catch (error) {
+          if (error.sessionExpired) {
+            handleSessionExpired() // Gérer la session expirée
+          } else {
+            console.error('Erreur lors de la sauvegarde du panier:', error)
+          }
+        }
       }
       localStorage.setItem('cart', JSON.stringify(updatedCart))
     }

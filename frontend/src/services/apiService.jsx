@@ -1,10 +1,32 @@
 import axios from 'axios'
-import { API_URL } from '../constants'
+import { API_URL, TOKEN_KEY } from '../utils/constants'
+
+const api = axios.create({
+  baseURL: process.env.API_URL,
+})
+
+// Intercepter les erreurs des requêtes
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Si le token est expiré ou invalide
+    if (error.response && error.response.status === 401) {
+      // Supprimer le token du localStorage
+      localStorage.removeItem(TOKEN_KEY)
+
+      // Retourner une erreur spéciale pour informer de l'expiration de la session
+      return Promise.reject({ sessionExpired: true, ...error })
+    }
+    return Promise.reject(error)
+  }
+)
+
+export default api
 
 // Gestion des produits
 export const getProducts = async (page, sort, filter) => {
   try {
-    const response = await axios.get(`${API_URL}/products`, {
+    const response = await api.get(`${API_URL}/products`, {
       params: { page, sort, filter },
     })
     return response.data
@@ -14,18 +36,18 @@ export const getProducts = async (page, sort, filter) => {
 }
 
 export const getLatestProducts = async () => {
-  const response = await axios.get(`${API_URL}/products/latest`)
+  const response = await api.get(`${API_URL}/products/latest`)
   return response.data
 }
 
 export const getFeaturedProducts = async () => {
-  const response = await axios.get(`${API_URL}/products/featured`)
+  const response = await api.get(`${API_URL}/products/featured`)
   return response.data
 }
 
 export const getProductById = async (id) => {
   try {
-    const response = await axios.get(`${API_URL}/products/${id}`)
+    const response = await api.get(`${API_URL}/products/${id}`)
     return response.data
   } catch (error) {
     throw error.response.data
@@ -34,12 +56,9 @@ export const getProductById = async (id) => {
 
 export const getProductsByCategory = async (category, page) => {
   try {
-    const response = await axios.get(
-      `${API_URL}/products/category/${category}`,
-      {
-        params: { page },
-      }
-    )
+    const response = await api.get(`${API_URL}/products/category/${category}`, {
+      params: { page },
+    })
     return response.data
   } catch (error) {
     throw error.response.data
@@ -48,7 +67,7 @@ export const getProductsByCategory = async (category, page) => {
 
 export const createProduct = async (productData, token) => {
   try {
-    const response = await axios.post(`${API_URL}/products`, productData, {
+    const response = await api.post(`${API_URL}/products`, productData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -62,7 +81,7 @@ export const createProduct = async (productData, token) => {
 // Gestion des catégories
 export const getCategories = async () => {
   try {
-    const response = await axios.get(`${API_URL}/categories`)
+    const response = await api.get(`${API_URL}/categories`)
     return response.data
   } catch (error) {
     throw error.response.data
@@ -72,7 +91,7 @@ export const getCategories = async () => {
 // Gestion des utilisateurs
 export const getUserProfile = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}/users/profile`, {
+    const response = await api.get(`${API_URL}/users/profile`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -86,7 +105,7 @@ export const getUserProfile = async (token) => {
 export const getUserRole = async (token) => {
   try {
     var user_id = JSON.parse(atob(token.split('.')[1])).id
-    const response = await axios.get(`${API_URL}/users/${user_id}`, {
+    const response = await api.get(`${API_URL}/users/${user_id}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -101,7 +120,7 @@ export const getUserRole = async (token) => {
 // Ajouter un produit au panier (pour les utilisateurs connectés)
 export const addItemToCart = async (token, productId, quantity) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${API_URL}/cart`,
       { productId, quantity }, // Données à envoyer dans le corps de la requête
       {
@@ -120,7 +139,7 @@ export const addItemToCart = async (token, productId, quantity) => {
 // Récupérer le panier de l'utilisateur
 export const getCart = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}/cart`, {
+    const response = await api.get(`${API_URL}/cart`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -135,7 +154,7 @@ export const getCart = async (token) => {
 // Supprimer un produit du panier
 export const removeItemFromCart = async (token, productId) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${API_URL}/cart/${productId}`,
       {},
       {
@@ -154,7 +173,7 @@ export const removeItemFromCart = async (token, productId) => {
 // Sauvegarder le panier (pour les utilisateurs connectés)
 export const saveCart = async (token, products) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${API_URL}/cart/save`,
       { products }, // Données à envoyer dans le corps de la requête
       {
@@ -173,7 +192,7 @@ export const saveCart = async (token, products) => {
 
 export const placeOrder = async (token, cartId, shippingAddressId) => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${API_URL}/orders`,
       {
         cartId,
@@ -195,7 +214,7 @@ export const placeOrder = async (token, cartId, shippingAddressId) => {
 // Récupérer les adresses de l'utilisateur
 export const getUserAddresses = async (token) => {
   try {
-    const response = await axios.get(`${API_URL}/users/addresses`, {
+    const response = await api.get(`${API_URL}/users/addresses`, {
       headers: { Authorization: `Bearer ${token}` },
     })
     return response.data
@@ -207,7 +226,7 @@ export const getUserAddresses = async (token) => {
 // Ajouter une nouvelle adresse
 export const addUserAddress = async (token, addressData) => {
   try {
-    const response = await axios.post(`${API_URL}/users/address`, addressData, {
+    const response = await api.post(`${API_URL}/users/address`, addressData, {
       headers: { Authorization: `Bearer ${token}` },
     })
     return response.data
@@ -219,7 +238,7 @@ export const addUserAddress = async (token, addressData) => {
 // Mettre à jour une adresse existante
 export const updateAddress = async (token, addressId, addressData) => {
   try {
-    const response = await axios.put(
+    const response = await api.put(
       `${API_URL}/users/address/${addressId}`,
       addressData,
       {
