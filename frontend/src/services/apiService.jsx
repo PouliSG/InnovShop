@@ -65,19 +65,6 @@ export const getProductsByCategory = async (category, page) => {
   }
 }
 
-export const createProduct = async (productData, token) => {
-  try {
-    const response = await api.post(`${API_URL}/products`, productData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    return response.data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
 // Gestion des catégories
 export const getCategories = async () => {
   try {
@@ -245,6 +232,230 @@ export const updateAddress = async (token, addressId, addressData) => {
         headers: { Authorization: `Bearer ${token}` },
       }
     )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Supprimer une adresse
+export const deleteAddress = async (token, addressId) => {
+  try {
+    const response = await api.delete(`${API_URL}/users/address/${addressId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Admin
+
+// Récupérer toutes les commandes
+export const getOrders = async (token) => {
+  try {
+    const response = await api.get(`${API_URL}/orders/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour le statut d'une commande
+export const updateOrderStatus = async (token, orderId, status) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/orders/${orderId}`,
+      { status },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour le statut du paiement d'une commande
+export const updatePaymentStatus = async (token, orderId, status) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/orders/${orderId}/payment`,
+      { status },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Récupérer tous les utilisateurs
+export const getUsers = async (token) => {
+  try {
+    const response = await api.get(`${API_URL}/users`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Réinitialiser le mot de passe d'un utilisateur
+export const resetUserPassword = async (token, userId) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/users/${userId}/reset-password`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour le rôle d'un utilisateur
+export const updateUserRole = async (token, userId, role) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/users/${userId}`,
+      { role },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Supprimer un utilisateur
+export const deleteUser = async (token, userId) => {
+  try {
+    const response = await api.delete(`${API_URL}/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Ajouter une catégorie
+export const addCategory = async (token, name) => {
+  try {
+    const response = await api.post(
+      `${API_URL}/categories`,
+      { name },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Supprimer une catégorie
+export const deleteCategory = async (token, categoryId) => {
+  try {
+    const response = await api.delete(`${API_URL}/categories/${categoryId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour une catégorie
+export const updateCategory = async (token, categoryId, name) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/categories/${categoryId}`,
+      { name },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Supprimer un produit
+export const deleteProduct = async (token, productId) => {
+  try {
+    const response = await api.delete(`${API_URL}/products/${productId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour un produit
+export const updateProduct = async (token, productId, productData) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/products/${productId}`,
+      productData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Ajouter un produit
+export const addProduct = async (productData, token) => {
+  try {
+    const response = await api.post(`${API_URL}/products`, productData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     return response.data
   } catch (error) {
     throw error.response.data

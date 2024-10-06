@@ -15,9 +15,10 @@ import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
 // import Dashboard from './pages/Dashboard'
 // import OrderHistory from './pages/OrderHistory'
-// import ManageProducts from './pages/Admin/ManageProducts'
-// import ManageOrders from './pages/Admin/ManageOrders'
-// import ManageUsers from './pages/Admin/ManageUsers'
+import DashboardAdmin from './pages/admin/DashboardAdmin'
+import ProductAdmin from './pages/admin/ProductAdmin'
+import OrderAdmin from './pages/admin/OrderAdmin'
+import UserAdmin from './pages/admin/UserAdmin'
 import { useTheme } from './utils/context/themeContext'
 import ThemedGlobalStyle from './utils/style/GlobalStyle'
 import {
@@ -145,10 +146,11 @@ function App() {
                 element={<OrderConfirmation />}
               />
               {/* <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/order-history" element={<OrderHistory />} />
-          <Route path="/admin/products" element={<ManageProducts />} />
-          <Route path="/admin/orders" element={<ManageOrders />} />
-          <Route path="/admin/users" element={<ManageUsers />} /> */}
+          <Route path="/order-history" element={<OrderHistory />} /> */}
+              <Route path="/admin" element={<DashboardAdmin />} />
+              <Route path="/admin/products" element={<ProductAdmin />} />
+              <Route path="/admin/orders" element={<OrderAdmin />} />
+              <Route path="/admin/users" element={<UserAdmin />} />
               <Route path="*" element={<Error />} />
             </Routes>
             <Footer />
