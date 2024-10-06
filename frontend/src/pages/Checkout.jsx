@@ -9,6 +9,11 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Snackbar,
+  Alert,
+  Stepper,
+  Step,
+  StepLabel,
 } from '@mui/material'
 import { useTheme as useMUITheme } from '@mui/material/styles'
 import NextIcon from '@mui/icons-material/NavigateNext'
@@ -25,11 +30,18 @@ import CheckoutStepSummary from '../components/CheckoutStepSummary'
 import CheckoutStepShipping from '../components/CheckoutStepShipping'
 import CheckoutStepConfirm from '../components/CheckoutStepConfirm'
 import { TOKEN_KEY } from '../utils/constants'
+import { isAuthenticated } from '../services/authService'
+
+const steps = [
+  'Récapitulatif de la commande',
+  'Adresse de livraison',
+  'Confirmation de commande',
+]
 
 const Checkout = ({ handleSessionExpiration }) => {
   const token = localStorage.getItem(TOKEN_KEY)
   const navigate = useNavigate()
-  const [activeStep, setActiveStep] = useState(1)
+  const [activeStep, setActiveStep] = useState(0)
   const [orderDetails, setOrderDetails] = useState({
     address: '',
     paymentMethod: '',
@@ -51,6 +63,21 @@ const Checkout = ({ handleSessionExpiration }) => {
   })
   const { cart, clearCart } = useContext(CartContext)
   const muiTheme = useMUITheme()
+  const [showAlert, setShowAlert] = useState(false)
+
+  const handleUnauthenticated = () => {
+    setShowAlert(true)
+    setTimeout(() => setShowAlert(false), 3000) // Hide the alert after 3 seconds
+    navigate('/')
+    handleSessionExpiration() // Close the modal after login
+  }
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!isAuthenticated()) {
+      handleUnauthenticated() // Open login modal if not authenticated
+    }
+  }, [])
 
   // Fonction pour passer à l'étape suivante
   const handleNextStep = () => {
@@ -120,6 +147,25 @@ const Checkout = ({ handleSessionExpiration }) => {
 
   return (
     <Box sx={{ p: 2 }}>
+      <Snackbar
+        open={showAlert}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={3000}
+        onClose={() => setShowAlert(false)}
+      >
+        <Alert severity="warning" onClose={() => setShowAlert(false)}>
+          Vous devez vous connecter pour passer une commande
+        </Alert>
+      </Snackbar>
+      {/* Stepper Section */}
+      <Stepper activeStep={activeStep} alternativeLabel>
+        {steps.map((label) => (
+          <Step key={label}>
+            <StepLabel>{label}</StepLabel>
+          </Step>
+        ))}
+      </Stepper>
+      <Divider sx={{ mb: 3 }} />
       <Box
         sx={{
           display: 'flex',
@@ -127,7 +173,7 @@ const Checkout = ({ handleSessionExpiration }) => {
           justifyContent: 'space-between',
         }}
       >
-        {activeStep > 1 && (
+        {activeStep > 0 && (
           <Button
             variant="contained"
             onClick={handlePreviousStep}
@@ -151,11 +197,11 @@ const Checkout = ({ handleSessionExpiration }) => {
           </Button>
         )}
         <Typography variant="h4" gutterBottom>
-          {activeStep === 1 && 'Récapitulatif de la commande'}
-          {activeStep === 2 && 'Adresse de livraison'}
-          {activeStep === 3 && 'Confirmation de commande'}
+          {activeStep === 0 && 'Récapitulatif de la commande'}
+          {activeStep === 1 && 'Adresse de livraison'}
+          {activeStep === 2 && 'Confirmation de commande'}
         </Typography>
-        {activeStep === 1 && (
+        {activeStep === 0 && (
           <Button
             variant="contained"
             onClick={handleNextStep}
@@ -178,7 +224,7 @@ const Checkout = ({ handleSessionExpiration }) => {
             Continuer
           </Button>
         )}
-        {activeStep === 2 && (
+        {activeStep === 1 && (
           <Button
             variant="contained"
             onClick={handleSaveAddress}
@@ -201,7 +247,7 @@ const Checkout = ({ handleSessionExpiration }) => {
             Continuer
           </Button>
         )}
-        {activeStep === 3 && (
+        {activeStep === 2 && (
           <Button
             variant="contained"
             onClick={handleConfirmOrder}
@@ -228,8 +274,8 @@ const Checkout = ({ handleSessionExpiration }) => {
       <Divider sx={{ mb: 1 }} />
 
       {/* Étapes du checkout */}
-      {activeStep === 1 && <CheckoutStepSummary muiTheme={muiTheme} />}
-      {activeStep === 2 && (
+      {activeStep === 0 && <CheckoutStepSummary muiTheme={muiTheme} />}
+      {activeStep === 1 && (
         <CheckoutStepShipping
           setIsEditing={setIsEditing}
           selectedAddressId={selectedAddressId}
@@ -238,7 +284,7 @@ const Checkout = ({ handleSessionExpiration }) => {
           newAddress={newAddress}
         />
       )}
-      {activeStep === 3 && <CheckoutStepConfirm />}
+      {activeStep === 2 && <CheckoutStepConfirm />}
 
       <Divider sx={{ m: 2 }} />
       <Box
@@ -248,7 +294,7 @@ const Checkout = ({ handleSessionExpiration }) => {
           justifyContent: 'space-between',
         }}
       >
-        {activeStep > 1 ? (
+        {activeStep > 0 ? (
           <Button
             variant="contained"
             onClick={handlePreviousStep}
@@ -273,7 +319,7 @@ const Checkout = ({ handleSessionExpiration }) => {
         ) : (
           <Box sx={{ width: 100 }} />
         )}
-        {activeStep === 1 && (
+        {activeStep === 0 && (
           <Button
             variant="contained"
             onClick={handleNextStep}
@@ -296,7 +342,7 @@ const Checkout = ({ handleSessionExpiration }) => {
             Continuer
           </Button>
         )}
-        {activeStep === 2 && (
+        {activeStep === 1 && (
           <Button
             variant="contained"
             onClick={handleSaveAddress}
@@ -319,7 +365,7 @@ const Checkout = ({ handleSessionExpiration }) => {
             Continuer
           </Button>
         )}
-        {activeStep === 3 && (
+        {activeStep === 2 && (
           <Button
             variant="contained"
             onClick={handleConfirmOrder}
