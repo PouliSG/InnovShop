@@ -12,7 +12,13 @@ import {
 } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 
-const ProductAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
+const ProductAdmin = ({
+  token,
+  userRole,
+  isLoggedIn,
+  handleUnauthorizedAccess,
+  handleSessionExpiration,
+}) => {
   const [products, setProducts] = useState([])
   const navigate = useNavigate()
 
@@ -21,12 +27,24 @@ const ProductAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
     navigate('/')
   }
 
+  const handleUnauthorized = () => {
+    handleUnauthorizedAccess()
+    navigate('/')
+  }
+
   useEffect(() => {
     // Check if the user is authenticated
     if (!isLoggedIn) {
       handleUnauthenticated() // Open login modal if not authenticated
     }
-  }, [])
+  }, [isLoggedIn])
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!['admin', 'employee'].includes(userRole)) {
+      handleUnauthorized() // Open login modal if not authenticated
+    }
+  }, [userRole])
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -60,6 +78,7 @@ const ProductAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
         <TableHead>
           <TableRow>
             <TableCell>Nom</TableCell>
+            <TableCell>Marque</TableCell>
             <TableCell>Prix</TableCell>
             <TableCell>Actions</TableCell>
           </TableRow>
@@ -68,16 +87,23 @@ const ProductAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
           {products.map((product) => (
             <TableRow key={product._id}>
               <TableCell>{product.name}</TableCell>
+              <TableCell>{product.brand}</TableCell>
               <TableCell>{product.price} €</TableCell>
-              <TableCell>
+              <TableCell sx={{ p: 2 }}>
                 <Button
                   component={Link}
                   to={`/admin/products/edit/${product._id}`}
                   variant="outlined"
+                  color="secondary"
+                  sx={{ mr: 2 }}
                 >
                   Modifier
                 </Button>
-                <Button color="error" onClick={() => handleDelete(product._id)}>
+                <Button
+                  variant="outlined"
+                  color="error"
+                  onClick={() => handleDelete(product._id)}
+                >
                   Supprimer
                 </Button>
               </TableCell>

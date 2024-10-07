@@ -9,11 +9,21 @@ import {
 } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 
-const DashboardAdmin = ({ isLoggedIn, handleSessionExpiration }) => {
+const DashboardAdmin = ({
+  userRole,
+  isLoggedIn,
+  handleUnauthorizedAccess,
+  handleSessionExpiration,
+}) => {
   const navigate = useNavigate()
 
   const handleUnauthenticated = () => {
     handleSessionExpiration()
+    navigate('/')
+  }
+
+  const handleUnauthorized = () => {
+    handleUnauthorizedAccess()
     navigate('/')
   }
 
@@ -23,6 +33,13 @@ const DashboardAdmin = ({ isLoggedIn, handleSessionExpiration }) => {
       handleUnauthenticated() // Open login modal if not authenticated
     }
   }, [isLoggedIn])
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!['admin', 'employee'].includes(userRole)) {
+      handleUnauthorized() // Open login modal if not authenticated
+    }
+  }, [userRole])
 
   return (
     <Box sx={{ p: 4 }}>

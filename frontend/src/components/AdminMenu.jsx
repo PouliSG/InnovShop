@@ -19,7 +19,7 @@ function AdminMenu({
   const getStyles = (path) => ({
     color:
       location.pathname === path ||
-      (path !== '/admin' && location.pathname.includes(path))
+      (path !== '/admin' && location.pathname.startsWith(path))
         ? muiTheme.palette.text.secondary
         : muiTheme.palette.text.primary,
   })

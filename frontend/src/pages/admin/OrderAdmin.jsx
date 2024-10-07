@@ -12,12 +12,23 @@ import {
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 
-const OrderAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
+const OrderAdmin = ({
+  token,
+  isLoggedIn,
+  userRole,
+  handleUnauthorizedAccess,
+  handleSessionExpiration,
+}) => {
   const [orders, setOrders] = useState([])
   const navigate = useNavigate()
 
   const handleUnauthenticated = () => {
     handleSessionExpiration()
+    navigate('/')
+  }
+
+  const handleUnauthorized = () => {
+    handleUnauthorizedAccess()
     navigate('/')
   }
 
@@ -27,6 +38,13 @@ const OrderAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
       handleUnauthenticated() // Open login modal if not authenticated
     }
   }, [isLoggedIn])
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!['admin', 'employee'].includes(userRole)) {
+      handleUnauthorized() // Open login modal if not authenticated
+    }
+  }, [userRole])
 
   useEffect(() => {
     const fetchOrders = async () => {

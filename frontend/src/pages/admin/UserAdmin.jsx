@@ -12,7 +12,13 @@ import {
 } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
 
-const UserAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
+const UserAdmin = ({
+  token,
+  userRole,
+  isLoggedIn,
+  handleUnauthorizedAccess,
+  handleSessionExpiration,
+}) => {
   const [users, setUsers] = useState([])
   const navigate = useNavigate()
 
@@ -21,12 +27,24 @@ const UserAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
     navigate('/')
   }
 
+  const handleUnauthorized = () => {
+    handleUnauthorizedAccess()
+    navigate('/')
+  }
+
   useEffect(() => {
     // Check if the user is authenticated
     if (!isLoggedIn) {
       handleUnauthenticated() // Open login modal if not authenticated
     }
-  }, [])
+  }, [isLoggedIn])
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!['admin', 'employee'].includes(userRole)) {
+      handleUnauthorized() // Open login modal if not authenticated
+    }
+  }, [userRole])
 
   useEffect(() => {
     const fetchUsers = async () => {

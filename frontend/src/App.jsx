@@ -1,4 +1,4 @@
-import { React, useState } from 'react'
+import { React, useEffect, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
@@ -47,8 +47,13 @@ function App() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [showLogoutSuccess, setShowLogoutSuccess] = useState(false)
   const [showSessionExpired, setShowSessionExpired] = useState(false)
-  const decodedToken = token ? jwtDecode(token) : null
-  const userRole = isAuthenticated() ? decodedToken.user.role : null
+  const [showUnauthorized, setShowUnauthorized] = useState(false)
+  const [userRole, setUserRole] = useState(null)
+
+  useEffect(() => {
+    const decodedToken = token ? jwtDecode(token) : null
+    isAuthenticated() ? setUserRole(decodedToken.user.role) : setUserRole(null)
+  }, [token])
 
   const handleLoginOpen = () => setLoginOpen(true)
   const handleLoginClose = () => setLoginOpen(false)
@@ -77,6 +82,12 @@ function App() {
     localStorage.removeItem(TOKEN_KEY)
     setSessionExpired(true)
     setLoginOpen(true) // Ouvrir la popup de connexion
+  }
+
+  //Fonction pour gérer l'affichage d'alerte après restrictions d'accès aux pages
+  const handleUnauthorizedAccess = () => {
+    setShowUnauthorized(true) // Afficher l'alerte de session expirée
+    setTimeout(() => setShowUnauthorized(false), 3000) // Masquer l'alerte après 3 secondes
   }
 
   const { handleSessionExpired } = useSessionManager(handleLoginOpen)
@@ -134,6 +145,20 @@ function App() {
               </Alert>
             </Snackbar>
 
+            <Snackbar
+              open={showUnauthorized}
+              anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+              autoHideDuration={3000}
+              onClose={() => setShowUnauthorized(false)}
+            >
+              <Alert
+                severity="error"
+                onClose={() => setShowUnauthorized(false)}
+              >
+                Accès non autorisé
+              </Alert>
+            </Snackbar>
+
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/products/:id" element={<Product />} />
@@ -155,7 +180,9 @@ function App() {
                 path="/admin"
                 element={
                   <DashboardAdmin
+                    userRole={userRole}
                     isLoggedIn={isAuthenticated()}
+                    handleUnauthorizedAccess={handleUnauthorizedAccess}
                     handleSessionExpiration={handleSessionExpiration}
                   />
                 }
@@ -165,7 +192,9 @@ function App() {
                 element={
                   <ProductAdmin
                     token={token}
+                    userRole={userRole}
                     isLoggedIn={isAuthenticated()}
+                    handleUnauthorizedAccess={handleUnauthorizedAccess}
                     handleSessionExpiration={handleSessionExpiration}
                   />
                 }
@@ -175,7 +204,9 @@ function App() {
                 element={
                   <CategoryAdmin
                     token={token}
+                    userRole={userRole}
                     isLoggedIn={isAuthenticated()}
+                    handleUnauthorizedAccess={handleUnauthorizedAccess}
                     handleSessionExpiration={handleSessionExpiration}
                   />
                 }
@@ -185,7 +216,9 @@ function App() {
                 element={
                   <OrderAdmin
                     token={token}
+                    userRole={userRole}
                     isLoggedIn={isAuthenticated()}
+                    handleUnauthorizedAccess={handleUnauthorizedAccess}
                     handleSessionExpiration={handleSessionExpiration}
                   />
                 }
@@ -197,6 +230,7 @@ function App() {
                     token={token}
                     userRole={userRole}
                     isLoggedIn={isAuthenticated()}
+                    handleUnauthorizedAccess={handleUnauthorizedAccess}
                     handleSessionExpiration={handleSessionExpiration}
                   />
                 }

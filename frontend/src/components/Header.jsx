@@ -1,6 +1,5 @@
 import { useState, useContext } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { jwtDecode } from 'jwt-decode'
 import {
   AppBar,
   Toolbar,
@@ -73,7 +72,7 @@ function Header({
   const getButtonStyles = (path) => ({
     color:
       location.pathname === path ||
-      (path != '/' && location.pathname.includes(path))
+      (path != '/' && location.pathname.startsWith(path))
         ? muiTheme.palette.text.secondary
         : muiTheme.palette.text.primary,
     '&:hover': {
@@ -82,7 +81,7 @@ function Header({
     '& .MuiButton-startIcon': {
       color:
         location.pathname === path ||
-        (path != '/' && location.pathname.includes(path))
+        (path != '/' && location.pathname.startsWith(path))
           ? muiTheme.palette.text.secondary
           : muiTheme.palette.text.primary,
     },
@@ -94,7 +93,7 @@ function Header({
   const getContainedButtonStyles = (path) => ({
     color:
       location.pathname === path ||
-      (path != '/' && location.pathname.includes(path))
+      (path != '/' && location.pathname.startsWith(path))
         ? muiTheme.palette.text.secondary
         : muiTheme.palette.text.third,
     '&:hover': {
@@ -103,7 +102,7 @@ function Header({
     '& .MuiButton-startIcon': {
       color:
         location.pathname === path ||
-        (path != '/' && location.pathname.includes(path))
+        (path != '/' && location.pathname.startsWith(path))
           ? muiTheme.palette.text.secondary
           : muiTheme.palette.text.third,
     },
@@ -115,7 +114,7 @@ function Header({
   const getIconButtonStyles = (path) => ({
     color:
       location.pathname === path ||
-      (path != '/' && location.pathname.includes(path))
+      (path != '/' && location.pathname.startsWith(path))
         ? muiTheme.palette.text.secondary.main
         : muiTheme.palette.text.primary.main,
     '&:hover': {
