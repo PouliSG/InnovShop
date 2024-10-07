@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Box,
   Grid2 as Grid,
@@ -7,9 +7,24 @@ import {
   Typography,
   Button,
 } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { isAuthenticated } from '../../services/authService'
 
-const DashboardAdmin = () => {
+const DashboardAdmin = ({ handleSessionExpiration }) => {
+  const navigate = useNavigate()
+
+  const handleUnauthenticated = () => {
+    handleSessionExpiration()
+    navigate('/')
+  }
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!isAuthenticated()) {
+      handleUnauthenticated() // Open login modal if not authenticated
+    }
+  }, [])
+
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>

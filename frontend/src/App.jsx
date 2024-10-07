@@ -68,8 +68,8 @@ function App() {
 
   // Fonction pour gérer la déconnexion si le token est expiré
   const handleSessionExpiration = () => {
-    setShowSessionExpired(true) // Trigger the success alert
-    setTimeout(() => setShowSessionExpired(false), 3000) // Hide the alert after 3 seconds
+    setShowSessionExpired(true) // Afficher l'alerte de session expirée
+    setTimeout(() => setShowSessionExpired(false), 3000) // Masquer l'alerte après 3 secondes
     // Supprimer le token du localStorage
     localStorage.removeItem(TOKEN_KEY)
     setSessionExpired(true)
@@ -147,7 +147,14 @@ function App() {
               />
               {/* <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/order-history" element={<OrderHistory />} /> */}
-              <Route path="/admin" element={<DashboardAdmin />} />
+              <Route
+                path="/admin"
+                element={
+                  <DashboardAdmin
+                    handleSessionExpiration={handleSessionExpiration}
+                  />
+                }
+              />
               <Route path="/admin/products" element={<ProductAdmin />} />
               <Route path="/admin/orders" element={<OrderAdmin />} />
               <Route path="/admin/users" element={<UserAdmin />} />

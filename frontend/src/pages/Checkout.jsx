@@ -68,8 +68,8 @@ const Checkout = ({ handleSessionExpiration }) => {
   const handleUnauthenticated = () => {
     setShowAlert(true)
     setTimeout(() => setShowAlert(false), 3000) // Hide the alert after 3 seconds
-    navigate('/')
     handleSessionExpiration() // Close the modal after login
+    navigate('/')
   }
 
   useEffect(() => {

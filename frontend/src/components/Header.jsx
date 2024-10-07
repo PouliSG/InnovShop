@@ -23,6 +23,7 @@ import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import darkLogo from '../assets/InnovShop_logo_dark.png'
 import lightLogo from '../assets/InnovShop_logo_light.png'
 import CartMenu from './CartMenu'
+import AdminMenu from './AdminMenu'
 import { useTheme as useMUITheme } from '@mui/material/styles'
 import { isAuthenticated } from '../services/authService'
 import { CartContext } from '../utils/context/cartContext'
@@ -41,7 +42,8 @@ function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
   const userRole = isLoggedIn ? decodedToken.user.role : null
   const { cart, totalQuantity } = useContext(CartContext) // Utiliser le contexte du panier
   const [isLogoutOpen, setLogoutOpen] = useState(false)
-  const [anchorEl, setAnchorEl] = useState(null)
+  const [anchorEl, setAnchorEl] = useState(null) // Pour gérer le menu panier
+  const [adminMenuAnchorEl, setAdminMenuAnchorEl] = useState(null) // Pour gérer le menu admin
   const location = useLocation()
 
   const handleLogoutOpen = () => setLogoutOpen(true)
@@ -60,9 +62,19 @@ function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
     setAnchorEl(null)
   }
 
+  // Gestion de l'ouverture/fermeture du menu Admin
+  const handleAdminMenuOpen = (event) => {
+    setAdminMenuAnchorEl(event.currentTarget)
+  }
+
+  const handleAdminMenuClose = () => {
+    setAdminMenuAnchorEl(null)
+  }
+
   const getButtonStyles = (path) => ({
     color:
-      location.pathname === path
+      location.pathname === path ||
+      (path != '/' && location.pathname.includes(path))
         ? muiTheme.palette.text.secondary
         : muiTheme.palette.text.primary,
     '&:hover': {
@@ -70,7 +82,8 @@ function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
     },
     '& .MuiButton-startIcon': {
       color:
-        location.pathname === path
+        location.pathname === path ||
+        (path != '/' && location.pathname.includes(path))
           ? muiTheme.palette.text.secondary
           : muiTheme.palette.text.primary,
     },
@@ -81,7 +94,8 @@ function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
 
   const getContainedButtonStyles = (path) => ({
     color:
-      location.pathname === path
+      location.pathname === path ||
+      (path != '/' && location.pathname.includes(path))
         ? muiTheme.palette.text.secondary
         : muiTheme.palette.text.third,
     '&:hover': {
@@ -89,7 +103,8 @@ function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
     },
     '& .MuiButton-startIcon': {
       color:
-        location.pathname === path
+        location.pathname === path ||
+        (path != '/' && location.pathname.includes(path))
           ? muiTheme.palette.text.secondary
           : muiTheme.palette.text.third,
     },
@@ -100,7 +115,8 @@ function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
 
   const getIconButtonStyles = (path) => ({
     color:
-      location.pathname === path
+      location.pathname === path ||
+      (path != '/' && location.pathname.includes(path))
         ? muiTheme.palette.text.secondary.main
         : muiTheme.palette.text.primary.main,
     '&:hover': {
@@ -249,16 +265,27 @@ function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
               </Button>
 
               {(userRole === 'admin' || userRole === 'employee') && (
-                <Button
-                  component={Link}
-                  to="/admin"
-                  startIcon={<AdminPanelSettingsIcon />}
-                  variant="contained"
-                  color="primary"
-                  sx={getContainedButtonStyles('/admin')}
-                >
-                  Administration
-                </Button>
+                <>
+                  <Button
+                    startIcon={<AdminPanelSettingsIcon />}
+                    variant="contained"
+                    color="primary"
+                    onClick={handleAdminMenuOpen} // Ouvrir le menu Admin
+                    sx={getContainedButtonStyles('/admin')}
+                  >
+                    Administration
+                  </Button>
+                  <AdminMenu
+                    userRole={userRole}
+                    location={location}
+                    anchorEl={adminMenuAnchorEl}
+                    open={Boolean(adminMenuAnchorEl)}
+                    onClose={handleAdminMenuClose}
+                    handleClose={handleAdminMenuClose}
+                    muiTheme={muiTheme}
+                    sx={{ width: '100%' }}
+                  />
+                </>
               )}
 
               <Button
