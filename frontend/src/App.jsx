@@ -2,6 +2,7 @@ import { React, useState } from 'react'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
+import { jwtDecode } from 'jwt-decode'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Error from './components/Error'
@@ -33,7 +34,7 @@ import { lightTheme, darkTheme } from './utils/theme'
 import { CartProvider } from './utils/context/cartContext'
 import { useSessionManager } from './utils/hooks/useSessionManager'
 import { TOKEN_KEY } from './utils/constants'
-import { logout } from './services/authService'
+import { logout, isAuthenticated } from './services/authService'
 
 function App() {
   const { theme } = useTheme()
@@ -46,6 +47,8 @@ function App() {
   const [showSuccess, setShowSuccess] = useState(false)
   const [showLogoutSuccess, setShowLogoutSuccess] = useState(false)
   const [showSessionExpired, setShowSessionExpired] = useState(false)
+  const decodedToken = token ? jwtDecode(token) : null
+  const userRole = isAuthenticated() ? decodedToken.user.role : null
 
   const handleLoginOpen = () => setLoginOpen(true)
   const handleLoginClose = () => setLoginOpen(false)
@@ -89,7 +92,8 @@ function App() {
               handleLoginOpen={handleLoginOpen}
               handleRegisterOpen={handleRegisterOpen}
               onLogout={handleLogout}
-              token={token}
+              isLoggedIn={isAuthenticated()}
+              userRole={userRole}
             />
             <Snackbar
               open={showSuccess}
@@ -151,13 +155,52 @@ function App() {
                 path="/admin"
                 element={
                   <DashboardAdmin
+                    isLoggedIn={isAuthenticated()}
                     handleSessionExpiration={handleSessionExpiration}
                   />
                 }
               />
-              <Route path="/admin/products" element={<ProductAdmin />} />
-              <Route path="/admin/orders" element={<OrderAdmin />} />
-              <Route path="/admin/users" element={<UserAdmin />} />
+              <Route
+                path="/admin/products"
+                element={
+                  <ProductAdmin
+                    token={token}
+                    isLoggedIn={isAuthenticated()}
+                    handleSessionExpiration={handleSessionExpiration}
+                  />
+                }
+              />
+              {/* <Route
+                path="/admin/categories"
+                element={
+                  <CategoryAdmin
+                    token={token}
+                    isLoggedIn={isAuthenticated()}
+                    handleSessionExpiration={handleSessionExpiration}
+                  />
+                }
+              /> */}
+              <Route
+                path="/admin/orders"
+                element={
+                  <OrderAdmin
+                    token={token}
+                    isLoggedIn={isAuthenticated()}
+                    handleSessionExpiration={handleSessionExpiration}
+                  />
+                }
+              />
+              <Route
+                path="/admin/users"
+                element={
+                  <UserAdmin
+                    token={token}
+                    userRole={userRole}
+                    isLoggedIn={isAuthenticated()}
+                    handleSessionExpiration={handleSessionExpiration}
+                  />
+                }
+              />
               <Route path="*" element={<Error />} />
             </Routes>
             <Footer />

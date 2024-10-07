@@ -25,21 +25,20 @@ import lightLogo from '../assets/InnovShop_logo_light.png'
 import CartMenu from './CartMenu'
 import AdminMenu from './AdminMenu'
 import { useTheme as useMUITheme } from '@mui/material/styles'
-import { isAuthenticated } from '../services/authService'
 import { CartContext } from '../utils/context/cartContext'
-import { TOKEN_KEY } from '../utils/constants'
 
 const Logo = styled('img')({
   height: '100px',
 })
 
-function Header({ handleLoginOpen, handleRegisterOpen, onLogout, token }) {
-  token ||= localStorage.getItem(TOKEN_KEY)
-
+function Header({
+  handleLoginOpen,
+  handleRegisterOpen,
+  onLogout,
+  isLoggedIn,
+  userRole,
+}) {
   const muiTheme = useMUITheme()
-  const isLoggedIn = isAuthenticated()
-  const decodedToken = token ? jwtDecode(token) : null
-  const userRole = isLoggedIn ? decodedToken.user.role : null
   const { cart, totalQuantity } = useContext(CartContext) // Utiliser le contexte du panier
   const [isLogoutOpen, setLogoutOpen] = useState(false)
   const [anchorEl, setAnchorEl] = useState(null) // Pour gérer le menu panier

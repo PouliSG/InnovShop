@@ -8,9 +8,8 @@ import {
   Button,
 } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
-import { isAuthenticated } from '../../services/authService'
 
-const DashboardAdmin = ({ handleSessionExpiration }) => {
+const DashboardAdmin = ({ isLoggedIn, handleSessionExpiration }) => {
   const navigate = useNavigate()
 
   const handleUnauthenticated = () => {
@@ -20,10 +19,10 @@ const DashboardAdmin = ({ handleSessionExpiration }) => {
 
   useEffect(() => {
     // Check if the user is authenticated
-    if (!isAuthenticated()) {
+    if (!isLoggedIn) {
       handleUnauthenticated() // Open login modal if not authenticated
     }
-  }, [])
+  }, [isLoggedIn])
 
   return (
     <Box sx={{ p: 4 }}>

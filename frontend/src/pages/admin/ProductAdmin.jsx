@@ -10,10 +10,23 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
-const ProductAdmin = () => {
+const ProductAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
   const [products, setProducts] = useState([])
+  const navigate = useNavigate()
+
+  const handleUnauthenticated = () => {
+    handleSessionExpiration()
+    navigate('/')
+  }
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!isLoggedIn) {
+      handleUnauthenticated() // Open login modal if not authenticated
+    }
+  }, [])
 
   useEffect(() => {
     const fetchProducts = async () => {

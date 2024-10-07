@@ -10,11 +10,23 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import { TOKEN_KEY } from '../../utils/constants'
+import { Link, useNavigate } from 'react-router-dom'
 
-const UserAdmin = () => {
+const UserAdmin = ({ token, isLoggedIn, handleSessionExpiration }) => {
   const [users, setUsers] = useState([])
-  const token = localStorage.getItem(TOKEN_KEY)
+  const navigate = useNavigate()
+
+  const handleUnauthenticated = () => {
+    handleSessionExpiration()
+    navigate('/')
+  }
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!isLoggedIn) {
+      handleUnauthenticated() // Open login modal if not authenticated
+    }
+  }, [])
 
   useEffect(() => {
     const fetchUsers = async () => {
