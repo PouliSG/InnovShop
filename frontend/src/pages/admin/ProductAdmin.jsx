@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@mui/material'
 import { Link, useNavigate } from 'react-router-dom'
+import EnhancedTable from '../../components/EnhancedTable'
 
 const ProductAdmin = ({
   token,
@@ -59,6 +60,25 @@ const ProductAdmin = ({
     setProducts(products.filter((product) => product._id !== productId))
   }
 
+  const headCells = [
+    { id: 'name', numeric: false, disablePadding: false, label: 'Nom' },
+    { id: 'brand', numeric: false, disablePadding: false, label: 'Marque' },
+    {
+      id: 'category',
+      numeric: false,
+      disablePadding: false,
+      label: 'Catégorie',
+    },
+    { id: 'stock', numeric: true, disablePadding: false, label: 'Stock' },
+    { id: 'price', numeric: true, disablePadding: false, label: 'Prix' },
+    {
+      id: 'createdAt',
+      numeric: true,
+      disablePadding: false,
+      label: 'Date de création',
+    },
+  ]
+
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h4" gutterBottom>
@@ -74,43 +94,12 @@ const ProductAdmin = ({
         Ajouter un produit
       </Button>
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Nom</TableCell>
-            <TableCell>Marque</TableCell>
-            <TableCell>Prix</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {products.map((product) => (
-            <TableRow key={product._id}>
-              <TableCell>{product.name}</TableCell>
-              <TableCell>{product.brand}</TableCell>
-              <TableCell>{product.price} €</TableCell>
-              <TableCell sx={{ p: 2 }}>
-                <Button
-                  component={Link}
-                  to={`/admin/products/edit/${product._id}`}
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ mr: 2 }}
-                >
-                  Modifier
-                </Button>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => handleDelete(product._id)}
-                >
-                  Supprimer
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <EnhancedTable
+        title="Produits"
+        headCells={headCells}
+        rows={products}
+        handleDelete={handleDelete}
+      />
     </Box>
   )
 }

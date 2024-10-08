@@ -88,6 +88,9 @@ const OrderAdmin = ({
                 <Button
                   onClick={() => handleStatusUpdate(order._id)}
                   disabled={order.status === 'expédiée'}
+                  variant="outlined"
+                  color="secondary"
+                  sx={{ mr: 2 }}
                 >
                   Marquer comme expédiée
                 </Button>

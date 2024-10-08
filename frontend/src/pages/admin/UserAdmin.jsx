@@ -79,7 +79,12 @@ const UserAdmin = ({
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>
-                <Button color="error" onClick={() => handleDelete(user._id)}>
+                <Button
+                  color="error"
+                  variant="outlined"
+                  sx={{ mr: 2 }}
+                  onClick={() => handleDelete(user._id)}
+                >
                   Supprimer
                 </Button>
               </TableCell>
