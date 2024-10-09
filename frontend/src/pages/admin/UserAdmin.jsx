@@ -48,15 +48,31 @@ const UserAdmin = ({
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const data = await getUsers(token)
-      setUsers(data)
+      try {
+        const data = await getUsers(token)
+        setUsers(data)
+      } catch (error) {
+        if (error.sessionExpired) {
+          handleUnauthenticated() // Gérer la session expirée
+        } else {
+          console.error('Erreur lors du chargement des utilisateurs', error)
+        }
+      }
     }
     fetchUsers()
   }, [])
 
   const handleDelete = async (userId) => {
-    await deleteUser(userId)
-    setUsers(users.filter((user) => user._id !== userId))
+    try {
+      await deleteUser(userId)
+      setUsers(users.filter((user) => user._id !== userId))
+    } catch (error) {
+      if (error.sessionExpired) {
+        handleUnauthenticated() // Gérer la session expirée
+      } else {
+        console.error("Erreur lors de la suppression de l'utilisateur", error)
+      }
+    }
   }
 
   return (

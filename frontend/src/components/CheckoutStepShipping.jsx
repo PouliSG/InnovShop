@@ -17,6 +17,7 @@ const CheckoutStepShipping = ({
   setIsEditing,
   setNewAddress,
   newAddress,
+  handleSessionExpiration,
 }) => {
   const token = localStorage.getItem(TOKEN_KEY)
   const [addresses, setAddresses] = useState([])
@@ -26,7 +27,11 @@ const CheckoutStepShipping = ({
         const userAddresses = await getUserAddresses(token)
         setAddresses(userAddresses)
       } catch (error) {
-        console.error('Erreur lors du chargement des adresses', error)
+        if (error.sessionExpired) {
+          handleSessionExpiration() // Gérer la session expirée
+        } else {
+          console.error('Erreur lors du chargement des adresses', error)
+        }
       }
     }
     fetchAddresses()

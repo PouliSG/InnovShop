@@ -234,7 +234,7 @@ export default function EnhancedTable(props) {
       [...rows]
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage]
+    [rows, order, orderBy, page, rowsPerPage]
   )
 
   return (
@@ -333,7 +333,7 @@ export default function EnhancedTable(props) {
       </Paper>
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Dense padding"
+        label="Condensé"
       />
     </Box>
   )

@@ -282,9 +282,12 @@ const Checkout = ({ handleSessionExpiration }) => {
           setSelectedAddressId={setSelectedAddressId}
           setNewAddress={setNewAddress}
           newAddress={newAddress}
+          handleSessionExpiration={handleSessionExpiration}
         />
       )}
-      {activeStep === 2 && <CheckoutStepConfirm />}
+      {activeStep === 2 && (
+        <CheckoutStepConfirm handleConfirmOrder={handleConfirmOrder} />
+      )}
 
       <Divider sx={{ m: 2 }} />
       <Box

@@ -48,19 +48,38 @@ const OrderAdmin = ({
 
   useEffect(() => {
     const fetchOrders = async () => {
-      const data = await getOrders(token)
-      setOrders(data)
+      try {
+        const data = await getOrders(token)
+        setOrders(data)
+      } catch (error) {
+        if (error.sessionExpired) {
+          handleUnauthenticated() // Gérer la session expirée
+        } else {
+          console.error('Erreur lors du chargement des commandes', error)
+        }
+      }
     }
     fetchOrders()
   }, [])
 
   const handleStatusUpdate = async (orderId) => {
-    await updateOrderStatus(orderId, { status: 'expédiée' })
-    setOrders(
-      orders.map((order) =>
-        order._id === orderId ? { ...order, status: 'expédiée' } : order
+    try {
+      await updateOrderStatus(orderId, { status: 'expédiée' })
+      setOrders(
+        orders.map((order) =>
+          order._id === orderId ? { ...order, status: 'expédiée' } : order
+        )
       )
-    )
+    } catch (error) {
+      if (error.sessionExpired) {
+        handleUnauthenticated() // Gérer la session expirée
+      } else {
+        console.error(
+          'Erreur lors de la mise à jour du status de la commande',
+          error
+        )
+      }
+    }
   }
 
   return (

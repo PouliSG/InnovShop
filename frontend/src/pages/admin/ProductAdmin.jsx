@@ -49,8 +49,12 @@ const ProductAdmin = ({
 
   useEffect(() => {
     const fetchProducts = async () => {
-      const data = await getProducts()
-      setProducts(data)
+      try {
+        const data = await getProducts()
+        setProducts(data)
+      } catch (error) {
+        console.error('Erreur lors du chargement des produits', error)
+      }
     }
     fetchProducts()
   }, [])
