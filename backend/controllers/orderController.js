@@ -17,6 +17,15 @@ const placeOrder = async (req, res) => {
         .json({ msg: 'Panier ou adresse de livraison non trouvés' })
     }
 
+    // Vérifier le stock disponible pour chaque produit
+    for (const item of cart.products) {
+      if (item.product.stock < item.quantity) {
+        return res.status(400).json({
+          msg: `Le produit ${item.product.name} n'a pas assez de stock`,
+        })
+      }
+    }
+
     // Créer une nouvelle commande
     const order = new Order({
       user: req.user.id,
@@ -29,6 +38,12 @@ const placeOrder = async (req, res) => {
     })
 
     await order.save()
+
+    // Mettre à jour le stock des produits
+    for (const item of cart.products) {
+      item.product.stock -= item.quantity
+      await item.product.save()
+    }
 
     // Vider le panier après la commande
     cart.products = []
@@ -45,7 +60,7 @@ const placeOrder = async (req, res) => {
 const getUserOrders = async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user.id }).populate(
-      'products.product shippingAddress'
+      'status paymentStatus products.product shippingAddress'
     )
     res.status(200).json(orders)
   } catch (err) {
@@ -58,7 +73,7 @@ const getUserOrders = async (req, res) => {
 const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate(
-      'user products.product shippingAddress'
+      'user status paymentStatus products.product shippingAddress'
     )
     res.status(200).json(orders)
   } catch (err) {
@@ -72,7 +87,7 @@ const getOrderById = async (req, res) => {
   const { id } = req.params
   try {
     const order = await Order.findById(id).populate(
-      'user products.product shippingAddress'
+      'user status paymentStatus products.product shippingAddress'
     )
     if (!order) {
       return res.status(404).json({ msg: 'Commande non trouvée' })
@@ -88,17 +103,28 @@ const getOrderById = async (req, res) => {
 const updateOrderStatus = async (req, res) => {
   const { id } = req.params
   const { status } = req.body
-  const statusChangedAt = new Date() // Define the statusChangedAt variable
+  const statusChangedAt = new Date()
 
   try {
-    const order = await Order.findByIdAndUpdate(
-      id,
-      { status, statusChangedAt },
-      { new: true }
-    )
+    const order = await Order.findById(id).populate('products.product')
 
     if (!order) {
       return res.status(404).json({ msg: 'Commande non trouvée' })
+    }
+
+    // Mettre à jour le statut de la commande
+    order.status = status
+    order.statusChangedAt = statusChangedAt
+
+    await order.save()
+
+    // Vérifier si le statut est modifié en 'cancelled' et n'était pas déjà 'cancelled'
+    if (status === 'cancelled' && order.status !== 'cancelled') {
+      // Incrémenter le stock des produits
+      for (const item of order.products) {
+        item.product.stock += item.quantity
+        await item.product.save()
+      }
     }
 
     res.status(200).json(order)
@@ -136,7 +162,19 @@ const updatePaymentStatus = async (req, res) => {
 const deleteOrder = async (req, res) => {
   const { id } = req.params
   try {
+    const order = await Order.findById(id).populate('products.product')
+
+    if (!order) {
+      return res.status(404).json({ msg: 'Commande non trouvée' })
+    }
+
     await Order.findByIdAndDelete(id)
+
+    // Incrémenter le stock des produits
+    for (const item of order.products) {
+      item.product.stock += item.quantity
+      await item.product.save()
+    }
     res.json({ message: 'Commande supprimée' })
   } catch (err) {
     console.error(err.message)

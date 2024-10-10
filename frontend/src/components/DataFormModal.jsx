@@ -160,7 +160,7 @@ function ProductFormModal({
             case 'Select':
               return (
                 <TextField
-                  key={field.name}
+                  key={field._id}
                   select
                   label={field.label}
                   name={field.name}

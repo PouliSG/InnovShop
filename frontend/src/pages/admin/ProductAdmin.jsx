@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { getProducts, deleteProducts } from '../../services/apiService'
-import {
-  Box,
-  Button,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
 
@@ -22,6 +12,7 @@ const ProductAdmin = ({
   handleSuccess,
 }) => {
   const [products, setProducts] = useState([])
+
   const navigate = useNavigate()
 
   const handleUnauthenticated = () => {
@@ -97,27 +88,13 @@ const ProductAdmin = ({
   ]
 
   return (
-    // <Box sx={{ p: 2 }}>
-    //   <Typography variant="h4" gutterBottom>
-    //     Gestion des produits
-    //   </Typography>
-    //   <Button
-    //     component={Link}
-    //     to="/admin/products/add"
-    //     variant="contained"
-    //     color="primary"
-    //     sx={{ mb: 2 }}
-    //   >
-    //     Ajouter un produit
-    //   </Button>
-
     <EnhancedTable
       title="Produits"
       headCells={headCells}
       rows={products}
       handleDelete={handleDelete}
+      onSuccess={handleSuccess}
     />
-    // </Box>
   )
 }
 

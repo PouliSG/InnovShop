@@ -5,6 +5,7 @@ import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CardMedia from '@mui/material/CardMedia'
+import Modal from '@mui/material/Modal'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -153,7 +154,7 @@ EnhancedTableHead.propTypes = {
 }
 
 function EnhancedTableToolbar(props) {
-  const { numSelected, selected, title, handleDelete, handleAdd, handleEdit } =
+  const { numSelected, title, handleDeleteConfirmOpen, handleAdd, handleEdit } =
     props
   const theme = useTheme()
   return (
@@ -206,7 +207,7 @@ function EnhancedTableToolbar(props) {
           </Tooltip>
           <Tooltip title="Supprimer">
             <IconButton
-              onClick={() => handleDelete(selected)}
+              onClick={() => handleDeleteConfirmOpen()}
               sx={getIconButtonStyles(theme)}
             >
               <DeleteIcon />
@@ -226,9 +227,8 @@ function EnhancedTableToolbar(props) {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
-  selected: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
-  handleDelete: PropTypes.func,
+  handleDeleteConfirmOpen: PropTypes.func,
   handleAdd: PropTypes.func,
   handleEdit: PropTypes.func,
 }
@@ -238,16 +238,26 @@ EnhancedTable.propTypes = {
   headCells: PropTypes.array.isRequired,
   rows: PropTypes.array.isRequired,
   handleDelete: PropTypes.func,
+  onSuccess: PropTypes.func,
 }
 
 export default function EnhancedTable(props) {
-  const { title, headCells, rows, handleDelete } = props
+  const { title, headCells, rows, handleDelete, onSuccess } = props
   const [order, setOrder] = React.useState('desc')
   const [orderBy, setOrderBy] = React.useState('createdAt')
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
   const [dense, setDense] = React.useState(true)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
+  const [isDeleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false)
+
+  const handleDeleteConfirmOpen = () => setDeleteConfirmOpen(true)
+  const handleDeleteConfirmClose = () => setDeleteConfirmOpen(false)
+
+  const handleConfirmDelete = () => {
+    handleDelete(selected)
+    handleDeleteConfirmClose()
+  }
 
   const navigate = useNavigate()
   const location = useLocation()
@@ -325,131 +335,184 @@ export default function EnhancedTable(props) {
   )
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Paper sx={{ width: '100%', mb: 2 }}>
-        <EnhancedTableToolbar
-          numSelected={selected.length}
-          selected={selected}
-          title={title}
-          handleDelete={handleDelete}
-          handleAdd={handleAdd}
-          handleEdit={handleEdit}
-        />
-        <TableContainer sx={{ maxHeight: 600 }}>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? 'small' : 'medium'}
-          >
-            <EnhancedTableHead
-              headCells={headCells}
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={rows.length}
-            />
-            <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = selected.includes(row._id)
-                const labelId = `enhanced-table-checkbox-${index}`
+    <>
+      <Box sx={{ width: '100%' }}>
+        <Paper sx={{ width: '100%', mb: 2 }}>
+          <EnhancedTableToolbar
+            numSelected={selected.length}
+            title={title}
+            handleDeleteConfirmOpen={handleDeleteConfirmOpen}
+            handleAdd={handleAdd}
+            handleEdit={handleEdit}
+          />
+          <TableContainer sx={{ maxHeight: 600 }}>
+            <Table
+              sx={{ minWidth: 750 }}
+              aria-labelledby="tableTitle"
+              size={dense ? 'small' : 'medium'}
+            >
+              <EnhancedTableHead
+                headCells={headCells}
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={rows.length}
+              />
+              <TableBody>
+                {visibleRows.map((row, index) => {
+                  const isItemSelected = selected.includes(row._id)
+                  const labelId = `enhanced-table-checkbox-${index}`
 
-                return (
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row._id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row._id}
+                      selected={isItemSelected}
+                      sx={{ cursor: 'pointer' }}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                      {headCells.map((cell, index) =>
+                        index <= headCells.length / 2 ? (
+                          <TableCell
+                            key={cell.id}
+                            component="th"
+                            id={labelId}
+                            scope="row"
+                            padding="normal"
+                            sx={{
+                              maxWidth: '200px',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {cell.id === 'image' ? (
+                              <CardMedia
+                                component="img"
+                                height="80"
+                                image={row[cell.id]}
+                                alt={row.name}
+                              />
+                            ) : typeof row[cell.id] === 'object' ? (
+                              row[cell.id].name
+                            ) : (
+                              row[cell.id]
+                            )}
+                          </TableCell>
+                        ) : (
+                          <TableCell
+                            align="right"
+                            key={cell.id}
+                            sx={{
+                              maxWidth: '100px',
+                              whiteSpace: 'nowrap',
+                              overflow: 'hidden',
+                              textOverflow: 'ellipsis',
+                            }}
+                          >
+                            {typeof row[cell.id] === 'object'
+                              ? (row[cell.id].name || '').toLocaleString(
+                                  'fr-FR'
+                                )
+                              : (row[cell.id] || '').toLocaleString('fr-FR')}
+                          </TableCell>
+                        )
+                      )}
+                    </TableRow>
+                  )
+                })}
+                {emptyRows > 0 && (
                   <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row._id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row._id}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
+                    style={{
+                      height: (dense ? 33 : 53) * emptyRows,
+                    }}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
-                    {headCells.map((cell, index) =>
-                      index <= headCells.length / 2 ? (
-                        <TableCell
-                          key={cell.id}
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="normal"
-                          sx={{
-                            maxWidth: '200px',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
-                          {cell.id === 'image' ? (
-                            <CardMedia
-                              component="img"
-                              height="80"
-                              image={row[cell.id]}
-                              alt={row.name}
-                            />
-                          ) : typeof row[cell.id] === 'object' ? (
-                            row[cell.id].name
-                          ) : (
-                            row[cell.id]
-                          )}
-                        </TableCell>
-                      ) : (
-                        <TableCell
-                          align="right"
-                          key={cell.id}
-                          sx={{
-                            maxWidth: '100px',
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
-                          {typeof row[cell.id] === 'object'
-                            ? row[cell.id].name.toLocaleString('fr-FR')
-                            : row[cell.id].toLocaleString('fr-FR')}
-                        </TableCell>
-                      )
-                    )}
+                    <TableCell colSpan={6} />
                   </TableRow>
-                )
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25, { value: -1, label: 'Toutes/Tous' }]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          sx={{ alignItems: 'center' }}
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[
+              5,
+              10,
+              25,
+              { value: -1, label: 'Toutes/Tous' },
+            ]}
+            component="div"
+            count={rows.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+            sx={{ alignItems: 'center' }}
+          />
+        </Paper>
+        <FormControlLabel
+          control={<Switch checked={dense} onChange={handleChangeDense} />}
+          label="Condensé"
         />
-      </Paper>
-      <FormControlLabel
-        control={<Switch checked={dense} onChange={handleChangeDense} />}
-        label="Condensé"
-      />
-    </Box>
+      </Box>
+
+      <Modal open={isDeleteConfirmOpen} onClose={handleDeleteConfirmClose}>
+        <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            bgcolor: 'background.paper',
+            border: '2px solid #000',
+            boxShadow: 24,
+            p: 4,
+            width: 400, // Width of the modal
+            textAlign: 'center', // Center the text
+          }}
+        >
+          <Typography variant="h6" component="h2">
+            Confirmer la suppression
+          </Typography>
+          <Typography sx={{ mt: 2 }}>
+            Êtes-vous sûr de vouloir supprimer{' '}
+            {selected.length > 1
+              ? `les ${selected.length} éléments sélectionnés ?`
+              : "l'élément sélectionné ?"}
+          </Typography>
+          <Box
+            sx={{
+              mt: 4,
+              display: 'flex',
+              justifyContent: 'space-around',
+            }}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleConfirmDelete}
+            >
+              Oui
+            </Button>
+            <Button variant="outlined" onClick={handleDeleteConfirmClose}>
+              Annuler
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </>
   )
 }

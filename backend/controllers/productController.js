@@ -15,6 +15,7 @@ const addProduct = async (req, res) => {
       stock,
       featured,
       image,
+      createdAt: Date.now(),
     })
 
     await product.save()
