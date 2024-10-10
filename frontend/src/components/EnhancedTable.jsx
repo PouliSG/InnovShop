@@ -1,7 +1,10 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { alpha } from '@mui/material/styles'
 import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import CardMedia from '@mui/material/CardMedia'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -20,7 +23,10 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import DeleteIcon from '@mui/icons-material/Delete'
 import FilterListIcon from '@mui/icons-material/FilterList'
+import AddIcon from '@mui/icons-material/Add'
+import EditIcon from '@mui/icons-material/Edit'
 import { visuallyHidden } from '@mui/utils'
+import { useTheme } from '@mui/material/styles'
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -36,6 +42,50 @@ function getComparator(order, orderBy) {
   return order === 'desc'
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy)
+}
+
+function getButtonStyles(theme) {
+  return {
+    color: theme.palette.text.primary,
+    whiteSpace: 'nowrap',
+    '&:hover': {
+      color: theme.palette.text.secondary,
+    },
+    '& .MuiButton-startIcon': {
+      color: theme.palette.text.primary,
+    },
+    '&:hover .MuiButton-startIcon': {
+      color: theme.palette.text.secondary,
+    },
+  }
+}
+
+function getContainedButtonStyles(theme) {
+  return {
+    color: theme.palette.text.third,
+    whiteSpace: 'nowrap',
+    minWidth: '170px',
+    'font-size': '0.7rem',
+    '&:hover': {
+      color: theme.palette.text.secondary,
+    },
+    '& .MuiButton-startIcon': {
+      color: theme.palette.text.third,
+    },
+    '&:hover .MuiButton-startIcon': {
+      color: theme.palette.text.secondary,
+    },
+  }
+}
+
+function getIconButtonStyles(theme) {
+  return {
+    color: theme.palette.text.primary.main,
+    '&:hover': {
+      color: theme.palette.text.secondary,
+    },
+    borderRadius: theme.shape.borderRadius,
+  }
 }
 
 function EnhancedTableHead(props) {
@@ -103,7 +153,9 @@ EnhancedTableHead.propTypes = {
 }
 
 function EnhancedTableToolbar(props) {
-  const { numSelected, title, handleDelete } = props
+  const { numSelected, selected, title, handleDelete, handleAdd, handleEdit } =
+    props
+  const theme = useTheme()
   return (
     <Toolbar
       sx={[
@@ -120,16 +172,7 @@ function EnhancedTableToolbar(props) {
         },
       ]}
     >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} sélectionnés
-        </Typography>
-      ) : (
+      <Box sx={{ flex: '1 1 100%' }}>
         <Typography
           sx={{ flex: '1 1 100%' }}
           variant="h6"
@@ -138,16 +181,41 @@ function EnhancedTableToolbar(props) {
         >
           {title}
         </Typography>
-      )}
+        {numSelected > 0 && (
+          <Typography
+            sx={{ flex: '1 1 100%' }}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
+          >
+            {numSelected} sélectionné(s)
+          </Typography>
+        )}
+      </Box>
+      <Tooltip title="Ajouter">
+        <IconButton onClick={handleAdd} sx={getIconButtonStyles(theme)}>
+          <AddIcon />
+        </IconButton>
+      </Tooltip>
       {numSelected > 0 ? (
-        <Tooltip title="Supprimer">
-          <IconButton onClick={handleDelete}>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
+        <>
+          <Tooltip title="Modifier">
+            <IconButton onClick={handleEdit} sx={getIconButtonStyles(theme)}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Supprimer">
+            <IconButton
+              onClick={() => handleDelete(selected)}
+              sx={getIconButtonStyles(theme)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+        </>
       ) : (
         <Tooltip title="Filtres">
-          <IconButton>
+          <IconButton sx={getIconButtonStyles(theme)}>
             <FilterListIcon />
           </IconButton>
         </Tooltip>
@@ -158,8 +226,11 @@ function EnhancedTableToolbar(props) {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+  selected: PropTypes.array.isRequired,
   title: PropTypes.string.isRequired,
   handleDelete: PropTypes.func,
+  handleAdd: PropTypes.func,
+  handleEdit: PropTypes.func,
 }
 
 EnhancedTable.propTypes = {
@@ -175,8 +246,24 @@ export default function EnhancedTable(props) {
   const [orderBy, setOrderBy] = React.useState('createdAt')
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
-  const [dense, setDense] = React.useState(false)
+  const [dense, setDense] = React.useState(true)
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
+
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const handleAdd = () => {
+    navigate(location.pathname + '/add')
+  }
+
+  const handleEdit = () => {
+    if (selected.length === 1) {
+      navigate(`${location.pathname}/edit/${selected[0]}`)
+    } else {
+      // Gérer le cas où plusieurs éléments sont sélectionnés ou aucun
+      alert('Veuillez sélectionner un seul produit à éditer.')
+    }
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc'
@@ -186,7 +273,7 @@ export default function EnhancedTable(props) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id)
+      const newSelected = rows.map((n) => n._id)
       setSelected(newSelected)
       return
     }
@@ -242,10 +329,13 @@ export default function EnhancedTable(props) {
       <Paper sx={{ width: '100%', mb: 2 }}>
         <EnhancedTableToolbar
           numSelected={selected.length}
+          selected={selected}
           title={title}
           handleDelete={handleDelete}
+          handleAdd={handleAdd}
+          handleEdit={handleEdit}
         />
-        <TableContainer>
+        <TableContainer sx={{ maxHeight: 600 }}>
           <Table
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
@@ -262,13 +352,13 @@ export default function EnhancedTable(props) {
             />
             <TableBody>
               {visibleRows.map((row, index) => {
-                const isItemSelected = selected.includes(row.id)
+                const isItemSelected = selected.includes(row._id)
                 const labelId = `enhanced-table-checkbox-${index}`
 
                 return (
                   <TableRow
                     hover
-                    onClick={(event) => handleClick(event, row.id)}
+                    onClick={(event) => handleClick(event, row._id)}
                     role="checkbox"
                     aria-checked={isItemSelected}
                     tabIndex={-1}
@@ -286,23 +376,47 @@ export default function EnhancedTable(props) {
                       />
                     </TableCell>
                     {headCells.map((cell, index) =>
-                      index === 0 ? (
+                      index <= headCells.length / 2 ? (
                         <TableCell
                           key={cell.id}
                           component="th"
                           id={labelId}
                           scope="row"
-                          padding="none"
+                          padding="normal"
+                          sx={{
+                            maxWidth: '200px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
                         >
-                          {typeof row[cell.id] === 'object'
-                            ? row[cell.id].name
-                            : row[cell.id]}
+                          {cell.id === 'image' ? (
+                            <CardMedia
+                              component="img"
+                              height="80"
+                              image={row[cell.id]}
+                              alt={row.name}
+                            />
+                          ) : typeof row[cell.id] === 'object' ? (
+                            row[cell.id].name
+                          ) : (
+                            row[cell.id]
+                          )}
                         </TableCell>
                       ) : (
-                        <TableCell align="right" key={cell.id}>
+                        <TableCell
+                          align="right"
+                          key={cell.id}
+                          sx={{
+                            maxWidth: '100px',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                          }}
+                        >
                           {typeof row[cell.id] === 'object'
-                            ? row[cell.id].name
-                            : row[cell.id]}
+                            ? row[cell.id].name.toLocaleString('fr-FR')
+                            : row[cell.id].toLocaleString('fr-FR')}
                         </TableCell>
                       )
                     )}
@@ -322,13 +436,14 @@ export default function EnhancedTable(props) {
           </Table>
         </TableContainer>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[5, 10, 25, { value: -1, label: 'Toutes/Tous' }]}
           component="div"
           count={rows.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          sx={{ alignItems: 'center' }}
         />
       </Paper>
       <FormControlLabel

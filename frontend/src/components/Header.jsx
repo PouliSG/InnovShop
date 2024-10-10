@@ -70,6 +70,7 @@ function Header({
   }
 
   const getButtonStyles = (path) => ({
+    whiteSpace: 'nowrap',
     color:
       location.pathname === path ||
       (path != '/' && location.pathname.startsWith(path))
@@ -91,6 +92,7 @@ function Header({
   })
 
   const getContainedButtonStyles = (path) => ({
+    whiteSpace: 'nowrap',
     color:
       location.pathname === path ||
       (path != '/' && location.pathname.startsWith(path))

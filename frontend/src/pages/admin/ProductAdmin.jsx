@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getProducts, deleteProduct } from '../../services/apiService'
+import { getProducts, deleteProducts } from '../../services/apiService'
 import {
   Box,
   Button,
@@ -10,7 +10,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
 
 const ProductAdmin = ({
@@ -19,6 +19,7 @@ const ProductAdmin = ({
   isLoggedIn,
   handleUnauthorizedAccess,
   handleSessionExpiration,
+  handleSuccess,
 }) => {
   const [products, setProducts] = useState([])
   const navigate = useNavigate()
@@ -59,12 +60,24 @@ const ProductAdmin = ({
     fetchProducts()
   }, [])
 
-  const handleDelete = async (productId) => {
-    await deleteProduct(productId)
-    setProducts(products.filter((product) => product._id !== productId))
+  const handleDelete = async (productIds) => {
+    try {
+      await deleteProducts(token, productIds)
+      setProducts(
+        products.filter((product) => !productIds.includes(product._id))
+      )
+      handleSuccess()
+    } catch (error) {
+      if (error.sessionExpired) {
+        handleUnauthenticated() // Gérer la session expirée
+      } else {
+        console.error('Erreur lors de la suppression du produit', error)
+      }
+    }
   }
 
   const headCells = [
+    { id: 'image', numeric: false, disablePadding: false, label: 'Image' },
     { id: 'name', numeric: false, disablePadding: false, label: 'Nom' },
     { id: 'brand', numeric: false, disablePadding: false, label: 'Marque' },
     {
@@ -84,27 +97,27 @@ const ProductAdmin = ({
   ]
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Gestion des produits
-      </Typography>
-      <Button
-        component={Link}
-        to="/admin/products/add"
-        variant="contained"
-        color="primary"
-        sx={{ mb: 2 }}
-      >
-        Ajouter un produit
-      </Button>
+    // <Box sx={{ p: 2 }}>
+    //   <Typography variant="h4" gutterBottom>
+    //     Gestion des produits
+    //   </Typography>
+    //   <Button
+    //     component={Link}
+    //     to="/admin/products/add"
+    //     variant="contained"
+    //     color="primary"
+    //     sx={{ mb: 2 }}
+    //   >
+    //     Ajouter un produit
+    //   </Button>
 
-      <EnhancedTable
-        title="Produits"
-        headCells={headCells}
-        rows={products}
-        handleDelete={handleDelete}
-      />
-    </Box>
+    <EnhancedTable
+      title="Produits"
+      headCells={headCells}
+      rows={products}
+      handleDelete={handleDelete}
+    />
+    // </Box>
   )
 }
 

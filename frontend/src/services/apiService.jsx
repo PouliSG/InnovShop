@@ -430,6 +430,24 @@ export const deleteProduct = async (token, productId) => {
   }
 }
 
+// Supprimer des produits
+export const deleteProducts = async (token, productIds) => {
+  try {
+    var responses = []
+    productIds.forEach(async (productId) => {
+      const response = await api.delete(`${API_URL}/products/${productId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      responses.push(response.data)
+    })
+    return responses
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
 // Mettre à jour un produit
 export const updateProduct = async (token, productId, productData) => {
   try {
@@ -449,7 +467,7 @@ export const updateProduct = async (token, productId, productData) => {
 }
 
 // Ajouter un produit
-export const addProduct = async (productData, token) => {
+export const addProduct = async (token, productData) => {
   try {
     const response = await api.post(`${API_URL}/products`, productData, {
       headers: {
