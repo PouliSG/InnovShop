@@ -154,8 +154,18 @@ EnhancedTableHead.propTypes = {
 }
 
 function EnhancedTableToolbar(props) {
-  const { numSelected, title, handleDeleteConfirmOpen, handleAdd, handleEdit } =
-    props
+  const {
+    numSelected,
+    title,
+    handleDeleteConfirmOpen,
+    handleAdd,
+    handleEdit,
+    handleUpdateStatus,
+    handleUpdatePayment,
+    handlePromote,
+    handleSetActive,
+    handleSetVerified,
+  } = props
   const theme = useTheme()
   return (
     <Toolbar
@@ -231,6 +241,11 @@ EnhancedTableToolbar.propTypes = {
   handleDeleteConfirmOpen: PropTypes.func,
   handleAdd: PropTypes.func,
   handleEdit: PropTypes.func,
+  handleUpdateStatus: PropTypes.func,
+  handleUpdatePayment: PropTypes.func,
+  handlePromote: PropTypes.func,
+  handleSetActive: PropTypes.func,
+  handleSetVerified: PropTypes.func,
 }
 
 EnhancedTable.propTypes = {
@@ -239,10 +254,26 @@ EnhancedTable.propTypes = {
   rows: PropTypes.array.isRequired,
   handleDelete: PropTypes.func,
   onSuccess: PropTypes.func,
+  handleUpdateStatus: PropTypes.func,
+  handleUpdatePayment: PropTypes.func,
+  handlePromote: PropTypes.func,
+  handleSetActive: PropTypes.func,
+  handleSetVerified: PropTypes.func,
 }
 
 export default function EnhancedTable(props) {
-  const { title, headCells, rows, handleDelete, onSuccess } = props
+  const {
+    title,
+    headCells,
+    rows,
+    handleDelete,
+    onSuccess,
+    handleUpdateStatus,
+    handleUpdatePayment,
+    handlePromote,
+    handleSetActive,
+    handleSetVerified,
+  } = props
   const [order, setOrder] = React.useState('desc')
   const [orderBy, setOrderBy] = React.useState('createdAt')
   const [selected, setSelected] = React.useState([])
@@ -344,6 +375,11 @@ export default function EnhancedTable(props) {
             handleDeleteConfirmOpen={handleDeleteConfirmOpen}
             handleAdd={handleAdd}
             handleEdit={handleEdit}
+            handleUpdateStatus={handleUpdateStatus}
+            handleUpdatePayment={handleUpdatePayment}
+            handlePromote={handlePromote}
+            handleSetActive={handleSetActive}
+            handleSetVerified={handleSetVerified}
           />
           <TableContainer sx={{ maxHeight: 600 }}>
             <Table

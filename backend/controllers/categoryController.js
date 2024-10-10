@@ -36,6 +36,23 @@ const getCategories = async (req, res) => {
   }
 }
 
+// Obtenir une catégorie par ID
+const getCategoryById = async (req, res) => {
+  const { id } = req.params
+
+  try {
+    const category = await Category.findById(id)
+    if (!category) {
+      return res.status(404).json({ msg: 'Catégorie non trouvée' })
+    }
+
+    res.status(200).json(category)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur serveur')
+  }
+}
+
 // Mettre à jour une catégorie
 const updateCategory = async (req, res) => {
   const { id } = req.params
@@ -79,6 +96,7 @@ const deleteCategory = async (req, res) => {
 
 module.exports = {
   addCategory,
+  getCategoryById,
   getCategories,
   updateCategory,
   deleteCategory,

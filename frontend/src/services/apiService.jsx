@@ -222,6 +222,17 @@ export const addUserAddress = async (token, addressData) => {
   }
 }
 
+// Ajouter un utilisateur
+export const addUser = async (token, userData) => {
+  try {
+    const response = await api.post(`${API_URL}/users`, userData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
 // Mettre à jour une adresse existante
 export const updateAddress = async (token, addressId, addressData) => {
   try {
@@ -256,6 +267,34 @@ export const deleteAddress = async (token, addressId) => {
 export const getOrders = async (token) => {
   try {
     const response = await api.get(`${API_URL}/orders/all`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Récupérer une commande par ID
+export const getOrderById = async (token, orderId) => {
+  try {
+    const response = await api.get(`${API_URL}/orders/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour une commande
+export const updateOrder = async (token, orderId, orderData) => {
+  try {
+    const response = await api.put(`${API_URL}/orders/${orderId}`, orderData, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -316,6 +355,20 @@ export const getUsers = async (token) => {
   }
 }
 
+// Récupérer un utilisateur par ID
+export const getUserById = async (token, userId) => {
+  try {
+    const response = await api.get(`${API_URL}/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
 // Réinitialiser le mot de passe d'un utilisateur
 export const resetUserPassword = async (token, userId) => {
   try {
@@ -352,6 +405,52 @@ export const updateUserRole = async (token, userId, role) => {
   }
 }
 
+// Mettre à jour les paramètres d'un utilisateur
+export const updateUserSettings = async (token, userId, settings) => {
+  try {
+    const response = await api.put(
+      `${API_URL}/users/${userId}/settings`,
+      { settings },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour le profil d'un utilisateur
+export const updateUserProfile = async (token, userData) => {
+  try {
+    const response = await api.put(`${API_URL}/users/profile`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour un utilisateur
+export const updateUser = async (token, userId, userData) => {
+  try {
+    const response = await api.put(`${API_URL}/users/${userId}`, userData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
 // Supprimer un utilisateur
 export const deleteUser = async (token, userId) => {
   try {
@@ -367,17 +466,23 @@ export const deleteUser = async (token, userId) => {
 }
 
 // Ajouter une catégorie
-export const addCategory = async (token, name) => {
+export const addCategory = async (token, catData) => {
   try {
-    const response = await api.post(
-      `${API_URL}/categories`,
-      { name },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    const response = await api.post(`${API_URL}/categories`, catData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Obtenir une catégorie par ID
+export const getCategoryById = async (categoryId) => {
+  try {
+    const response = await api.get(`${API_URL}/categories/${categoryId}`)
     return response.data
   } catch (error) {
     throw error.response.data
@@ -393,6 +498,24 @@ export const deleteCategory = async (token, categoryId) => {
       },
     })
     return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Supprimer des catégories
+export const deleteCategories = async (token, categoryIds) => {
+  try {
+    var responses = []
+    categoryIds.forEach(async (categoryId) => {
+      const response = await api.delete(`${API_URL}/categories/${categoryId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      responses.push(response.data)
+    })
+    return responses
   } catch (error) {
     throw error.response.data
   }

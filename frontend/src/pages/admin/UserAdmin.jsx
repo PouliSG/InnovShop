@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getUsers, deleteUser } from '../../services/apiService'
-import {
-  Box,
-  Button,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@mui/material'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
+import EnhancedTable from '../../components/EnhancedTable'
 
 const UserAdmin = ({
   token,
@@ -18,6 +9,7 @@ const UserAdmin = ({
   isLoggedIn,
   handleUnauthorizedAccess,
   handleSessionExpiration,
+  handleSuccess,
 }) => {
   const [users, setUsers] = useState([])
   const navigate = useNavigate()
@@ -75,40 +67,56 @@ const UserAdmin = ({
     }
   }
 
-  return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Gestion des utilisateurs
-      </Typography>
+  const headCells = [
+    { id: 'firstname', numeric: false, disablePadding: false, label: 'Prénom' },
+    { id: 'lastname', numeric: false, disablePadding: false, label: 'Nom' },
+    {
+      id: 'email',
+      numeric: false,
+      disablePadding: false,
+      label: 'Adresse e-mail',
+    },
+    { id: 'role', numeric: false, disablePadding: false, label: 'Rôle' },
+    {
+      id: 'verified',
+      numeric: false,
+      disablePadding: false,
+      label: 'Compte vérifié',
+    },
+    {
+      id: 'active',
+      numeric: false,
+      disablePadding: false,
+      label: 'Compte actif',
+    },
+    {
+      id: 'signup_date',
+      numeric: true,
+      disablePadding: false,
+      label: 'Date de création',
+    },
+    {
+      id: 'last_login_date',
+      numeric: true,
+      disablePadding: false,
+      label: 'Dernière connexion',
+    },
+    {
+      id: 'newsletter_optin',
+      numeric: false,
+      disablePadding: false,
+      label: 'Opt-in newsletter',
+    },
+  ]
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Nom</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user._id}>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>
-                <Button
-                  color="error"
-                  variant="outlined"
-                  sx={{ mr: 2 }}
-                  onClick={() => handleDelete(user._id)}
-                >
-                  Supprimer
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Box>
+  return (
+    <EnhancedTable
+      title="Utilisateurs"
+      headCells={headCells}
+      rows={users}
+      handleDelete={handleDelete}
+      onSuccess={handleSuccess}
+    />
   )
 }
 

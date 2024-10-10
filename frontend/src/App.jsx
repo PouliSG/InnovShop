@@ -24,8 +24,9 @@ import OrderConfirmation from './pages/OrderConfirmation'
 // import Dashboard from './pages/Dashboard'
 // import OrderHistory from './pages/OrderHistory'
 import DashboardAdmin from './pages/admin/DashboardAdmin'
-import ProductAdmin from './pages/admin/ProductAdmin'
+import CategoryAdmin from './pages/admin/CategoryAdmin'
 import OrderAdmin from './pages/admin/OrderAdmin'
+import ProductAdmin from './pages/admin/ProductAdmin'
 import UserAdmin from './pages/admin/UserAdmin'
 import { useTheme } from './utils/context/themeContext'
 import ThemedGlobalStyle from './utils/style/GlobalStyle'
@@ -177,7 +178,14 @@ function AppContent(props) {
   const navigate = useNavigate()
 
   // Vérifiez si la route actuelle correspond à une modal
-  const isModalOpen = /^\/admin\/products\/(?:add|edit)(?:\/[\w-]+)?$/.test(
+  const isProductModalOpen =
+    /^\/admin\/products\/(?:add|edit)(?:\/[\w-]+)?$/.test(location.pathname)
+  const isCategoryModalOpen =
+    /^\/admin\/categories\/(?:add|edit)(?:\/[\w-]+)?$/.test(location.pathname)
+  const isOrderModalOpen = /^\/admin\/orders\/(?:add|edit)(?:\/[\w-]+)?$/.test(
+    location.pathname
+  )
+  const isUserModalOpen = /^\/admin\/users\/(?:add|edit)(?:\/[\w-]+)?$/.test(
     location.pathname
   )
 
@@ -287,7 +295,7 @@ function AppContent(props) {
         <Route
           path="/admin/products/add"
           element={
-            isModalOpen && (
+            isProductModalOpen && (
               <DataFormModal
                 token={token}
                 onClose={() => navigate(-1)}
@@ -305,7 +313,7 @@ function AppContent(props) {
         <Route
           path="/admin/products/edit/:id"
           element={
-            isModalOpen && (
+            isProductModalOpen && (
               <DataFormModal
                 token={token}
                 onClose={() => navigate(-1)}
@@ -319,18 +327,55 @@ function AppContent(props) {
             )
           }
         />
-        {/* <Route
-                path="/admin/categories"
-                element={
-                  <CategoryAdmin
-                    token={token}
-                    userRole={userRole}
-                    isLoggedIn={isAuthenticated()}
-                    handleUnauthorizedAccess={handleUnauthorizedAccess}
-                    handleSessionExpiration={handleSessionExpiration}
-                  />
-                }
-              /> */}
+        <Route
+          path="/admin/categories"
+          element={
+            <CategoryAdmin
+              token={token}
+              userRole={userRole}
+              isLoggedIn={isAuthenticated()}
+              handleUnauthorizedAccess={handleUnauthorizedAccess}
+              handleSessionExpiration={handleSessionExpiration}
+              handleSuccess={handleGenericSuccess}
+            />
+          }
+        />
+        {/* Route pour l'ajout de catégorie */}
+        <Route
+          path="/admin/categories/add"
+          element={
+            isCategoryModalOpen && (
+              <DataFormModal
+                token={token}
+                onClose={() => navigate(-1)}
+                handleSuccess={handleGenericSuccess}
+                handleSessionExpiration={handleSessionExpiration}
+                dataType={'catégorie'}
+                addMethod={apiService.addCategory}
+                updateMethod={apiService.updateCategory}
+                getByIdMethod={apiService.getCategoryById}
+              />
+            )
+          }
+        />
+        {/* Route pour l'édition de catégorie */}
+        <Route
+          path="/admin/categories/edit/:id"
+          element={
+            isCategoryModalOpen && (
+              <DataFormModal
+                token={token}
+                onClose={() => navigate(-1)}
+                handleSuccess={handleGenericSuccess}
+                handleSessionExpiration={handleSessionExpiration}
+                dataType={'catégorie'}
+                addMethod={apiService.addCategory}
+                updateMethod={apiService.updateCategory}
+                getByIdMethod={apiService.getCategoryById}
+              />
+            )
+          }
+        />
         <Route
           path="/admin/orders"
           element={
@@ -340,7 +385,44 @@ function AppContent(props) {
               isLoggedIn={isAuthenticated()}
               handleUnauthorizedAccess={handleUnauthorizedAccess}
               handleSessionExpiration={handleSessionExpiration}
+              handleSuccess={handleGenericSuccess}
             />
+          }
+        />
+        {/* Route pour l'ajout de commande */}
+        <Route
+          path="/admin/orders/add"
+          element={
+            isOrderModalOpen && (
+              <DataFormModal
+                token={token}
+                onClose={() => navigate(-1)}
+                handleSuccess={handleGenericSuccess}
+                handleSessionExpiration={handleSessionExpiration}
+                dataType={'commande'}
+                addMethod={apiService.placeOrder}
+                updateMethod={apiService.updateOrder}
+                getByIdMethod={apiService.getOrderById}
+              />
+            )
+          }
+        />
+        {/* Route pour l'édition de commande */}
+        <Route
+          path="/admin/orders/edit/:id"
+          element={
+            isOrderModalOpen && (
+              <DataFormModal
+                token={token}
+                onClose={() => navigate(-1)}
+                handleSuccess={handleGenericSuccess}
+                handleSessionExpiration={handleSessionExpiration}
+                dataType={'commande'}
+                addMethod={apiService.placeOrder}
+                updateMethod={apiService.updateOrder}
+                getByIdMethod={apiService.getOrderById}
+              />
+            )
           }
         />
         <Route
@@ -352,7 +434,44 @@ function AppContent(props) {
               isLoggedIn={isAuthenticated()}
               handleUnauthorizedAccess={handleUnauthorizedAccess}
               handleSessionExpiration={handleSessionExpiration}
+              handleSuccess={handleGenericSuccess}
             />
+          }
+        />
+        {/* Route pour l'ajout d'utilisateur */}
+        <Route
+          path="/admin/users/add"
+          element={
+            isUserModalOpen && (
+              <DataFormModal
+                token={token}
+                onClose={() => navigate(-1)}
+                handleSuccess={handleGenericSuccess}
+                handleSessionExpiration={handleSessionExpiration}
+                dataType={'utilisateur'}
+                addMethod={apiService.addUser}
+                updateMethod={apiService.updateUser}
+                getByIdMethod={apiService.getUserById}
+              />
+            )
+          }
+        />
+        {/* Route pour l'édition d'utilisateur */}
+        <Route
+          path="/admin/users/edit/:id"
+          element={
+            isUserModalOpen && (
+              <DataFormModal
+                token={token}
+                onClose={() => navigate(-1)}
+                handleSuccess={handleGenericSuccess}
+                handleSessionExpiration={handleSessionExpiration}
+                dataType={'utilisateur'}
+                addMethod={apiService.addUser}
+                updateMethod={apiService.updateUser}
+                getByIdMethod={apiService.getUserById}
+              />
+            )
           }
         />
         <Route path="*" element={<Error />} />

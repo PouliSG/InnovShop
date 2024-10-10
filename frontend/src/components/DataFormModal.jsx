@@ -15,7 +15,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { DataStructure, DefaultData } from '../utils/constants'
 import { getCategories } from '../services/apiService'
 
-function ProductFormModal({
+function DataFormModal({
   token,
   onClose,
   handleSuccess,
@@ -141,66 +141,68 @@ function ProductFormModal({
             : `Ajouter un${(dataType.endsWith('e') ? 'e ' : ' ') + dataType}`}
         </Typography>
         {/* Champs du formulaire */}
-        {itemStructure.map((field) => {
-          switch (field.type) {
-            case 'TextField':
-              return (
-                <TextField
-                  key={field.name}
-                  label={field.label}
-                  name={field.name}
-                  value={item[field.name] || ''}
-                  onChange={handleChange}
-                  fullWidth
-                  required={field.required}
-                  margin="normal"
-                  type={field.inputType || 'text'}
-                />
-              )
-            case 'Select':
-              return (
-                <TextField
-                  key={field._id}
-                  select
-                  label={field.label}
-                  name={field.name}
-                  value={item[field.name] || ''}
-                  onChange={handleChange}
-                  fullWidth
-                  required={field.required}
-                  margin="normal"
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category._id} value={category._id}>
-                      {category.name}
-                    </MenuItem>
-                  ))}
-                </TextField>
-              )
-            case 'CheckBox':
-              return (
-                <FormControlLabel
-                  key={field.name}
-                  control={
-                    <Checkbox
-                      checked={item[field.name] || false}
-                      onChange={(e) => {
-                        setIsDirty(true)
-                        setItem({ ...item, [field.name]: e.target.checked })
-                      }}
-                      name={field.name}
-                      color="primary"
-                    />
-                  }
-                  label={field.label}
-                />
-              )
-            default:
-              return null
-          }
-        })}
+        <Box display="flex" flexDirection="column" gap={2}>
+          {itemStructure.map((field) => {
+            switch (field.type) {
+              case 'TextField':
+                return (
+                  <TextField
+                    key={field.name}
+                    label={field.label}
+                    name={field.name}
+                    value={item[field.name] || ''}
+                    onChange={handleChange}
+                    fullWidth
+                    required={field.required}
+                    margin="normal"
+                    type={field.inputType || 'text'}
+                  />
+                )
+              case 'Select':
+                return (
+                  <TextField
+                    key={field._id}
+                    select
+                    label={field.label}
+                    name={field.name}
+                    value={item[field.name] || ''}
+                    onChange={handleChange}
+                    fullWidth
+                    required={field.required}
+                    margin="normal"
+                  >
+                    {categories.map((category) => (
+                      <MenuItem key={category._id} value={category._id}>
+                        {category.name}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                )
+              case 'CheckBox':
+                return (
+                  <FormControlLabel
+                    key={field.name}
+                    control={
+                      <Checkbox
+                        checked={item[field.name] || false}
+                        onChange={(e) => {
+                          setIsDirty(true)
+                          setItem({ ...item, [field.name]: e.target.checked })
+                        }}
+                        name={field.name}
+                        color="primary"
+                      />
+                    }
+                    label={field.label}
+                  />
+                )
+              default:
+                return null
+            }
+          })}
+        </Box>
         {/* Boutons d'action */}
-        <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
+        <Box display="flex" justifyContent="flex-end" gap={0.5}>
           <Button variant="outlined" onClick={handleClose}>
             Annuler
           </Button>
@@ -213,4 +215,4 @@ function ProductFormModal({
   )
 }
 
-export default ProductFormModal
+export default DataFormModal
