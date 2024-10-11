@@ -36,6 +36,9 @@ export const DataStructure = {
       name: 'category',
       label: 'Catégorie',
       type: 'Select',
+      values: 'categories',
+      key: '_id',
+      value: 'name',
       required: true,
     },
     {
@@ -127,6 +130,7 @@ export const DataStructure = {
       name: 'role',
       label: 'Rôle',
       type: 'Select',
+      values: ['admin', 'employee', 'user'],
       required: true,
     },
     // {
@@ -178,6 +182,59 @@ export const DataStructure = {
       required: false,
     },
   ],
+  commande: [
+    {
+      name: 'user',
+      label: 'Utilisateur',
+      type: 'AutocComplete',
+      values: 'users', // Indique que nous devons charger la liste des utilisateurs
+      key: '_id',
+      value: (option) =>
+        `${option.firstname} ${option.lastname} (${option.email})`,
+      required: true,
+    },
+    {
+      name: 'shippingAddress',
+      label: 'Adresse de livraison',
+      type: 'Select',
+      values: 'shippingAddresses', // Sera chargé en fonction de l'utilisateur sélectionné
+      key: '_id',
+      value: 'fullAddress', // Assurez-vous que l'adresse a un champ 'fullAddress'
+      required: true,
+    },
+    {
+      name: 'products',
+      label: 'Produits',
+      type: 'ProductList', // Type de champ personnalisé pour gérer les produits multiples
+      required: true,
+    },
+    {
+      name: 'totalPrice',
+      label: 'Prix total',
+      type: 'TextField',
+      format: 'float',
+      value: (products) =>
+        products.reduce((acc, product) => acc + product.price, 0),
+      required: true,
+      readOnly: true, // Champ en lecture seule
+    },
+    {
+      name: 'status',
+      label: 'Statut de la commande',
+      type: 'Select',
+      values: ['pending', 'shipped', 'delivered', 'cancelled'],
+      defaultValue: 'pending',
+      required: true,
+    },
+    {
+      name: 'paymentStatus',
+      label: 'Statut du paiement',
+      type: 'Select',
+      values: ['pending', 'paid', 'failed'],
+      defaultValue: 'pending',
+      required: true,
+    },
+  ],
 }
 
 export const DefaultData = {
@@ -201,8 +258,16 @@ export const DefaultData = {
     email: '',
     gender: '',
     birthdate: '',
-    role: 'user',
+    role: '',
     verified: false,
     active: true,
+  },
+  commande: {
+    user: '',
+    shippingAddress: '',
+    products: [], // Tableau des produits avec quantité
+    totalPrice: 0,
+    status: 'pending',
+    paymentStatus: 'pending',
   },
 }

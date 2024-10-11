@@ -99,10 +99,31 @@ const getOrderById = async (req, res) => {
   }
 }
 
+// Mettre à jour une commande par ID
+const updateOrder = async (req, res) => {
+  const { id } = req.params
+  const { user, products, shippingAddress, status, paymentStatus, totalPrice } =
+    req.params
+  try {
+    const order = await Order.findByIdAndUpdate(
+      id,
+      { user, products, shippingAddress, status, paymentStatus, totalPrice },
+      { new: true }
+    )
+    if (!order) {
+      return res.status(404).json({ msg: 'Commande non trouvée' })
+    }
+    res.status(200).json(order)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur serveur')
+  }
+}
+
 // Mettre à jour le statut d'une commande
 const updateOrderStatus = async (req, res) => {
   const { id } = req.params
-  const { status } = req.body
+  const { status } = req.params
   const statusChangedAt = new Date()
 
   try {
@@ -137,7 +158,7 @@ const updateOrderStatus = async (req, res) => {
 // Mettre à jour le statut de paiement d'une commande
 const updatePaymentStatus = async (req, res) => {
   const { id } = req.params
-  const { paymentStatus } = req.body
+  const { status } = req.params
   const paymentStatusChangedAt = new Date()
 
   try {
@@ -199,6 +220,7 @@ module.exports = {
   getUserOrders,
   getAllOrders,
   getOrderById,
+  updateOrder,
   updateOrderStatus,
   updatePaymentStatus,
   deleteOrder,

@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { getOrders, updateOrderStatus } from '../../services/apiService'
+import {
+  getOrders,
+  updateOrderStatus,
+  updatePaymentStatus,
+  deleteOrders,
+} from '../../services/apiService'
 import {
   Box,
   Button,
@@ -10,6 +15,7 @@ import {
   TableHead,
   TableRow,
 } from '@mui/material'
+import EnhancedTable from '../../components/EnhancedTable'
 import { useNavigate } from 'react-router-dom'
 
 const OrderAdmin = ({
@@ -18,6 +24,7 @@ const OrderAdmin = ({
   userRole,
   handleUnauthorizedAccess,
   handleSessionExpiration,
+  handleSuccess,
 }) => {
   const [orders, setOrders] = useState([])
   const navigate = useNavigate()
@@ -82,43 +89,88 @@ const OrderAdmin = ({
     }
   }
 
-  return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Gestion des commandes
-      </Typography>
+  const handleDelete = async (orderIds) => {
+    try {
+      await deleteOrders(token, orderIds)
+      setOrders(orders.filter((order) => !orderIds.includes(order._id)))
+      handleSuccess()
+    } catch (error) {
+      if (error.sessionExpired) {
+        handleUnauthenticated() // Gérer la session expirée
+      } else {
+        console.error('Erreur lors de la suppression du produit', error)
+      }
+    }
+  }
 
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Numéro de commande</TableCell>
-            <TableCell>Date</TableCell>
-            <TableCell>Status</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {orders.map((order) => (
-            <TableRow key={order._id}>
-              <TableCell>{order._id}</TableCell>
-              <TableCell>{new Date(order.date).toLocaleDateString()}</TableCell>
-              <TableCell>{order.status}</TableCell>
-              <TableCell>
-                <Button
-                  onClick={() => handleStatusUpdate(order._id)}
-                  disabled={order.status === 'expédiée'}
-                  variant="outlined"
-                  color="secondary"
-                  sx={{ mr: 2 }}
-                >
-                  Marquer comme expédiée
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Box>
+  const headCells = [
+    {
+      id: '_id',
+      numeric: false,
+      disablePadding: false,
+      label: 'ID de commande',
+    },
+    {
+      id: 'user',
+      numeric: false,
+      disablePadding: false,
+      label: 'Utilisateur',
+      value: (user) => `${user.firstname} ${user.lastname}`,
+    },
+    {
+      id: 'products',
+      numeric: false,
+      disablePadding: false,
+      label: 'Articles',
+      value: (products) =>
+        products.reduce((acc, product) => acc + product.quantity, 0),
+    },
+    {
+      id: 'totalPrice',
+      numeric: true,
+      disablePadding: false,
+      label: 'Prix total (€)',
+    },
+    {
+      id: 'status',
+      numeric: false,
+      disablePadding: false,
+      label: 'Statut',
+    },
+    {
+      id: 'paymentStatus',
+      numeric: false,
+      disablePadding: false,
+      label: 'Statut de paiement',
+    },
+    {
+      id: 'createdAt',
+      numeric: true,
+      disablePadding: false,
+      label: 'Date de création',
+    },
+    {
+      id: 'statusChangedAt',
+      numeric: true,
+      disablePadding: false,
+      label: 'Date ch. statut',
+    },
+    {
+      id: 'paymentStatusChangedAt',
+      numeric: true,
+      disablePadding: false,
+      label: 'Date ch. statut paiement',
+    },
+  ]
+
+  return (
+    <EnhancedTable
+      title="Commandes"
+      headCells={headCells}
+      rows={orders}
+      handleDelete={handleDelete}
+      onSuccess={handleSuccess}
+    />
   )
 }
 

@@ -79,6 +79,10 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ msg: 'Identifiants incorrects' })
     }
 
+    // Mise à jour du statut de connexion
+    user.last_login_date = Date.now()
+    await user.save()
+
     // Génération du token JWT
     const payload = {
       user: {

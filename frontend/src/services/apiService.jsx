@@ -198,6 +198,18 @@ export const placeOrder = async (token, cartId, shippingAddressId) => {
   }
 }
 
+// Récupérer les addresses d'un utilisateur
+export const getAddressesByUser = async (token, userId) => {
+  try {
+    const response = await api.get(`${API_URL}/addresses/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
 // Récupérer les adresses de l'utilisateur
 export const getUserAddresses = async (token) => {
   try {
@@ -309,8 +321,7 @@ export const updateOrder = async (token, orderId, orderData) => {
 export const updateOrderStatus = async (token, orderId, status) => {
   try {
     const response = await api.put(
-      `${API_URL}/orders/${orderId}`,
-      { status },
+      `${API_URL}/orders/${orderId}/status/${status}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -327,8 +338,7 @@ export const updateOrderStatus = async (token, orderId, status) => {
 export const updatePaymentStatus = async (token, orderId, status) => {
   try {
     const response = await api.put(
-      `${API_URL}/orders/${orderId}/payment`,
-      { status },
+      `${API_URL}/orders/${orderId}/payment/${status}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -336,6 +346,38 @@ export const updatePaymentStatus = async (token, orderId, status) => {
       }
     )
     return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Supprimer une commande
+export const deleteOrder = async (token, orderId) => {
+  try {
+    const response = await api.delete(`${API_URL}/orders/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Supprimer des commandes
+export const deleteOrders = async (token, orderIds) => {
+  try {
+    var responses = []
+    orderIds.forEach(async (orderId) => {
+      const response = await api.delete(`${API_URL}/orders/${orderId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      responses.push(response.data)
+    })
+    return responses
   } catch (error) {
     throw error.response.data
   }

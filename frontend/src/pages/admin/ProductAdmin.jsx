@@ -76,6 +76,7 @@ const ProductAdmin = ({
       numeric: false,
       disablePadding: false,
       label: 'Catégorie',
+      value: (option) => option.name,
     },
     { id: 'stock', numeric: true, disablePadding: false, label: 'Stock' },
     { id: 'price', numeric: true, disablePadding: false, label: 'Prix' },

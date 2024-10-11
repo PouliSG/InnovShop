@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getUsers, deleteUser } from '../../services/apiService'
+import { getUsers, deleteUser, promoteUser } from '../../services/apiService'
 import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
 
@@ -63,6 +63,21 @@ const UserAdmin = ({
         handleUnauthenticated() // Gérer la session expirée
       } else {
         console.error("Erreur lors de la suppression de l'utilisateur", error)
+      }
+    }
+  }
+
+  const handlePromote = () => {
+    try {
+      // TODO
+    } catch (error) {
+      if (error.sessionExpired) {
+        handleUnauthenticated() // Gérer la session expirée
+      } else {
+        console.error(
+          "Erreur lors du changement du statut d'un utilisateur",
+          error
+        )
       }
     }
   }

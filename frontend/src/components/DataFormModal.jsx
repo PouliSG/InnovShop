@@ -9,11 +9,18 @@ import {
   MenuItem,
   FormControlLabel,
   Checkbox,
+  Autocomplete,
 } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { Close as CloseIcon } from '@mui/icons-material'
+import ProductListField from './ProductListField'
 import { useParams, useNavigate } from 'react-router-dom'
 import { DataStructure, DefaultData } from '../utils/constants'
-import { getCategories } from '../services/apiService'
+import {
+  getCategories,
+  getUsers,
+  getProducts,
+  getAddressesByUser,
+} from '../services/apiService'
 
 function DataFormModal({
   token,
@@ -29,28 +36,44 @@ function DataFormModal({
   const navigate = useNavigate()
   const [item, setItem] = useState(DefaultData[dataType]) // Pour stocker les données du formulaire
   const [categories, setCategories] = useState([]) // Pour stocker les catégories
+  const [users, setUsers] = useState([])
+  const [products, setProducts] = useState([])
+  const [shippingAddresses, setShippingAddresses] = useState([])
   const [isDirty, setIsDirty] = useState(false) // Pour suivre les modifications du formulaire
 
-  const itemStructure = DataStructure[dataType]
+  const orderStatuses = ['pending', 'shipped', 'delivered', 'cancelled']
+  const paymentStatuses = ['pending', 'paid', 'failed']
+
+  var itemStructure = DataStructure[dataType]
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       try {
-        const categories = await getCategories()
-        setCategories(categories)
+        if (dataType === 'commande') {
+          // Charger les utilisateurs
+          const usersData = await getUsers(token)
+          setUsers(usersData)
+
+          // Charger les produits
+          const productsData = await getProducts()
+          setProducts(productsData)
+        } else if (dataType === 'produit') {
+          // Charger les catégories
+          const categoriesData = await getCategories()
+          setCategories(categoriesData)
+        }
+        // Ajoutez d'autres chargements de données si nécessaire
       } catch (error) {
-        console.error('Erreur lors de la récupération des catégories :', error)
+        console.error('Erreur lors du chargement des données :', error)
       }
     }
-    if (dataType === 'produit') {
-      fetchCategories()
-    }
+    fetchData()
   }, [dataType])
 
   useEffect(() => {
     if (id) {
       // Si un ID est présent, nous sommes en mode édition
-      const fetchProduct = async () => {
+      const fetchItem = async () => {
         try {
           var data
           if (['produit', 'catégorie'].includes(dataType)) {
@@ -63,13 +86,45 @@ function DataFormModal({
           console.error('Erreur lors du chargement du produit', error)
         }
       }
-      fetchProduct()
+      fetchItem()
     }
   }, [id])
 
-  const handleChange = (e) => {
+  useEffect(() => {
+    if (dataType === 'commande') {
+      const calculateTotalPrice = () => {
+        let total = 0
+        item.products.forEach((productItem) => {
+          const product = products.find(
+            (p) => p._id === (productItem.product._id || productItem.product)
+          )
+          if (product) {
+            total += product.price * productItem.quantity
+          }
+        })
+        total === 0 && (total = null)
+        setItem((prevItem) => ({ ...prevItem, totalPrice: total }))
+      }
+      calculateTotalPrice()
+    }
+  }, [item.products, products])
+
+  const handleChange = async (e) => {
     setIsDirty(true)
-    setItem({ ...item, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setItem({ ...item, [name]: value })
+
+    if (dataType === 'commande' && name === 'user') {
+      try {
+        // Charger les adresses de livraison pour l'utilisateur sélectionné
+        const addressesData = await getAddressesByUser(token, value)
+        setShippingAddresses(addressesData)
+        // Réinitialiser l'adresse de livraison sélectionnée
+        setItem((prevItem) => ({ ...prevItem, shippingAddress: '' }))
+      } catch (error) {
+        console.error('Erreur lors du chargement des adresses :', error)
+      }
+    }
   }
 
   const handleSubmit = async (e) => {
@@ -156,9 +211,16 @@ function DataFormModal({
                     required={field.required}
                     margin="normal"
                     type={field.inputType || 'text'}
+                    InputProps={field.readOnly ? { readOnly: true } : {}}
                   />
                 )
               case 'Select':
+                const elements = Array.isArray(field.values)
+                  ? field.values
+                  : {
+                      categories,
+                      shippingAddresses,
+                    }[field.values]
                 return (
                   <TextField
                     key={field._id}
@@ -171,12 +233,89 @@ function DataFormModal({
                     required={field.required}
                     margin="normal"
                   >
-                    {categories.map((category) => (
-                      <MenuItem key={category._id} value={category._id}>
-                        {category.name}
-                      </MenuItem>
-                    ))}
+                    {elements &&
+                      elements.map((element) => (
+                        <MenuItem
+                          key={element[field.key] || element}
+                          value={element[field.key] || element}
+                        >
+                          {element[field.value]
+                            ? element[field.value]
+                            : element}
+                        </MenuItem>
+                      ))}
                   </TextField>
+                )
+              case 'AutocComplete':
+                const options = Array.isArray(field.values)
+                  ? field.values
+                  : {
+                      users,
+                    }[field.values]
+                return (
+                  <Autocomplete
+                    key={field.name}
+                    options={options}
+                    getOptionLabel={field.value}
+                    value={
+                      options.find(
+                        (option) => option[field.key] === item[field.name]
+                      ) || null
+                    }
+                    onChange={(event, newValue) => {
+                      setIsDirty(true)
+                      setItem({
+                        ...item,
+                        [field.name]: newValue, // ? newValue[field.key] : '',
+                      })
+
+                      // Charger les adresses lorsque l'utilisateur est sélectionné
+                      if (
+                        dataType === 'commande' &&
+                        field.name === 'user' &&
+                        newValue
+                      ) {
+                        ;(async () => {
+                          try {
+                            const addressesData = await getAddressesByUser(
+                              token,
+                              newValue[field.key]
+                            )
+                            setShippingAddresses(addressesData)
+                            setItem((prevItem) => ({
+                              ...prevItem,
+                              shippingAddress: '',
+                            }))
+                          } catch (error) {
+                            console.error(
+                              'Erreur lors du chargement des adresses :',
+                              error
+                            )
+                          }
+                        })()
+                      }
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label={field.label}
+                        margin="normal"
+                        required={field.required}
+                      />
+                    )}
+                  />
+                )
+              case 'ProductList':
+                return (
+                  <ProductListField
+                    key={field.name}
+                    products={products}
+                    value={item[field.name]}
+                    onChange={(newProducts) => {
+                      setIsDirty(true)
+                      setItem({ ...item, [field.name]: newProducts })
+                    }}
+                  />
                 )
               case 'CheckBox':
                 return (

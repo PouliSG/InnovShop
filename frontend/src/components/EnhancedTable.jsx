@@ -444,7 +444,9 @@ export default function EnhancedTable(props) {
                                 alt={row.name}
                               />
                             ) : typeof row[cell.id] === 'object' ? (
-                              row[cell.id].name
+                              (cell.value(row[cell.id]) || '').toLocaleString(
+                                'fr-FR'
+                              )
                             ) : (
                               row[cell.id]
                             )}
@@ -461,7 +463,7 @@ export default function EnhancedTable(props) {
                             }}
                           >
                             {typeof row[cell.id] === 'object'
-                              ? (row[cell.id].name || '').toLocaleString(
+                              ? (cell.value(row[cell.id]) || '').toLocaleString(
                                   'fr-FR'
                                 )
                               : (row[cell.id] || '').toLocaleString('fr-FR')}

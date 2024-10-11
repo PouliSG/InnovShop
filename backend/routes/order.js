@@ -5,10 +5,10 @@ const {
   getUserOrders,
   getAllOrders,
   getOrderById,
+  updateOrder,
   updateOrderStatus,
   updatePaymentStatus,
   deleteOrder,
-  cancelOrder,
   getOrdersByUser,
 } = require('../controllers/orderController')
 const auth = require('../middlewares/auth')
@@ -26,12 +26,20 @@ router.get('/all', auth, checkRole(['employee', 'admin']), getAllOrders)
 // Route pour obtenir une commande par son id (employee and admin only)
 router.get('/:id', auth, checkRole(['employee', 'admin']), getOrderById)
 
+// Route pour mettre à jour une commande (employee and admin only)
+router.put('/:id', auth, checkRole(['employee', 'admin']), updateOrder)
+
 // Route pour mettre à jour le statut de la commande (employee and admin only)
-router.put('/:id', auth, checkRole(['employee', 'admin']), updateOrderStatus)
+router.put(
+  '/:id/status/:status',
+  auth,
+  checkRole(['employee', 'admin']),
+  updateOrderStatus
+)
 
 // Route pour mettre à jour le statut du paiement de la commande (employee and admin only)
 router.put(
-  '/:id/payment',
+  '/:id/payment/:status',
   auth,
   checkRole(['employee', 'admin']),
   updatePaymentStatus
