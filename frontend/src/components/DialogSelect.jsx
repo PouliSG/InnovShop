@@ -88,7 +88,7 @@ const DialogSelect = ({
               </InputLabel>
               <Select
                 native
-                value={selected[0][field.name]}
+                value={item[field.name]}
                 onChange={handleChange}
                 input={
                   <OutlinedInput label={field.label} id="demo-dialog-native" />

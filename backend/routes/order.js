@@ -39,7 +39,7 @@ router.put(
 
 // Route pour mettre à jour le statut du paiement de la commande (employee and admin only)
 router.put(
-  '/:id/payment/:status',
+  '/:id/payment/:paymentStatus',
   auth,
   checkRole(['employee', 'admin']),
   updatePaymentStatus

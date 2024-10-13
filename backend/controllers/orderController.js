@@ -156,8 +156,7 @@ const updateOrderStatus = async (req, res) => {
 
 // Mettre à jour le statut de paiement d'une commande
 const updatePaymentStatus = async (req, res) => {
-  const { id } = req.params
-  const { status } = req.params
+  const { id, paymentStatus } = req.params
   const paymentStatusChangedAt = new Date()
 
   try {
