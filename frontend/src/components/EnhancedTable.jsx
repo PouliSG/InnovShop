@@ -26,6 +26,11 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import FilterListIcon from '@mui/icons-material/FilterList'
 import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
+import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
+import DialogSelect from './DialogSelect'
+import { DataStructure } from '../utils/constants'
+
 import { visuallyHidden } from '@mui/utils'
 import { useTheme } from '@mui/material/styles'
 
@@ -145,6 +150,7 @@ function EnhancedTableHead(props) {
 
 EnhancedTableHead.propTypes = {
   headCells: PropTypes.array.isRequired,
+  selected: PropTypes.array.isRequired,
   numSelected: PropTypes.number.isRequired,
   onRequestSort: PropTypes.func.isRequired,
   onSelectAllClick: PropTypes.func.isRequired,
@@ -155,6 +161,8 @@ EnhancedTableHead.propTypes = {
 
 function EnhancedTableToolbar(props) {
   const {
+    selected,
+    data,
     numSelected,
     title,
     handleDeleteConfirmOpen,
@@ -165,56 +173,118 @@ function EnhancedTableToolbar(props) {
     handlePromote,
     handleSetActive,
     handleSetVerified,
+    onSuccess,
   } = props
+  const [statusDialogOpen, setStatusDialogOpen] = React.useState(false)
+  const [paymentDialogOpen, setPaymentDialogOpen] = React.useState(false)
+  const [item, setItem] = React.useState(null)
   const theme = useTheme()
+
+  React.useEffect(() => {
+    if (selected.length === 1) {
+      setItem(data.find((x) => x._id === selected[0]))
+    }
+  }, [selected])
+
+  const handleOpenStatusDialog = () => {
+    if (selected.length === 1) {
+      setStatusDialogOpen(true)
+    } else {
+      // Gérer le cas où plusieurs éléments sont sélectionnés ou aucun
+      alert('Veuillez sélectionner un seul élément à éditer.')
+    }
+  }
+
+  const handleOpenPaymentDialog = () => {
+    if (selected.length === 1) {
+      setPaymentDialogOpen(true)
+    } else {
+      // Gérer le cas où plusieurs éléments sont sélectionnés ou aucun
+      alert('Veuillez sélectionner un seul élément à éditer.')
+    }
+  }
+  const statusField = DataStructure.commande.find((x) => x.name === 'status')
+  const paymentField = DataStructure.commande.find(
+    (x) => x.name === 'paymentStatus'
+  )
+
   return (
-    <Toolbar
-      sx={[
-        {
-          pl: { sm: 2 },
-          pr: { xs: 1, sm: 1 },
-        },
-        numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        },
-      ]}
-    >
-      <Box sx={{ flex: '1 1 100%' }}>
-        <Typography
-          sx={{ flex: '1 1 100%' }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          {title}
-        </Typography>
-        {numSelected > 0 && (
+    <>
+      <Toolbar
+        sx={[
+          {
+            pl: { sm: 2 },
+            pr: { xs: 1, sm: 1 },
+          },
+          numSelected > 0 && {
+            bgcolor: (theme) =>
+              alpha(
+                theme.palette.primary.main,
+                theme.palette.action.activatedOpacity
+              ),
+          },
+        ]}
+      >
+        <Box sx={{ flex: '1 1 100%' }}>
           <Typography
             sx={{ flex: '1 1 100%' }}
-            color="inherit"
-            variant="subtitle1"
+            variant="h6"
+            id="tableTitle"
             component="div"
           >
-            {numSelected} sélectionné(s)
+            {title}
           </Typography>
+          {numSelected > 0 && (
+            <Typography
+              sx={{ flex: '1 1 100%' }}
+              color="inherit"
+              variant="subtitle1"
+              component="div"
+            >
+              {numSelected} sélectionné(s)
+            </Typography>
+          )}
+        </Box>
+        <Tooltip title="Ajouter">
+          <IconButton onClick={handleAdd} sx={getIconButtonStyles(theme)}>
+            <AddIcon />
+          </IconButton>
+        </Tooltip>
+        {numSelected === 1 && (
+          <>
+            {/* Boutons spécifiques aux commandes */}
+            {title === 'Commandes' ? (
+              <>
+                <Tooltip title="Modifier le statut">
+                  <IconButton
+                    onClick={() => handleOpenStatusDialog()}
+                    sx={getIconButtonStyles(theme)}
+                  >
+                    <ShoppingBagIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Modifier le paiement">
+                  <IconButton
+                    onClick={() => handleOpenPaymentDialog()}
+                    sx={getIconButtonStyles(theme)}
+                  >
+                    <ShoppingCartCheckoutIcon />
+                  </IconButton>
+                </Tooltip>
+              </>
+            ) : (
+              <Tooltip title="Modifier">
+                <IconButton
+                  onClick={handleEdit}
+                  sx={getIconButtonStyles(theme)}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </>
         )}
-      </Box>
-      <Tooltip title="Ajouter">
-        <IconButton onClick={handleAdd} sx={getIconButtonStyles(theme)}>
-          <AddIcon />
-        </IconButton>
-      </Tooltip>
-      {numSelected > 0 ? (
-        <>
-          <Tooltip title="Modifier">
-            <IconButton onClick={handleEdit} sx={getIconButtonStyles(theme)}>
-              <EditIcon />
-            </IconButton>
-          </Tooltip>
+        {numSelected > 0 && (
           <Tooltip title="Supprimer">
             <IconButton
               onClick={() => handleDeleteConfirmOpen()}
@@ -223,19 +293,51 @@ function EnhancedTableToolbar(props) {
               <DeleteIcon />
             </IconButton>
           </Tooltip>
-        </>
-      ) : (
+        )}
+        {/* {numSelected === 0 && (
+        // Afficher les filtres si aucun élément n'est sélectionné
         <Tooltip title="Filtres">
           <IconButton sx={getIconButtonStyles(theme)}>
             <FilterListIcon />
           </IconButton>
         </Tooltip>
+      )} */}
+      </Toolbar>
+
+      {statusDialogOpen && (
+        <DialogSelect
+          title="Modifier le statut de la commande"
+          field={statusField}
+          selected={selected}
+          item={item}
+          setItem={setItem}
+          open={statusDialogOpen}
+          setOpen={setStatusDialogOpen}
+          onSubmit={handleUpdateStatus}
+          handleSuccess={onSuccess}
+        />
       )}
-    </Toolbar>
+
+      {paymentDialogOpen && (
+        <DialogSelect
+          title="Modifier le statut de paiement de la commande"
+          field={paymentField}
+          selected={selected}
+          item={item}
+          setItem={setItem}
+          open={paymentDialogOpen}
+          setOpen={setPaymentDialogOpen}
+          onSubmit={handleUpdatePayment}
+          handleSuccess={onSuccess}
+        />
+      )}
+    </>
   )
 }
 
 EnhancedTableToolbar.propTypes = {
+  selected: PropTypes.array.isRequired,
+  data: PropTypes.array.isRequired,
   numSelected: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   handleDeleteConfirmOpen: PropTypes.func,
@@ -246,6 +348,7 @@ EnhancedTableToolbar.propTypes = {
   handlePromote: PropTypes.func,
   handleSetActive: PropTypes.func,
   handleSetVerified: PropTypes.func,
+  onSuccess: PropTypes.func,
 }
 
 EnhancedTable.propTypes = {
@@ -302,7 +405,7 @@ export default function EnhancedTable(props) {
       navigate(`${location.pathname}/edit/${selected[0]}`)
     } else {
       // Gérer le cas où plusieurs éléments sont sélectionnés ou aucun
-      alert('Veuillez sélectionner un seul produit à éditer.')
+      alert('Veuillez sélectionner un seul élément à éditer.')
     }
   }
 
@@ -370,6 +473,8 @@ export default function EnhancedTable(props) {
       <Box sx={{ width: '100%' }}>
         <Paper sx={{ width: '100%', mb: 2 }}>
           <EnhancedTableToolbar
+            selected={selected}
+            data={rows}
             numSelected={selected.length}
             title={title}
             handleDeleteConfirmOpen={handleDeleteConfirmOpen}
@@ -380,6 +485,7 @@ export default function EnhancedTable(props) {
             handlePromote={handlePromote}
             handleSetActive={handleSetActive}
             handleSetVerified={handleSetVerified}
+            onSuccess={onSuccess}
           />
           <TableContainer sx={{ maxHeight: 600 }}>
             <Table

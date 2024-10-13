@@ -122,8 +122,7 @@ const updateOrder = async (req, res) => {
 
 // Mettre à jour le statut d'une commande
 const updateOrderStatus = async (req, res) => {
-  const { id } = req.params
-  const { status } = req.params
+  const { id, status } = req.params
   const statusChangedAt = new Date()
 
   try {

@@ -69,12 +69,12 @@ const OrderAdmin = ({
     fetchOrders()
   }, [])
 
-  const handleStatusUpdate = async (orderId) => {
+  const handleStatusUpdate = async (orderId, status) => {
     try {
-      await updateOrderStatus(orderId, { status: 'expédiée' })
+      await updateOrderStatus(token, orderId, status)
       setOrders(
         orders.map((order) =>
-          order._id === orderId ? { ...order, status: 'expédiée' } : order
+          order._id === orderId ? { ...order, status } : order
         )
       )
     } catch (error) {
@@ -82,7 +82,27 @@ const OrderAdmin = ({
         handleUnauthenticated() // Gérer la session expirée
       } else {
         console.error(
-          'Erreur lors de la mise à jour du status de la commande',
+          'Erreur lors de la mise à jour du statut de la commande',
+          error
+        )
+      }
+    }
+  }
+
+  const handlePaymentUpdate = async (orderId, paymentStatus) => {
+    try {
+      await updatePaymentStatus(token, orderId, paymentStatus)
+      setOrders(
+        orders.map((order) =>
+          order._id === orderId ? { ...order, paymentStatus } : order
+        )
+      )
+    } catch (error) {
+      if (error.sessionExpired) {
+        handleUnauthenticated() // Gérer la session expirée
+      } else {
+        console.error(
+          'Erreur lors de la mise à jour du statut de paiement de la commande',
           error
         )
       }
@@ -170,6 +190,8 @@ const OrderAdmin = ({
       rows={orders}
       handleDelete={handleDelete}
       onSuccess={handleSuccess}
+      handleUpdateStatus={handleStatusUpdate}
+      handleUpdatePayment={handlePaymentUpdate}
     />
   )
 }

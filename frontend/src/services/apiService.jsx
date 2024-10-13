@@ -322,6 +322,7 @@ export const updateOrderStatus = async (token, orderId, status) => {
   try {
     const response = await api.put(
       `${API_URL}/orders/${orderId}/status/${status}`,
+      {},
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -339,6 +340,7 @@ export const updatePaymentStatus = async (token, orderId, status) => {
   try {
     const response = await api.put(
       `${API_URL}/orders/${orderId}/payment/${status}`,
+      {},
       {
         headers: {
           Authorization: `Bearer ${token}`,

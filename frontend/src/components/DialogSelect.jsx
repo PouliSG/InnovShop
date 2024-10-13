@@ -10,17 +10,57 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import MenuItem from '@mui/material/MenuItem'
 import FormControl from '@mui/material/FormControl'
 import Select from '@mui/material/Select'
+import { useTheme } from '@mui/material/styles'
 
-export default function DialogSelect() {
-  const [open, setOpen] = React.useState(false)
-  const [age, setAge] = React.useState('')
+const DialogSelect = ({
+  title,
+  field,
+  selected,
+  item,
+  setItem,
+  open,
+  setOpen,
+  onSubmit,
+  handleSuccess,
+}) => {
+  const [value, setValue] = React.useState(item[field.name])
+  const theme = useTheme()
 
-  const handleChange = (event) => {
-    setAge(Number(event.target.value) || '')
+  function getButtonStyles(theme) {
+    return {
+      color: theme.palette.text.primary,
+      whiteSpace: 'nowrap',
+      '&:hover': {
+        color: theme.palette.text.secondary,
+      },
+      '& .MuiButton-startIcon': {
+        color: theme.palette.text.primary,
+      },
+      '&:hover .MuiButton-startIcon': {
+        color: theme.palette.text.secondary,
+      },
+    }
   }
 
-  const handleClickOpen = () => {
-    setOpen(true)
+  function getContainedButtonStyles(theme) {
+    return {
+      color: theme.palette.text.primary,
+      '&:hover': {
+        color: theme.palette.text.secondary,
+      },
+      '& .MuiButton-startIcon': {
+        color: theme.palette.text.primary,
+      },
+      '&:hover .MuiButton-startIcon': {
+        color: theme.palette.text.secondary,
+      },
+    }
+  }
+
+  const handleChange = (event) => {
+    setValue(event.target.value || '')
+    item[field.name] = event.target.value
+    setItem(item)
   }
 
   const handleClose = (event, reason) => {
@@ -29,51 +69,51 @@ export default function DialogSelect() {
     }
   }
 
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    onSubmit(item._id, value)
+    handleSuccess()
+    setOpen(false)
+  }
+
   return (
     <div>
-      <Button onClick={handleClickOpen}>Open select dialog</Button>
       <Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
-        <DialogTitle>Fill the form</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
         <DialogContent>
           <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel htmlFor="demo-dialog-native">Age</InputLabel>
+            <FormControl sx={{ m: 1, minWidth: 400 }}>
+              <InputLabel htmlFor="demo-dialog-native">
+                {field.label}
+              </InputLabel>
               <Select
                 native
-                value={age}
+                value={selected[0][field.name]}
                 onChange={handleChange}
-                input={<OutlinedInput label="Age" id="demo-dialog-native" />}
+                input={
+                  <OutlinedInput label={field.label} id="demo-dialog-native" />
+                }
               >
-                <option aria-label="None" value="" />
-                <option value={10}>Ten</option>
-                <option value={20}>Twenty</option>
-                <option value={30}>Thirty</option>
-              </Select>
-            </FormControl>
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <InputLabel id="demo-dialog-select-label">Age</InputLabel>
-              <Select
-                labelId="demo-dialog-select-label"
-                id="demo-dialog-select"
-                value={age}
-                onChange={handleChange}
-                input={<OutlinedInput label="Age" />}
-              >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
+                {field.values.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
               </Select>
             </FormControl>
           </Box>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleClose}>Ok</Button>
+          <Button onClick={handleClose} sx={getButtonStyles(theme)}>
+            Annuler
+          </Button>
+          <Button onClick={handleSubmit} sx={getContainedButtonStyles(theme)}>
+            Mettre à jour
+          </Button>
         </DialogActions>
       </Dialog>
     </div>
   )
 }
+
+export default DialogSelect
