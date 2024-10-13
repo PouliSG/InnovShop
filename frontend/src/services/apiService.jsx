@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { API_URL, TOKEN_KEY } from '../utils/constants'
+import { API_URL, SETTINGS_KEY, TOKEN_KEY } from '../utils/constants'
 
 const api = axios.create({
   baseURL: process.env.API_URL,
@@ -210,41 +210,6 @@ export const getAddressesByUser = async (token, userId) => {
   }
 }
 
-// Récupérer les adresses de l'utilisateur
-export const getUserAddresses = async (token) => {
-  try {
-    const response = await api.get(`${API_URL}/users/addresses`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    return response.data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
-// Ajouter une nouvelle adresse
-export const addUserAddress = async (token, addressData) => {
-  try {
-    const response = await api.post(`${API_URL}/users/address`, addressData, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    return response.data
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
-// Ajouter un utilisateur
-export const addUser = async (token, userData) => {
-  try {
-    const response = await api.post(`${API_URL}/users`, userData, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-  } catch (error) {
-    throw error.response.data
-  }
-}
-
 // Mettre à jour une adresse existante
 export const updateAddress = async (token, addressId, addressData) => {
   try {
@@ -385,6 +350,18 @@ export const deleteOrders = async (token, orderIds) => {
   }
 }
 
+// Récupérer les commandes d'un utilisateur
+export const getUserOrders = async (token) => {
+  try {
+    const response = await api.get(`${API_URL}/orders/user`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data || error
+  }
+}
+
 // Récupérer tous les utilisateurs
 export const getUsers = async (token) => {
   try {
@@ -449,18 +426,25 @@ export const updateUserRole = async (token, userId, role) => {
   }
 }
 
-// Mettre à jour les paramètres d'un utilisateur
-export const updateUserSettings = async (token, userId, settings) => {
+// Obtenir les paramètres de l'utilisateur
+export const getUserSettings = async (token) => {
   try {
-    const response = await api.put(
-      `${API_URL}/users/${userId}/settings`,
-      { settings },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    const response = await api.get(`${API_URL}/users/settings`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Mettre à jour les paramètres de l'utilisateur
+export const updateUserSettings = async (token, settings) => {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+    const response = await api.put(`${API_URL}/users/settings`, settings, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
     return response.data
   } catch (error) {
     throw error.response.data
@@ -502,6 +486,54 @@ export const deleteUser = async (token, userId) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Récupérer les adresses de l'utilisateur
+export const getUserAddresses = async (token) => {
+  try {
+    const response = await api.get(`${API_URL}/users/addresses`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Ajouter une nouvelle adresse
+export const addUserAddress = async (token, addressData) => {
+  try {
+    const response = await api.post(`${API_URL}/users/address`, addressData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Ajouter un utilisateur
+export const addUser = async (token, userData) => {
+  try {
+    const response = await api.post(`${API_URL}/users`, userData, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    return response.data
+  } catch (error) {
+    throw error.response.data
+  }
+}
+
+// Obtenir une adresse par ID
+export const getAddressById = async (token, addressId) => {
+  try {
+    const response = await api.get(`${API_URL}/users/address/${addressId}`, {
+      headers: { Authorization: `Bearer ${token}` },
     })
     return response.data
   } catch (error) {

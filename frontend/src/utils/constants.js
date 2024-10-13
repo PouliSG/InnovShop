@@ -1,5 +1,6 @@
 export const API_URL = 'http://localhost:5000/api' // Base URL pour toutes les API
 export const TOKEN_KEY = 'auth_token' // Nom de la clé utilisée pour stocker le token dans le localStorage
+export const SETTINGS_KEY = 'settings' // Nom de la clé utilisée pour stocker les paramètres dans le localStorage
 export const TIMEOUT = 5000 // Timeout par défaut pour les requêtes HTTP
 
 export const DataStructure = {
@@ -235,6 +236,93 @@ export const DataStructure = {
       required: true,
     },
   ],
+  adresse: [
+    {
+      name: 'number',
+      label: 'Numéro',
+      type: 'TextField',
+      format: 'string',
+      required: true,
+    },
+    {
+      name: 'street',
+      label: 'Rue',
+      type: 'TextField',
+      format: 'string',
+      required: true,
+    },
+    {
+      name: 'additional',
+      label: "Complément d'adresse",
+      type: 'TextField',
+      format: 'string',
+      required: false,
+    },
+    {
+      name: 'city',
+      label: 'Ville',
+      type: 'TextField',
+      format: 'string',
+      required: true,
+    },
+    {
+      name: 'zip',
+      label: 'Code postal',
+      type: 'TextField',
+      format: 'string',
+      required: true,
+    },
+    {
+      name: 'country',
+      label: 'Pays',
+      type: 'TextField',
+      format: 'string',
+      required: true,
+      defaultValue: 'France',
+    },
+    {
+      name: 'label',
+      label: 'Libellé',
+      type: 'TextField',
+      format: 'string',
+      required: false,
+      defaultValue: 'Domicile',
+    },
+    {
+      name: 'isDefault',
+      label: 'Adresse par défaut',
+      type: 'CheckBox',
+      required: false,
+    },
+  ],
+  paramètres: [
+    {
+      name: 'notifications',
+      label: 'Activer les notifications',
+      type: 'CheckBox',
+      required: false,
+    },
+    {
+      name: 'theme',
+      label: 'Thème',
+      type: 'Select',
+      values: ['light', 'dark'],
+      required: true,
+    },
+    {
+      name: 'language',
+      label: 'Langue',
+      type: 'Select',
+      values: ['fr', 'en'],
+      required: true,
+    },
+    {
+      name: 'dense',
+      label: 'Mode condensé pour les tableaux',
+      type: 'CheckBox',
+      required: false,
+    },
+  ],
 }
 
 export const DefaultData = {
@@ -269,5 +357,21 @@ export const DefaultData = {
     totalPrice: 0,
     status: 'pending',
     paymentStatus: 'pending',
+  },
+  adresse: {
+    number: '',
+    street: '',
+    additional: '',
+    city: '',
+    zip: '',
+    country: 'France',
+    label: 'Domicile',
+    isDefault: false,
+  },
+  paramètres: {
+    notifications: true,
+    theme: 'dark',
+    language: 'fr',
+    dense: true,
   },
 }

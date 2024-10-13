@@ -59,9 +59,9 @@ const placeOrder = async (req, res) => {
 // Obtenir les commandes de l'utilisateur
 const getUserOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ user: req.user.id }).populate(
-      'status paymentStatus products.product shippingAddress'
-    )
+    const orders = await Order.find({ user: req.user.id })
+      .populate('products.product', 'name price')
+      .populate('shippingAddress')
     res.status(200).json(orders)
   } catch (err) {
     console.error(err.message)

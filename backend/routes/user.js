@@ -11,9 +11,11 @@ const {
   selfDeleteUser,
   promoteUser,
   updateUserRole,
+  getUserSettings,
   updateUserSettings,
   addAddress,
   getAddresses,
+  getAddressById,
   updateAddress,
   deleteAddress,
 } = require('../controllers/userController')
@@ -24,7 +26,7 @@ const checkRole = require('../middlewares/role')
 router.put('/profile', auth, updateUserProfile)
 
 // Mettre à jour les paramètres de l'utilisateur
-router.put('/:id/settings', auth, updateUserSettings)
+router.put('/settings', auth, updateUserSettings)
 
 // Ajouter une adresse
 router.post('/address', auth, addAddress)
@@ -32,17 +34,23 @@ router.post('/address', auth, addAddress)
 // Obtenir les adresses de l'utilisateur
 router.get('/addresses', auth, getAddresses)
 
+// Obtenir l'adresse de l'utilisateur par son id
+router.get('/address/:id', auth, getAddressById)
+
 // Mettre à jour une adresse
 router.put('/address/:id', auth, updateAddress)
 
 // Supprimer une adresse
 router.delete('/address/:id', auth, deleteAddress)
 
-// Obtenir l'utilisateur
-router.get('/:id', auth, getUser)
+// Obtenir les paramètres de l'utilisateur
+router.get('/settings', auth, getUserSettings)
 
 // Obtenir l'utilisateur actuel (réservé aux utilisateurs)
 router.get('/profile', auth, getUserProfile)
+
+// Obtenir l'utilisateur
+router.get('/:id', auth, getUser)
 
 // Obtenir le rôle de l'utilisateur
 router.get('/:id/role', auth, getUserRole)

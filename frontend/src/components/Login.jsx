@@ -4,7 +4,8 @@ import LoginIcon from '@mui/icons-material/Login'
 import CloseIcon from '@mui/icons-material/Close'
 import { useTheme } from '@mui/material/styles'
 import { login } from '../services/authService'
-import { TOKEN_KEY } from '../utils/constants'
+import { getUserSettings } from '../services/apiService'
+import { TOKEN_KEY, SETTINGS_KEY } from '../utils/constants'
 
 function Login({ handleClose, onLoginSuccess }) {
   const [email, setEmail] = useState('')
@@ -18,6 +19,8 @@ function Login({ handleClose, onLoginSuccess }) {
       const response = await login(email, password)
       const token = response.token
       localStorage.setItem(TOKEN_KEY, token)
+      const settings = await getUserSettings(token)
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
       onLoginSuccess(token) // Send token up to parent
       handleClose() // Close the popup
     } catch (err) {

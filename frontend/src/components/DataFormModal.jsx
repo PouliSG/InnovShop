@@ -192,7 +192,7 @@ function DataFormModal({
         </IconButton>
         <Typography variant="h6" component="h2" mb={2}>
           {id
-            ? `Modifier ${(dataType.endsWith('e') ? 'la ' : 'le ') + dataType}`
+            ? `Modifier un${(dataType.endsWith('e') ? 'e ' : ' ') + dataType}`
             : `Ajouter un${(dataType.endsWith('e') ? 'e ' : ' ') + dataType}`}
         </Typography>
         {/* Champs du formulaire */}

@@ -5,16 +5,6 @@ import {
   updatePaymentStatus,
   deleteOrders,
 } from '../../services/apiService'
-import {
-  Box,
-  Button,
-  Typography,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@mui/material'
 import EnhancedTable from '../../components/EnhancedTable'
 import { useNavigate } from 'react-router-dom'
 

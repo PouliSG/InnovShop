@@ -18,7 +18,7 @@ const checkRole = require('../middlewares/role')
 router.post('/', auth, placeOrder)
 
 // Route pour obtenir les commandes de l'utilisateur
-router.get('/', auth, checkRole(['user']), getUserOrders)
+router.get('/user', auth, checkRole(['user']), getUserOrders)
 
 // Route pour obtenir toutes les commandes (employee and admin only)
 router.get('/all', auth, checkRole(['employee', 'admin']), getAllOrders)

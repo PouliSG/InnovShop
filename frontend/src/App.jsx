@@ -21,13 +21,16 @@ import Products from './pages/Products'
 import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
-// import Dashboard from './pages/Dashboard'
-// import OrderHistory from './pages/OrderHistory'
-import DashboardAdmin from './pages/admin/DashboardAdmin'
-import CategoryAdmin from './pages/admin/CategoryAdmin'
-import OrderAdmin from './pages/admin/OrderAdmin'
-import ProductAdmin from './pages/admin/ProductAdmin'
-import UserAdmin from './pages/admin/UserAdmin'
+import Dashboard from './pages/Account/Dashboard'
+import OrderHistory from './pages/Account/OrderHistory'
+import Profile from './pages/Account/Profile'
+import Addresses from './pages/Account/Addresses'
+import Settings from './pages/Account/Settings'
+import DashboardAdmin from './pages/Admin/DashboardAdmin'
+import CategoryAdmin from './pages/Admin/CategoryAdmin'
+import OrderAdmin from './pages/Admin/OrderAdmin'
+import ProductAdmin from './pages/Admin/ProductAdmin'
+import UserAdmin from './pages/Admin/UserAdmin'
 import { useTheme } from './utils/context/themeContext'
 import ThemedGlobalStyle from './utils/style/GlobalStyle'
 import {
@@ -109,7 +112,7 @@ function App() {
   const { handleSessionExpired } = useSessionManager(handleLoginOpen)
 
   return (
-    <ThemeProvider theme={appliedTheme}>
+    <ThemeProvider theme={appliedTheme} token={token}>
       <CartProvider>
         <CssBaseline />
         <ThemedGlobalStyle />
@@ -188,6 +191,8 @@ function AppContent(props) {
   const isUserModalOpen = /^\/admin\/users\/(?:add|edit)(?:\/[\w-]+)?$/.test(
     location.pathname
   )
+  const isAdressModalOpen =
+    /^\/account\/addresses\/(?:add|edit)(?:\/[\w-]+)?$/.test(location.pathname)
 
   return (
     <>
@@ -265,8 +270,78 @@ function AppContent(props) {
           }
         />
         <Route path="/order-confirmation" element={<OrderConfirmation />} />
-        {/* <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/order-history" element={<OrderHistory />} /> */}
+        <Route
+          path="/account"
+          element={
+            <Dashboard
+              token={token}
+              handleSessionExpiration={handleSessionExpiration}
+              isLoggedIn={isAuthenticated()}
+              handleUnauthorizedAccess={handleUnauthorizedAccess}
+            />
+          }
+        />
+        <Route
+          path="/account/orders"
+          element={
+            <OrderHistory
+              token={token}
+              handleSessionExpiration={handleSessionExpiration}
+              isLoggedIn={isAuthenticated()}
+              handleUnauthorizedAccess={handleUnauthorizedAccess}
+            />
+          }
+        />
+        <Route
+          path="/account/profile"
+          element={
+            <Profile
+              token={token}
+              handleSessionExpiration={handleSessionExpiration}
+              isLoggedIn={isAuthenticated()}
+              handleUnauthorizedAccess={handleUnauthorizedAccess}
+            />
+          }
+        />
+        <Route
+          path="/account/addresses"
+          element={
+            <Addresses
+              token={token}
+              handleSessionExpiration={handleSessionExpiration}
+              isLoggedIn={isAuthenticated()}
+              handleUnauthorizedAccess={handleUnauthorizedAccess}
+            />
+          }
+        />
+        <Route
+          path="/account/addresses/edit/:id"
+          element={
+            isAdressModalOpen && (
+              <DataFormModal
+                token={token}
+                onClose={() => navigate(-1)}
+                handleSuccess={handleGenericSuccess}
+                handleSessionExpiration={handleSessionExpiration}
+                dataType={'adresse'}
+                addMethod={apiService.addUserAddress}
+                updateMethod={apiService.updateAddress}
+                getByIdMethod={apiService.getAddressById}
+              />
+            )
+          }
+        />
+        <Route
+          path="/account/settings"
+          element={
+            <Settings
+              token={token}
+              handleSessionExpiration={handleSessionExpiration}
+              isLoggedIn={isAuthenticated()}
+              handleUnauthorizedAccess={handleUnauthorizedAccess}
+            />
+          }
+        />
         <Route
           path="/admin"
           element={

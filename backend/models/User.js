@@ -14,6 +14,10 @@ const SettingsSchema = new mongoose.Schema({
     type: String,
     default: 'fr',
   },
+  dense: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const UserSchema = new mongoose.Schema({

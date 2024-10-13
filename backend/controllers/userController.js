@@ -190,15 +190,30 @@ const updateUserRole = async (req, res) => {
   }
 }
 
-// Mettre à jour les paramètres de l'utilisateur
-const updateUserSettings = async (req, res) => {
+// Obtenir les paramètres de l'utilisateur
+const getUserSettings = async (req, res) => {
   try {
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.user.id).select('settings')
     if (!user) {
       return res.status(404).json({ msg: 'Utilisateur introuvable' })
     }
 
-    user.settings = req.body.settings || user.settings // Ajouter de nouveaux champs de paramètres si nécessaire
+    res.status(200).json(user.settings)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur du serveur')
+  }
+}
+
+// Mettre à jour les paramètres de l'utilisateur
+const updateUserSettings = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id)
+    if (!user) {
+      return res.status(404).json({ msg: 'Utilisateur introuvable' })
+    }
+
+    user.settings = { ...user.settings.toObject(), ...req.body }
     await user.save()
 
     res.status(200).json({
@@ -255,6 +270,20 @@ const getAddresses = async (req, res) => {
   try {
     const addresses = await Address.find({ user: req.user.id })
     res.status(200).json(addresses)
+  } catch (err) {
+    console.error(err.message)
+    res.status(500).send('Erreur du serveur')
+  }
+}
+
+// Obtenir une adresse par son ID
+const getAddressById = async (req, res) => {
+  try {
+    const address = await Address.findById(req.params.id)
+    if (!address) {
+      return res.status(404).json({ msg: 'Adresse introuvable' })
+    }
+    res.status(200).json(address)
   } catch (err) {
     console.error(err.message)
     res.status(500).send('Erreur du serveur')
@@ -334,9 +363,11 @@ module.exports = {
   selfDeleteUser,
   promoteUser,
   updateUserRole,
+  getUserSettings,
   updateUserSettings,
   addAddress,
   getAddresses,
+  getAddressById,
   updateAddress,
   deleteAddress,
 }
