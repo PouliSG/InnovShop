@@ -13,7 +13,7 @@ import { getUserAddresses, deleteAddress } from '../../services/apiService'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
 
-function Addresses({ token, handleSessionExpiration }) {
+function Addresses({ token, handleSessionExpiration, dataChanged }) {
   const [addresses, setAddresses] = useState([])
   const [editingAddress, setEditingAddress] = useState(null)
 
@@ -22,7 +22,7 @@ function Addresses({ token, handleSessionExpiration }) {
 
   useEffect(() => {
     fetchAddresses()
-  }, [token])
+  }, [token, dataChanged])
 
   const fetchAddresses = async () => {
     try {
@@ -54,12 +54,16 @@ function Addresses({ token, handleSessionExpiration }) {
 
   const handleAdd = () => {
     setEditingAddress(null)
-    navigate(`${location.pathname}/edit/add`)
+    navigate(`${location.pathname}/add`, {
+      state: { backgroundLocation: location },
+    })
   }
 
   const handleEdit = (address) => {
     setEditingAddress(address)
-    navigate(`${location.pathname}/edit/${address._id}`)
+    navigate(`${location.pathname}/edit/${address._id}`, {
+      state: { backgroundLocation: location },
+    })
   }
 
   return (

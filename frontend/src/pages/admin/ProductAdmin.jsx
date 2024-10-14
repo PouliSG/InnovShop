@@ -6,11 +6,10 @@ import { isAuthenticated, isAuthorized } from '../../services/authService'
 
 const ProductAdmin = ({
   token,
-  userRole,
-  isLoggedIn,
   handleUnauthorizedAccess,
   handleSessionExpiration,
   handleSuccess,
+  dataChanged,
 }) => {
   const [products, setProducts] = useState([])
 
@@ -50,7 +49,7 @@ const ProductAdmin = ({
       }
     }
     fetchProducts()
-  }, [])
+  }, [dataChanged])
 
   const handleDelete = async (productIds) => {
     try {

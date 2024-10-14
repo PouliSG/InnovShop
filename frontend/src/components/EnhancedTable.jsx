@@ -398,12 +398,16 @@ export default function EnhancedTable(props) {
   const location = useLocation()
 
   const handleAdd = () => {
-    navigate(location.pathname + '/add')
+    navigate(location.pathname + '/add', {
+      state: { backgroundLocation: location },
+    })
   }
 
   const handleEdit = () => {
     if (selected.length === 1) {
-      navigate(`${location.pathname}/edit/${selected[0]}`)
+      navigate(`${location.pathname}/edit/${selected[0]}`, {
+        state: { backgroundLocation: location },
+      })
     } else {
       // Gérer le cas où plusieurs éléments sont sélectionnés ou aucun
       alert('Veuillez sélectionner un seul élément à éditer.')

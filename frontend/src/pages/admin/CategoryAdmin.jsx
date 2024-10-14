@@ -9,6 +9,7 @@ const CategoryAdmin = ({
   handleUnauthorizedAccess,
   handleSessionExpiration,
   handleSuccess,
+  dataChanged,
 }) => {
   const [categories, setCategories] = useState([])
 
@@ -48,7 +49,7 @@ const CategoryAdmin = ({
       }
     }
     fetchCategories()
-  }, [])
+  }, [dataChanged])
 
   const handleDelete = async (categoryIds) => {
     try {

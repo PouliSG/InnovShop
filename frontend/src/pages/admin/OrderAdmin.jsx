@@ -14,6 +14,7 @@ const OrderAdmin = ({
   handleUnauthorizedAccess,
   handleSessionExpiration,
   handleSuccess,
+  dataChanged,
 }) => {
   const [orders, setOrders] = useState([])
   const navigate = useNavigate()
@@ -56,7 +57,7 @@ const OrderAdmin = ({
       }
     }
     fetchOrders()
-  }, [])
+  }, [dataChanged])
 
   const handleStatusUpdate = async (orderId, status) => {
     try {

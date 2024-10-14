@@ -6,11 +6,10 @@ import { isAuthenticated, isAuthorized } from '../../services/authService'
 
 const UserAdmin = ({
   token,
-  userRole,
-  isLoggedIn,
   handleUnauthorizedAccess,
   handleSessionExpiration,
   handleSuccess,
+  dataChanged,
 }) => {
   const [users, setUsers] = useState([])
   const navigate = useNavigate()
@@ -53,7 +52,7 @@ const UserAdmin = ({
       }
     }
     fetchUsers()
-  }, [])
+  }, [dataChanged])
 
   const handleDelete = async (userId) => {
     try {
