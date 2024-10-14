@@ -8,6 +8,7 @@ import {
 import EnhancedTable from '../../components/EnhancedTable'
 import { useNavigate } from 'react-router-dom'
 import { isAuthenticated, isAuthorized } from '../../services/authService'
+import { useLoading } from '../../utils/context/LoadingContext'
 
 const OrderAdmin = ({
   token,
@@ -18,6 +19,7 @@ const OrderAdmin = ({
 }) => {
   const [orders, setOrders] = useState([])
   const navigate = useNavigate()
+  const { startLoading, stopLoading } = useLoading()
 
   const handleUnauthenticated = () => {
     handleSessionExpiration()
@@ -45,6 +47,7 @@ const OrderAdmin = ({
 
   useEffect(() => {
     const fetchOrders = async () => {
+      startLoading()
       try {
         const data = await getOrders(token)
         setOrders(data)
@@ -54,12 +57,15 @@ const OrderAdmin = ({
         } else {
           console.error('Erreur lors du chargement des commandes', error)
         }
+      } finally {
+        stopLoading()
       }
     }
     fetchOrders()
   }, [dataChanged])
 
   const handleStatusUpdate = async (orderId, status) => {
+    startLoading()
     try {
       await updateOrderStatus(token, orderId, status)
       setOrders(
@@ -76,10 +82,13 @@ const OrderAdmin = ({
           error
         )
       }
+    } finally {
+      stopLoading()
     }
   }
 
   const handlePaymentUpdate = async (orderId, paymentStatus) => {
+    startLoading()
     try {
       await updatePaymentStatus(token, orderId, paymentStatus)
       setOrders(
@@ -96,10 +105,13 @@ const OrderAdmin = ({
           error
         )
       }
+    } finally {
+      stopLoading()
     }
   }
 
   const handleDelete = async (orderIds) => {
+    startLoading()
     try {
       await deleteOrders(token, orderIds)
       setOrders(orders.filter((order) => !orderIds.includes(order._id)))
@@ -110,6 +122,8 @@ const OrderAdmin = ({
       } else {
         console.error('Erreur lors de la suppression du produit', error)
       }
+    } finally {
+      stopLoading()
     }
   }
 

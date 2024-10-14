@@ -20,7 +20,7 @@ import NextIcon from '@mui/icons-material/NavigateNext'
 import PreviousIcon from '@mui/icons-material/NavigateBefore'
 import CheckIcon from '@mui/icons-material/Check'
 import CancelIcon from '@mui/icons-material/Cancel'
-import { CartContext } from '../utils/context/cartContext'
+import { CartContext } from '../utils/context/CartContext'
 import {
   addUserAddress,
   updateAddress,

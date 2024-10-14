@@ -9,6 +9,7 @@ import {
 } from '../services/apiService'
 import ProductFilters from '../components/ProductFilters'
 import ProductGrid from '../components/ProductGrid'
+import { useLoading } from '../utils/context/LoadingContext'
 
 const Products = () => {
   const location = useLocation()
@@ -23,15 +24,18 @@ const Products = () => {
   const [filter, setFilter] = useState(
     location.state?.filter || { priceRange: [0, 100000] }
   )
+  const { startLoading, stopLoading } = useLoading()
 
   const loadProducts = useCallback(async () => {
     let result
+    startLoading()
     if (category && category !== 'all') {
       result = await getProductsByCategory(category, page)
     } else {
       result = await getProducts(page, sort, filter)
     }
     setProducts(result)
+    stopLoading()
     // setProducts((prevProducts) => [...prevProducts, ...result])
   }, [category, page, sort, filter])
 
@@ -48,11 +52,14 @@ const Products = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      startLoading()
       try {
         const categories = await getCategories()
         setCategories(categories)
       } catch (error) {
         console.error('Erreur lors de la récupération des catégories :', error)
+      } finally {
+        stopLoading()
       }
     }
 

@@ -13,7 +13,7 @@ import {
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useTheme as useMUITheme } from '@mui/material/styles'
-import { CartContext } from '../utils/context/cartContext'
+import { CartContext } from '../utils/context/CartContext'
 
 const Cart = () => {
   const { cart, removeFromCart, updateCartItemQuantity } =

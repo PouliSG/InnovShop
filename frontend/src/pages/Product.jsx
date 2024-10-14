@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { getProductById } from '../services/apiService'
-import { CartContext } from '../utils/context/cartContext'
+import { CartContext } from '../utils/context/CartContext'
 import {
   Typography,
   Box,
@@ -14,6 +14,7 @@ import {
 import Alert from '@mui/material/Alert'
 import StarIcon from '@mui/icons-material/Star'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
+import { useLoading } from '../utils/context/LoadingContext'
 
 const Product = () => {
   const { id } = useParams()
@@ -25,9 +26,11 @@ const Product = () => {
   const [isInCart, setIsInCart] = useState(false) // État pour vérifier si le produit est dans le panier
   const navigate = useNavigate()
   const location = useLocation()
+  const { startLoading, stopLoading } = useLoading()
 
   useEffect(() => {
     const fetchProduct = async () => {
+      startLoading()
       try {
         const productData = await getProductById(id)
         setProduct(productData)
@@ -35,6 +38,8 @@ const Product = () => {
       } catch (err) {
         setError(err)
         setLoading(false)
+      } finally {
+        stopLoading()
       }
     }
     fetchProduct()

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useTheme } from '../utils/context/themeContext'
+import { useTheme } from '../utils/context/ThemeContext'
 import { Button } from '@mui/material'
 
 const ThemeToggleButton = () => {

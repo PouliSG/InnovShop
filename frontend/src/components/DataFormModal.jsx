@@ -22,7 +22,8 @@ import {
   getProducts,
   getAddressesByUser,
 } from '../services/apiService'
-import { useTheme } from '../utils/context/themeContext'
+import { useTheme } from '../utils/context/ThemeContext'
+import { useLoading } from '../utils/context/LoadingContext'
 
 function DataFormModal({
   token,
@@ -45,11 +46,13 @@ function DataFormModal({
   const [shippingAddresses, setShippingAddresses] = useState([])
   const [isDirty, setIsDirty] = useState(false) // Pour suivre les modifications du formulaire
   const { theme, setThemeMode } = useTheme()
+  const { startLoading, stopLoading } = useLoading()
 
   var itemStructure = DataStructure[dataType]
 
   useEffect(() => {
     const fetchData = async () => {
+      startLoading()
       try {
         if (dataType === 'commande') {
           // Charger les utilisateurs
@@ -67,6 +70,8 @@ function DataFormModal({
         // Ajoutez d'autres chargements de données si nécessaire
       } catch (error) {
         console.error('Erreur lors du chargement des données :', error)
+      } finally {
+        stopLoading()
       }
     }
     fetchData()
@@ -76,6 +81,7 @@ function DataFormModal({
     if (id || location.pathname.endsWith('/settings')) {
       // Si un ID est présent, nous sommes en mode édition
       const fetchItem = async () => {
+        startLoading()
         try {
           var data
           if (['produit', 'catégorie', 'paramètres'].includes(dataType)) {
@@ -86,6 +92,8 @@ function DataFormModal({
           setItem(data)
         } catch (error) {
           console.error('Erreur lors du chargement du produit', error)
+        } finally {
+          stopLoading()
         }
       }
       fetchItem()
@@ -131,6 +139,7 @@ function DataFormModal({
 
   const handleSubmit = async (e) => {
     e.preventDefault()
+    startLoading()
     try {
       if (id) {
         await updateMethod(token, id, item)
@@ -151,6 +160,8 @@ function DataFormModal({
       } else {
         console.error('Erreur lors de la sauvegarde du produit', error)
       }
+    } finally {
+      stopLoading()
     }
   }
 

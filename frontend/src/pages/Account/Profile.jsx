@@ -9,6 +9,7 @@ import {
   FormControlLabel,
 } from '@mui/material'
 import { getUserProfile, updateUserProfile } from '../../services/apiService'
+import { useLoading } from '../../utils/context/LoadingContext'
 
 function Profile({ token, handleSessionExpiration }) {
   const [profile, setProfile] = useState({
@@ -20,9 +21,11 @@ function Profile({ token, handleSessionExpiration }) {
   })
 
   const [isLoading, setIsLoading] = useState(true)
+  const { startLoading, stopLoading } = useLoading()
 
   useEffect(() => {
     const fetchProfile = async () => {
+      startLoading()
       try {
         const data = await getUserProfile(token)
         setProfile(data)
@@ -33,6 +36,8 @@ function Profile({ token, handleSessionExpiration }) {
         } else {
           console.error('Erreur lors de la récupération du profil :', error)
         }
+      } finally {
+        stopLoading()
       }
     }
     fetchProfile()
@@ -47,6 +52,7 @@ function Profile({ token, handleSessionExpiration }) {
   }
 
   const handleSubmit = async () => {
+    startLoading()
     try {
       await updateUserProfile(token, profile)
       alert('Profil mis à jour avec succès')
@@ -56,6 +62,8 @@ function Profile({ token, handleSessionExpiration }) {
       } else {
         console.error('Erreur lors de la mise à jour du profil :', error)
       }
+    } finally {
+      stopLoading()
     }
   }
 

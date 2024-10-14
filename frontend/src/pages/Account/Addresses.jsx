@@ -12,6 +12,7 @@ import {
 import { getUserAddresses, deleteAddress } from '../../services/apiService'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
+import { useLoading } from '../../utils/context/LoadingContext'
 
 function Addresses({ token, handleSessionExpiration, dataChanged }) {
   const [addresses, setAddresses] = useState([])
@@ -19,12 +20,14 @@ function Addresses({ token, handleSessionExpiration, dataChanged }) {
 
   const navigate = useNavigate()
   const location = useLocation()
+  const { startLoading, stopLoading } = useLoading()
 
   useEffect(() => {
     fetchAddresses()
   }, [token, dataChanged])
 
   const fetchAddresses = async () => {
+    startLoading()
     try {
       const data = await getUserAddresses(token)
       setAddresses(data)
@@ -34,6 +37,8 @@ function Addresses({ token, handleSessionExpiration, dataChanged }) {
       } else {
         console.error('Erreur lors de la récupération des adresses :', error)
       }
+    } finally {
+      stopLoading()
     }
   }
 

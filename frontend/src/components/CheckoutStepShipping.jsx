@@ -10,6 +10,7 @@ import {
   InputLabel,
 } from '@mui/material'
 import { TOKEN_KEY } from '../utils/constants'
+import { useLoading } from '../utils/context/LoadingContext'
 
 const CheckoutStepShipping = ({
   selectedAddressId,
@@ -21,8 +22,10 @@ const CheckoutStepShipping = ({
 }) => {
   const token = localStorage.getItem(TOKEN_KEY)
   const [addresses, setAddresses] = useState([])
+  const { startLoading, stopLoading } = useLoading()
   useEffect(() => {
     const fetchAddresses = async () => {
+      startLoading()
       try {
         const userAddresses = await getUserAddresses(token)
         setAddresses(userAddresses)
@@ -32,6 +35,8 @@ const CheckoutStepShipping = ({
         } else {
           console.error('Erreur lors du chargement des adresses', error)
         }
+      } finally {
+        stopLoading()
       }
     }
     fetchAddresses()

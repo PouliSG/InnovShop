@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import ErrorDark from '../assets/404_dark.png'
 import ErrorLight from '../assets/404_light.png'
-import { useTheme } from '../utils/context/themeContext'
+import { useTheme } from '../utils/context/ThemeContext'
 
 const ErrorWrapper = styled.div`
   margin: 30px;

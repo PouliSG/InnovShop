@@ -3,7 +3,7 @@ import { getCategories, deleteCategories } from '../../services/apiService'
 import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
 import { isAuthenticated, isAuthorized } from '../../services/authService'
-
+import { useLoading } from '../../utils/context/LoadingContext'
 const CategoryAdmin = ({
   token,
   handleUnauthorizedAccess,
@@ -14,6 +14,7 @@ const CategoryAdmin = ({
   const [categories, setCategories] = useState([])
 
   const navigate = useNavigate()
+  const { startLoading, stopLoading } = useLoading()
 
   const handleUnauthenticated = () => {
     handleSessionExpiration()
@@ -41,17 +42,21 @@ const CategoryAdmin = ({
 
   useEffect(() => {
     const fetchCategories = async () => {
+      startLoading()
       try {
         const data = await getCategories()
         setCategories(data)
       } catch (error) {
         console.error('Erreur lors du chargement des catégories', error)
+      } finally {
+        stopLoading()
       }
     }
     fetchCategories()
   }, [dataChanged])
 
   const handleDelete = async (categoryIds) => {
+    startLoading()
     try {
       await deleteCategories(token, categoryIds)
       setCategories(
@@ -64,6 +69,8 @@ const CategoryAdmin = ({
       } else {
         console.error('Erreur lors de la suppression du produit', error)
       }
+    } finally {
+      stopLoading()
     }
   }
 

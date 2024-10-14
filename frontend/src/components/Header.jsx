@@ -24,7 +24,7 @@ import lightLogo from '../assets/InnovShop_logo_light.png'
 import CartMenu from './CartMenu'
 import AdminMenu from './AdminMenu'
 import { useTheme as useMUITheme } from '@mui/material/styles'
-import { CartContext } from '../utils/context/cartContext'
+import { CartContext } from '../utils/context/CartContext'
 
 const Logo = styled('img')({
   height: '100px',

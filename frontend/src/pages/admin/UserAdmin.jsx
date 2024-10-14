@@ -3,6 +3,7 @@ import { getUsers, deleteUser, promoteUser } from '../../services/apiService'
 import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
 import { isAuthenticated, isAuthorized } from '../../services/authService'
+import { useLoading } from '../../utils/context/LoadingContext'
 
 const UserAdmin = ({
   token,
@@ -13,6 +14,7 @@ const UserAdmin = ({
 }) => {
   const [users, setUsers] = useState([])
   const navigate = useNavigate()
+  const { startLoading, stopLoading } = useLoading()
 
   const handleUnauthenticated = () => {
     handleSessionExpiration()
@@ -40,6 +42,7 @@ const UserAdmin = ({
 
   useEffect(() => {
     const fetchUsers = async () => {
+      startLoading()
       try {
         const data = await getUsers(token)
         setUsers(data)
@@ -49,12 +52,15 @@ const UserAdmin = ({
         } else {
           console.error('Erreur lors du chargement des utilisateurs', error)
         }
+      } finally {
+        stopLoading()
       }
     }
     fetchUsers()
   }, [dataChanged])
 
   const handleDelete = async (userId) => {
+    startLoading()
     try {
       await deleteUser(userId)
       setUsers(users.filter((user) => user._id !== userId))
@@ -64,10 +70,13 @@ const UserAdmin = ({
       } else {
         console.error("Erreur lors de la suppression de l'utilisateur", error)
       }
+    } finally {
+      stopLoading()
     }
   }
 
   const handlePromote = () => {
+    startLoading()
     try {
       // TODO
     } catch (error) {
@@ -79,6 +88,8 @@ const UserAdmin = ({
           error
         )
       }
+    } finally {
+      stopLoading()
     }
   }
 

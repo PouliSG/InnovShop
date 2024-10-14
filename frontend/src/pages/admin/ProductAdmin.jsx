@@ -3,6 +3,7 @@ import { getProducts, deleteProducts } from '../../services/apiService'
 import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
 import { isAuthenticated, isAuthorized } from '../../services/authService'
+import { useLoading } from '../../utils/context/LoadingContext'
 
 const ProductAdmin = ({
   token,
@@ -14,6 +15,7 @@ const ProductAdmin = ({
   const [products, setProducts] = useState([])
 
   const navigate = useNavigate()
+  const { startLoading, stopLoading } = useLoading()
 
   const handleUnauthenticated = () => {
     handleSessionExpiration()
@@ -41,17 +43,21 @@ const ProductAdmin = ({
 
   useEffect(() => {
     const fetchProducts = async () => {
+      startLoading()
       try {
         const data = await getProducts()
         setProducts(data)
       } catch (error) {
         console.error('Erreur lors du chargement des produits', error)
+      } finally {
+        stopLoading()
       }
     }
     fetchProducts()
   }, [dataChanged])
 
   const handleDelete = async (productIds) => {
+    startLoading()
     try {
       await deleteProducts(token, productIds)
       setProducts(
@@ -64,6 +70,8 @@ const ProductAdmin = ({
       } else {
         console.error('Erreur lors de la suppression du produit', error)
       }
+    } finally {
+      stopLoading()
     }
   }
 

@@ -9,12 +9,15 @@ import {
   TableBody,
 } from '@mui/material'
 import { getUserOrders } from '../../services/apiService'
+import { useLoading } from '../../utils/context/LoadingContext'
 
 function OrderHistory({ token, handleSessionExpiration }) {
   const [orders, setOrders] = useState([])
+  const { startLoading, stopLoading } = useLoading()
 
   useEffect(() => {
     const fetchOrders = async () => {
+      startLoading()
       try {
         const data = await getUserOrders(token)
         setOrders(data)
@@ -24,6 +27,8 @@ function OrderHistory({ token, handleSessionExpiration }) {
         } else {
           console.error('Erreur lors de la récupération des commandes :', error)
         }
+      } finally {
+        stopLoading()
       }
     }
     fetchOrders()

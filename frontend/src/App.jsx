@@ -31,7 +31,7 @@ import CategoryAdmin from './pages/Admin/CategoryAdmin'
 import OrderAdmin from './pages/Admin/OrderAdmin'
 import ProductAdmin from './pages/Admin/ProductAdmin'
 import UserAdmin from './pages/Admin/UserAdmin'
-import { useTheme } from './utils/context/themeContext'
+import { useTheme } from './utils/context/ThemeContext'
 import ThemedGlobalStyle from './utils/style/GlobalStyle'
 import {
   ThemeProvider,
@@ -42,11 +42,14 @@ import {
   Snackbar,
 } from '@mui/material'
 import { lightTheme, darkTheme } from './utils/theme'
-import { CartProvider } from './utils/context/cartContext'
+import { CartProvider } from './utils/context/CartContext'
 import { useSessionManager } from './utils/hooks/useSessionManager'
+import { LoadingProvider } from './utils/context/LoadingContext'
 import { TOKEN_KEY } from './utils/constants'
 import { logout, isAuthenticated } from './services/authService'
 import * as apiService from './services/apiService'
+import { useLoading } from './utils/context/LoadingContext'
+import { CircularProgress, Backdrop } from '@mui/material'
 
 function App() {
   const { theme } = useTheme()
@@ -120,40 +123,42 @@ function App() {
 
   return (
     <ThemeProvider theme={appliedTheme} token={token}>
-      <CartProvider>
-        <CssBaseline />
-        <ThemedGlobalStyle />
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <Router>
-            <AppContent
-              token={token}
-              userRole={userRole}
-              isLoginOpen={isLoginOpen}
-              isRegisterOpen={isRegisterOpen}
-              showSuccess={showSuccess}
-              setShowSuccess={setShowSuccess}
-              showLogoutSuccess={showLogoutSuccess}
-              setShowLogoutSuccess={setShowLogoutSuccess}
-              showSessionExpired={showSessionExpired}
-              setShowSessionExpired={setShowSessionExpired}
-              showUnauthorized={showUnauthorized}
-              setShowUnauthorized={setShowUnauthorized}
-              showGenericSuccess={showGenericSuccess}
-              setShowGenericSuccess={setShowGenericSuccess}
-              handleLoginOpen={handleLoginOpen}
-              handleLoginClose={handleLoginClose}
-              handleRegisterOpen={handleRegisterOpen}
-              handleRegisterClose={handleRegisterClose}
-              handleLoginSuccess={handleLoginSuccess}
-              handleLogout={handleLogout}
-              handleSessionExpiration={handleSessionExpiration}
-              handleUnauthorizedAccess={handleUnauthorizedAccess}
-              handleGenericSuccess={handleGenericSuccess}
-              dataChanged={dataChanged}
-            />
-          </Router>
-        </LocalizationProvider>
-      </CartProvider>
+      <LoadingProvider>
+        <CartProvider>
+          <CssBaseline />
+          <ThemedGlobalStyle />
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <Router>
+              <AppContent
+                token={token}
+                userRole={userRole}
+                isLoginOpen={isLoginOpen}
+                isRegisterOpen={isRegisterOpen}
+                showSuccess={showSuccess}
+                setShowSuccess={setShowSuccess}
+                showLogoutSuccess={showLogoutSuccess}
+                setShowLogoutSuccess={setShowLogoutSuccess}
+                showSessionExpired={showSessionExpired}
+                setShowSessionExpired={setShowSessionExpired}
+                showUnauthorized={showUnauthorized}
+                setShowUnauthorized={setShowUnauthorized}
+                showGenericSuccess={showGenericSuccess}
+                setShowGenericSuccess={setShowGenericSuccess}
+                handleLoginOpen={handleLoginOpen}
+                handleLoginClose={handleLoginClose}
+                handleRegisterOpen={handleRegisterOpen}
+                handleRegisterClose={handleRegisterClose}
+                handleLoginSuccess={handleLoginSuccess}
+                handleLogout={handleLogout}
+                handleSessionExpiration={handleSessionExpiration}
+                handleUnauthorizedAccess={handleUnauthorizedAccess}
+                handleGenericSuccess={handleGenericSuccess}
+                dataChanged={dataChanged}
+              />
+            </Router>
+          </LocalizationProvider>
+        </CartProvider>
+      </LoadingProvider>
     </ThemeProvider>
   )
 }
@@ -189,6 +194,7 @@ function AppContent(props) {
   const location = useLocation()
   const state = location.state
   const navigate = useNavigate()
+  const { isLoading } = useLoading()
 
   // Vérifiez si la route actuelle correspond à une modal
   const isProductModalOpen =
@@ -267,6 +273,14 @@ function AppContent(props) {
           Opération réussie !
         </Alert>
       </Snackbar>
+
+      {/* Afficher le loader global */}
+      <Backdrop
+        open={isLoading}
+        sx={{ color: 'primary', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="secondary" size={60} />
+      </Backdrop>
 
       <Routes location={state?.backgroundLocation || location}>
         <Route path="/" element={<Home />} />

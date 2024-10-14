@@ -3,13 +3,16 @@ import { useNavigate } from 'react-router-dom'
 import { Box, Typography } from '@mui/material'
 import DataFormModal from '../../components/DataFormModal'
 import { updateUserSettings, getUserSettings } from '../../services/apiService'
+import { useLoading } from '../../utils/context/LoadingContext'
 
 function Settings({ token, handleSessionExpiration, handleSuccess }) {
   const [settings, setSettings] = useState(null)
   const navigate = useNavigate()
+  const { startLoading, stopLoading } = useLoading()
 
   useEffect(() => {
     const fetchSettings = async () => {
+      startLoading()
       try {
         const data = await getUserSettings(token)
         setSettings(data)
@@ -22,6 +25,8 @@ function Settings({ token, handleSessionExpiration, handleSuccess }) {
             error
           )
         }
+      } finally {
+        stopLoading()
       }
     }
     fetchSettings()

@@ -4,15 +4,18 @@ import { NewReleases, Star } from '@mui/icons-material'
 import { useTheme } from '@mui/material/styles'
 import { getLatestProducts, getFeaturedProducts } from '../services/apiService'
 import ProductList from '../components/ProductList'
+import { useLoading } from '../utils/context/LoadingContext'
 
 const Home = () => {
   const [latestProducts, setLatestProducts] = useState([])
   const [featuredProducts, setFeaturedProducts] = useState([])
   const muiTheme = useTheme()
+  const { startLoading, stopLoading } = useLoading()
 
   useEffect(() => {
     // Charger les 3 derniers produits ajoutés
     const fetchLatestProducts = async () => {
+      startLoading()
       try {
         const products = await getLatestProducts()
         setLatestProducts(products.slice(0, 3))
@@ -21,11 +24,14 @@ const Home = () => {
           'Erreur lors de la récupération des derniers produits :',
           error
         )
+      } finally {
+        stopLoading()
       }
     }
 
     // Charger les 3 produits à la une
     const fetchFeaturedProducts = async () => {
+      startLoading()
       try {
         const products = await getFeaturedProducts()
         setFeaturedProducts(products.slice(0, 3))
@@ -34,6 +40,8 @@ const Home = () => {
           'Erreur lors de la récupération des produits à la une :',
           error
         )
+      } finally {
+        stopLoading()
       }
     }
 
