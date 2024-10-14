@@ -2,9 +2,10 @@ import React from 'react'
 import { Link, Navigate } from 'react-router-dom'
 import { Box, Typography, Button } from '@mui/material'
 import ThemeToggleButton from '../../components/ThemeToggleButton'
+import { isAuthenticated } from '../../services/authService'
 
-function Dashboard({ isLoggedIn, handleUnauthorizedAccess }) {
-  if (!isLoggedIn) {
+function Dashboard({ handleUnauthorizedAccess }) {
+  if (!isAuthenticated()) {
     handleUnauthorizedAccess()
     return <Navigate to="/" />
   }
@@ -14,7 +15,14 @@ function Dashboard({ isLoggedIn, handleUnauthorizedAccess }) {
       <Typography variant="h4" gutterBottom>
         Mon compte
       </Typography>
-      <Box sx={{ mt: 2 }}>
+      <Box
+        sx={{
+          mt: 2,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'begin',
+        }}
+      >
         <Button
           component={Link}
           to="/account/profile"
@@ -47,7 +55,6 @@ function Dashboard({ isLoggedIn, handleUnauthorizedAccess }) {
         >
           Mes paramètres
         </Button>
-        <ThemeToggleButton />
       </Box>
     </Box>
   )

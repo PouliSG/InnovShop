@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Box, Typography } from '@mui/material'
 import DataFormModal from '../../components/DataFormModal'
 import { updateUserSettings, getUserSettings } from '../../services/apiService'
 
-function Settings({ token, handleSessionExpiration }) {
+function Settings({ token, handleSessionExpiration, handleSuccess }) {
   const [settings, setSettings] = useState(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -25,10 +27,6 @@ function Settings({ token, handleSessionExpiration }) {
     fetchSettings()
   }, [token])
 
-  const handleSuccess = () => {
-    alert('Paramètres mis à jour avec succès')
-  }
-
   if (!settings) {
     return <Typography>Chargement...</Typography>
   }
@@ -40,13 +38,14 @@ function Settings({ token, handleSessionExpiration }) {
       </Typography>
       <DataFormModal
         token={token}
-        onClose={() => {}}
+        onClose={() => navigate(-1)}
         handleSuccess={handleSuccess}
         handleSessionExpiration={handleSessionExpiration}
         dataType={'paramètres'}
         addMethod={updateUserSettings}
         updateMethod={updateUserSettings}
         getByIdMethod={() => Promise.resolve(settings)}
+        modal={false}
       />
     </Box>
   )

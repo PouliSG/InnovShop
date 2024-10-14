@@ -29,8 +29,7 @@ import EditIcon from '@mui/icons-material/Edit'
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag'
 import DialogSelect from './DialogSelect'
-import { DataStructure } from '../utils/constants'
-
+import { DataStructure, SETTINGS_KEY } from '../utils/constants'
 import { visuallyHidden } from '@mui/utils'
 import { useTheme } from '@mui/material/styles'
 
@@ -381,7 +380,9 @@ export default function EnhancedTable(props) {
   const [orderBy, setOrderBy] = React.useState('createdAt')
   const [selected, setSelected] = React.useState([])
   const [page, setPage] = React.useState(0)
-  const [dense, setDense] = React.useState(true)
+  const [dense, setDense] = React.useState(
+    (JSON.parse(localStorage.getItem('settings')) || {}).dense || true
+  )
   const [rowsPerPage, setRowsPerPage] = React.useState(10)
   const [isDeleteConfirmOpen, setDeleteConfirmOpen] = React.useState(false)
 
@@ -450,10 +451,6 @@ export default function EnhancedTable(props) {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
-  }
-
-  const handleChangeDense = (event) => {
-    setDense(event.target.checked)
   }
 
   // Avoid a layout jump when reaching the last page with empty rows.
@@ -607,10 +604,6 @@ export default function EnhancedTable(props) {
             sx={{ alignItems: 'center' }}
           />
         </Paper>
-        <FormControlLabel
-          control={<Switch checked={dense} onChange={handleChangeDense} />}
-          label="Condensé"
-        />
       </Box>
 
       <Modal open={isDeleteConfirmOpen} onClose={handleDeleteConfirmClose}>

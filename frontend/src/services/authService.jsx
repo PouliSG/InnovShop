@@ -1,6 +1,11 @@
 import axios from 'axios'
 import { jwtDecode } from 'jwt-decode'
-import { API_URL, TOKEN_KEY } from '../utils/constants'
+import {
+  API_URL,
+  TOKEN_KEY,
+  USER_ROLE_KEY,
+  EXPIRES_IN_KEY,
+} from '../utils/constants'
 
 export const login = async (email, password) => {
   try {
@@ -47,6 +52,8 @@ export const resetPassword = async (token, password) => {
 // Fonction pour déconnecter l'utilisateur
 export const logout = () => {
   localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(USER_ROLE_KEY)
+  localStorage.removeItem(EXPIRES_IN_KEY)
 }
 
 // Fonction pour vérifier si l'utilisateur est authentifié
@@ -66,4 +73,11 @@ export const isAuthenticated = () => {
     console.error('Erreur lors du décodage du token:', error)
     return false
   }
+}
+
+// Fonction pour vérifier si l'utilisateur est autorisé
+export const isAuthorized = (role) => {
+  const roles = ['user', 'employee', 'admin']
+  const userRole = localStorage.getItem(USER_ROLE_KEY)
+  return roles.indexOf(userRole) >= roles.indexOf(role)
 }

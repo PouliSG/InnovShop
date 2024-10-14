@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getUsers, deleteUser, promoteUser } from '../../services/apiService'
 import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
+import { isAuthenticated, isAuthorized } from '../../services/authService'
 
 const UserAdmin = ({
   token,
@@ -26,17 +27,17 @@ const UserAdmin = ({
 
   useEffect(() => {
     // Check if the user is authenticated
-    if (!isLoggedIn) {
+    if (!isAuthenticated()) {
       handleUnauthenticated() // Open login modal if not authenticated
     }
-  }, [isLoggedIn])
+  }, [])
 
   useEffect(() => {
-    // Check if the user is authenticated
-    if (!['admin', 'employee'].includes(userRole)) {
-      handleUnauthorized() // Open login modal if not authenticated
+    // Check if the user is authorized
+    if (!isAuthorized('employee')) {
+      handleUnauthorized() // Open login modal if not authorized
     }
-  }, [userRole])
+  }, [])
 
   useEffect(() => {
     const fetchUsers = async () => {

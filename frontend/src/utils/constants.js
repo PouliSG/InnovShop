@@ -2,6 +2,8 @@ export const API_URL = 'http://localhost:5000/api' // Base URL pour toutes les A
 export const TOKEN_KEY = 'auth_token' // Nom de la clé utilisée pour stocker le token dans le localStorage
 export const SETTINGS_KEY = 'settings' // Nom de la clé utilisée pour stocker les paramètres dans le localStorage
 export const TIMEOUT = 5000 // Timeout par défaut pour les requêtes HTTP
+export const USER_ROLE_KEY = 'user_role' // Nom de la clé utilisée pour stocker le rôle de l'utilisateur dans le localStorage
+export const EXPIRES_IN_KEY = 'expires_in' // Nom de la clé utilisée pour stocker la date d'expiration de la session dans le localStorage
 
 export const DataStructure = {
   produit: [
@@ -223,7 +225,12 @@ export const DataStructure = {
       name: 'status',
       label: 'Statut de la commande',
       type: 'Select',
-      values: ['pending', 'shipped', 'delivered', 'cancelled'],
+      values: [
+        { value: 'pending', label: 'En attente' },
+        { value: 'shipped', label: 'Expediée' },
+        { value: 'delivered', label: 'Reçue' },
+        { value: 'cancelled', label: 'Annulée' },
+      ],
       defaultValue: 'pending',
       required: true,
     },
@@ -231,7 +238,11 @@ export const DataStructure = {
       name: 'paymentStatus',
       label: 'Statut du paiement',
       type: 'Select',
-      values: ['pending', 'paid', 'failed'],
+      values: [
+        { value: 'pending', label: 'En attente' },
+        { value: 'paid', label: 'Payée' },
+        { value: 'failed', label: 'Echec' },
+      ],
       defaultValue: 'pending',
       required: true,
     },
@@ -297,16 +308,19 @@ export const DataStructure = {
   ],
   paramètres: [
     {
-      name: 'notifications',
-      label: 'Activer les notifications',
-      type: 'CheckBox',
-      required: false,
-    },
-    {
       name: 'theme',
       label: 'Thème',
       type: 'Select',
-      values: ['light', 'dark'],
+      values: [
+        {
+          value: 'light',
+          label: 'Clair',
+        },
+        {
+          value: 'dark',
+          label: 'Sombre',
+        },
+      ],
       required: true,
     },
     {
@@ -317,9 +331,15 @@ export const DataStructure = {
       required: true,
     },
     {
+      name: 'notifications',
+      label: 'Activer les notifications',
+      type: 'Switch',
+      required: false,
+    },
+    {
       name: 'dense',
       label: 'Mode condensé pour les tableaux',
-      type: 'CheckBox',
+      type: 'Switch',
       required: false,
     },
   ],

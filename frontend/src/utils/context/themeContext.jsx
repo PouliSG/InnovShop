@@ -11,7 +11,7 @@ export const useTheme = () => useContext(ThemeContext)
 // Create a provider component
 export const ThemeProvider = ({ children, token }) => {
   const [settings, setSettings] = useState(
-    JSON.parse(localStorage.getItem(SETTINGS_KEY))
+    JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}
   )
   const [theme, setTheme] = useState('dark') // Default to dark theme
 
@@ -19,16 +19,18 @@ export const ThemeProvider = ({ children, token }) => {
     const fetchSettings = async () => {
       if (token) {
         try {
-          const settings = await getUserSettings(token)
-          setTheme(settings.theme || 'dark')
-          setSettings(settings)
-          localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+          const userSettings = await getUserSettings(token)
+          setTheme(userSettings.theme || 'dark')
+          setSettings(userSettings)
+          localStorage.setItem(SETTINGS_KEY, JSON.stringify(userSettings))
         } catch (error) {
           console.error('Erreur lors de la récupération du thème :', error)
         }
+      } else {
+        setTheme(settings.theme || 'dark')
       }
     }
-    if (!settings && token) fetchSettings()
+    if (token) fetchSettings()
   }, [settings, token])
 
   const toggleTheme = async () => {
@@ -47,8 +49,23 @@ export const ThemeProvider = ({ children, token }) => {
     }
   }
 
+  const setThemeMode = (mode) => {
+    setTheme(mode)
+    // settings.theme = mode
+    // setSettings(settings)
+    // localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
+    // // Mettre à jour le paramètre utilisateur
+    // if (token) {
+    //   try {
+    //     updateUserSettings(token, settings)
+    //   } catch (error) {
+    //     console.error('Erreur lors de la mise à jour du thème :', error)
+    //   }
+    // }
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setThemeMode }}>
       {children}
     </ThemeContext.Provider>
   )

@@ -95,8 +95,8 @@ const DialogSelect = ({
                 }
               >
                 {field.values.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
+                  <option key={value.value} value={value.value}>
+                    {value.label}
                   </option>
                 ))}
               </Select>

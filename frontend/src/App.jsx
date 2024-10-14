@@ -300,6 +300,7 @@ function AppContent(props) {
               handleSessionExpiration={handleSessionExpiration}
               isLoggedIn={isAuthenticated()}
               handleUnauthorizedAccess={handleUnauthorizedAccess}
+              handleSuccess={handleGenericSuccess}
             />
           }
         />
@@ -311,6 +312,7 @@ function AppContent(props) {
               handleSessionExpiration={handleSessionExpiration}
               isLoggedIn={isAuthenticated()}
               handleUnauthorizedAccess={handleUnauthorizedAccess}
+              handleSuccess={handleGenericSuccess}
             />
           }
         />
@@ -339,6 +341,7 @@ function AppContent(props) {
               handleSessionExpiration={handleSessionExpiration}
               isLoggedIn={isAuthenticated()}
               handleUnauthorizedAccess={handleUnauthorizedAccess}
+              handleSuccess={handleGenericSuccess}
             />
           }
         />
