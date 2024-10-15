@@ -10,7 +10,7 @@ import {
   InputLabel,
 } from '@mui/material'
 import { TOKEN_KEY } from '../utils/constants'
-import { useLoading } from '../utils/context/LoadingContext'
+import { useLoading } from '../utils/context/loadingContext'
 
 const CheckoutStepShipping = ({
   selectedAddressId,

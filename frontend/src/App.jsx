@@ -31,7 +31,7 @@ import CategoryAdmin from './pages/Admin/CategoryAdmin'
 import OrderAdmin from './pages/Admin/OrderAdmin'
 import ProductAdmin from './pages/Admin/ProductAdmin'
 import UserAdmin from './pages/Admin/UserAdmin'
-import { useTheme } from './utils/context/ThemeContext'
+import { useTheme } from './utils/context/themeContext'
 import ThemedGlobalStyle from './utils/style/GlobalStyle'
 import {
   ThemeProvider,
@@ -42,13 +42,13 @@ import {
   Snackbar,
 } from '@mui/material'
 import { lightTheme, darkTheme } from './utils/theme'
-import { CartProvider } from './utils/context/CartContext'
+import { CartProvider } from './utils/context/cartContext'
 import { useSessionManager } from './utils/hooks/useSessionManager'
-import { LoadingProvider } from './utils/context/LoadingContext'
+import { LoadingProvider } from './utils/context/loadingContext'
 import { TOKEN_KEY } from './utils/constants'
 import { logout, isAuthenticated } from './services/authService'
 import * as apiService from './services/apiService'
-import { useLoading } from './utils/context/LoadingContext'
+import { useLoading } from './utils/context/loadingContext'
 import { CircularProgress, Backdrop } from '@mui/material'
 
 function App() {

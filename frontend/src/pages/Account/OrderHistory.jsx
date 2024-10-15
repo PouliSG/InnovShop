@@ -9,7 +9,7 @@ import {
   TableBody,
 } from '@mui/material'
 import { getUserOrders } from '../../services/apiService'
-import { useLoading } from '../../utils/context/LoadingContext'
+import { useLoading } from '../../utils/context/loadingContext'
 
 function OrderHistory({ token, handleSessionExpiration }) {
   const [orders, setOrders] = useState([])

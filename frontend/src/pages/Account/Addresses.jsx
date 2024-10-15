@@ -12,7 +12,7 @@ import {
 import { getUserAddresses, deleteAddress } from '../../services/apiService'
 import DeleteIcon from '@mui/icons-material/Delete'
 import AddIcon from '@mui/icons-material/Add'
-import { useLoading } from '../../utils/context/LoadingContext'
+import { useLoading } from '../../utils/context/loadingContext'
 
 function Addresses({ token, handleSessionExpiration, dataChanged }) {
   const [addresses, setAddresses] = useState([])

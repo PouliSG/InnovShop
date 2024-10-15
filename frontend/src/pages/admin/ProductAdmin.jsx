@@ -3,7 +3,7 @@ import { getProducts, deleteProducts } from '../../services/apiService'
 import { useNavigate } from 'react-router-dom'
 import EnhancedTable from '../../components/EnhancedTable'
 import { isAuthenticated, isAuthorized } from '../../services/authService'
-import { useLoading } from '../../utils/context/LoadingContext'
+import { useLoading } from '../../utils/context/loadingContext'
 
 const ProductAdmin = ({
   token,

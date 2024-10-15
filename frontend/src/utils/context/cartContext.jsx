@@ -10,6 +10,7 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState({
     products: [],
   })
+  // Récupérer le token depuis le localStorage
   const token = localStorage.getItem(TOKEN_KEY)
 
   // Quantité totale dans le panier (pour le badge de notification)
@@ -110,7 +111,7 @@ export const CartProvider = ({ children }) => {
   }
 
   // Mettre à jour la quantité d'un produit dans le panier
-  // Ajouter cette méthode dans le cartContext.jsx
+  // Ajouter cette méthode dans le CartContext.jsx
   const updateCartItemQuantity = (productId, newQuantity) => {
     const updatedCart = { ...cart }
     const productIndex = updatedCart.products.findIndex(

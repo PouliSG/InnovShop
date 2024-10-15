@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import { CartContext } from '../utils/context/CartContext'
+import { CartContext } from '../utils/context/cartContext'
 import { Box, Typography, Divider, Avatar, Grid2 as Grid } from '@mui/material'
 
 const CheckoutStepSummary = ({ muiTheme }) => {

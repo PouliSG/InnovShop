@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './utils/style/brandStyle.css'
 import App from './App'
-import { ThemeProvider } from './utils/context/ThemeContext'
+import { ThemeProvider } from './utils/context/themeContext'
 import reportWebVitals from './reportWebVitals'
 import 'bootstrap/dist/css/bootstrap.min.css'
 

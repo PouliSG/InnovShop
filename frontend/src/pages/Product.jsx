@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { getProductById } from '../services/apiService'
-import { CartContext } from '../utils/context/CartContext'
+import { CartContext } from '../utils/context/cartContext'
 import {
   Typography,
   Box,
@@ -14,7 +14,7 @@ import {
 import Alert from '@mui/material/Alert'
 import StarIcon from '@mui/icons-material/Star'
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart'
-import { useLoading } from '../utils/context/LoadingContext'
+import { useLoading } from '../utils/context/loadingContext'
 
 const Product = () => {
   const { id } = useParams()

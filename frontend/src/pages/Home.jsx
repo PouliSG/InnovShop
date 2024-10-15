@@ -4,7 +4,7 @@ import { NewReleases, Star } from '@mui/icons-material'
 import { useTheme } from '@mui/material/styles'
 import { getLatestProducts, getFeaturedProducts } from '../services/apiService'
 import ProductList from '../components/ProductList'
-import { useLoading } from '../utils/context/LoadingContext'
+import { useLoading } from '../utils/context/loadingContext'
 
 const Home = () => {
   const [latestProducts, setLatestProducts] = useState([])

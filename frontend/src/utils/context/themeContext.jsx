@@ -51,17 +51,6 @@ export const ThemeProvider = ({ children, token }) => {
 
   const setThemeMode = (mode) => {
     setTheme(mode)
-    // settings.theme = mode
-    // setSettings(settings)
-    // localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings))
-    // // Mettre à jour le paramètre utilisateur
-    // if (token) {
-    //   try {
-    //     updateUserSettings(token, settings)
-    //   } catch (error) {
-    //     console.error('Erreur lors de la mise à jour du thème :', error)
-    //   }
-    // }
   }
 
   return (

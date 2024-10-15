@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Box, Typography } from '@mui/material'
 import DataFormModal from '../../components/DataFormModal'
 import { updateUserSettings, getUserSettings } from '../../services/apiService'
-import { useLoading } from '../../utils/context/LoadingContext'
+import { useLoading } from '../../utils/context/loadingContext'
 
 function Settings({ token, handleSessionExpiration, handleSuccess }) {
   const [settings, setSettings] = useState(null)

@@ -9,7 +9,7 @@ import {
   FormControlLabel,
 } from '@mui/material'
 import { getUserProfile, updateUserProfile } from '../../services/apiService'
-import { useLoading } from '../../utils/context/LoadingContext'
+import { useLoading } from '../../utils/context/loadingContext'
 
 function Profile({ token, handleSessionExpiration }) {
   const [profile, setProfile] = useState({

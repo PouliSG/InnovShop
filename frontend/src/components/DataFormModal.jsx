@@ -22,8 +22,8 @@ import {
   getProducts,
   getAddressesByUser,
 } from '../services/apiService'
-import { useTheme } from '../utils/context/ThemeContext'
-import { useLoading } from '../utils/context/LoadingContext'
+import { useTheme } from '../utils/context/themeContext'
+import { useLoading } from '../utils/context/loadingContext'
 
 function DataFormModal({
   token,

@@ -9,7 +9,7 @@ import {
 } from '../services/apiService'
 import ProductFilters from '../components/ProductFilters'
 import ProductGrid from '../components/ProductGrid'
-import { useLoading } from '../utils/context/LoadingContext'
+import { useLoading } from '../utils/context/loadingContext'
 
 const Products = () => {
   const location = useLocation()
