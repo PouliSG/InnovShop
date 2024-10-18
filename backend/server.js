@@ -14,12 +14,13 @@ const app = express()
 
 // Middleware
 app.use(bodyParser.json())
-app.use(
-  cors({
-    origin: 'https://innovshop.vercel.app',
-    credentials: true,
-  })
-)
+app.use(cors())
+// app.use(
+//   cors({
+//     origin: 'https://innovshop.vercel.app',
+//     credentials: true,
+//   })
+// )
 
 // Définir les routes
 app.use('/api/auth', require('./routes/auth'))

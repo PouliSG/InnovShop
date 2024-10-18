@@ -66,8 +66,6 @@ const Checkout = ({ handleSessionExpiration }) => {
   const [showAlert, setShowAlert] = useState(false)
 
   const handleUnauthenticated = () => {
-    setShowAlert(true)
-    setTimeout(() => setShowAlert(false), 3000) // Hide the alert after 3 seconds
     handleSessionExpiration() // Close the modal after login
     navigate('/')
   }
@@ -77,7 +75,7 @@ const Checkout = ({ handleSessionExpiration }) => {
     if (!isAuthenticated()) {
       handleUnauthenticated() // Open login modal if not authenticated
     }
-  }, [])
+  }, [isAuthenticated()])
 
   // Fonction pour passer à l'étape suivante
   const handleNextStep = () => {
@@ -126,17 +124,23 @@ const Checkout = ({ handleSessionExpiration }) => {
         } else {
           await updateAddress(token, selectedAddressId, newAddress)
         }
+        handleNextStep()
       } catch (error) {
         if (error.sessionExpired) {
           handleSessionExpiration() // Gérer la session expirée
         } else {
           console.error("Erreur lors de la sauvegarde de l'adresse", error)
+          setShowAlert(true)
+          setTimeout(() => setShowAlert(false), 3000) // Hide the alert after 3 seconds
         }
       }
-    } else {
+    } else if (selectedAddressId !== '') {
       setShowConfirmDialog(true)
+      handleNextStep()
+    } else {
+      setShowAlert(true)
+      setTimeout(() => setShowAlert(false), 3000) // Hide the alert after 3 seconds
     }
-    handleNextStep()
   }
 
   useEffect(() => {
@@ -154,7 +158,8 @@ const Checkout = ({ handleSessionExpiration }) => {
         onClose={() => setShowAlert(false)}
       >
         <Alert severity="warning" onClose={() => setShowAlert(false)}>
-          Vous devez vous connecter pour passer une commande
+          Vous devez sélectionner ou ajouter une addresse pour passer une
+          commande
         </Alert>
       </Snackbar>
       {/* Stepper Section */}

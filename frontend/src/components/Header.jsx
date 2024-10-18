@@ -1,4 +1,4 @@
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import {
   AppBar,
@@ -44,6 +44,8 @@ function Header({
   const [adminMenuAnchorEl, setAdminMenuAnchorEl] = useState(null) // Pour gérer le menu admin
   const location = useLocation()
 
+  useEffect(() => {}, [cart, totalQuantity])
+
   const handleLogoutOpen = () => setLogoutOpen(true)
   const handleLogoutClose = () => setLogoutOpen(false)
 
@@ -73,7 +75,7 @@ function Header({
     whiteSpace: 'nowrap',
     color:
       location.pathname === path ||
-      (path != '/' && location.pathname.startsWith(path))
+      (path !== '/' && location.pathname.startsWith(path))
         ? muiTheme.palette.text.secondary
         : muiTheme.palette.text.primary,
     '&:hover': {
@@ -82,7 +84,7 @@ function Header({
     '& .MuiButton-startIcon': {
       color:
         location.pathname === path ||
-        (path != '/' && location.pathname.startsWith(path))
+        (path !== '/' && location.pathname.startsWith(path))
           ? muiTheme.palette.text.secondary
           : muiTheme.palette.text.primary,
     },
@@ -95,7 +97,7 @@ function Header({
     whiteSpace: 'nowrap',
     color:
       location.pathname === path ||
-      (path != '/' && location.pathname.startsWith(path))
+      (path !== '/' && location.pathname.startsWith(path))
         ? muiTheme.palette.text.secondary
         : muiTheme.palette.text.third,
     '&:hover': {
@@ -104,7 +106,7 @@ function Header({
     '& .MuiButton-startIcon': {
       color:
         location.pathname === path ||
-        (path != '/' && location.pathname.startsWith(path))
+        (path !== '/' && location.pathname.startsWith(path))
           ? muiTheme.palette.text.secondary
           : muiTheme.palette.text.third,
     },
@@ -116,7 +118,7 @@ function Header({
   const getIconButtonStyles = (path) => ({
     color:
       location.pathname === path ||
-      (path != '/' && location.pathname.startsWith(path))
+      (path !== '/' && location.pathname.startsWith(path))
         ? muiTheme.palette.text.secondary.main
         : muiTheme.palette.text.primary.main,
     '&:hover': {
@@ -200,7 +202,6 @@ function Header({
           <CartMenu
             anchorEl={anchorEl}
             open={Boolean(anchorEl)}
-            onClose={handleCartClose}
             cart={cart}
             handleCartClose={handleCartClose}
             muiTheme={muiTheme}

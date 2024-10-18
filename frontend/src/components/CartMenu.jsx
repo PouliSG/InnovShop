@@ -4,16 +4,9 @@ import { Box, Button, Typography, Menu, MenuItem } from '@mui/material'
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart'
 import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
 
-const CartMenu = ({
-  anchorEl,
-  open,
-  onClose,
-  cart,
-  handleCartClose,
-  muiTheme,
-}) => {
+const CartMenu = ({ anchorEl, open, cart, handleCartClose, muiTheme }) => {
   return (
-    <Menu anchorEl={anchorEl} open={open} onClose={onClose}>
+    <Menu anchorEl={anchorEl} open={open} onClose={handleCartClose}>
       {cart.products.length === 0 ? (
         <MenuItem>Votre panier est vide</MenuItem>
       ) : (

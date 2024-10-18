@@ -31,7 +31,7 @@ const DashboardAdmin = ({
     if (!isAuthenticated()) {
       handleUnauthenticated() // Open login modal if not authenticated
     }
-  }, [])
+  }, [isAuthenticated()])
 
   useEffect(() => {
     // Check if the user is authorized

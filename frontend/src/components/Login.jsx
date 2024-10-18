@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { jwtDecode } from 'jwt-decode'
-import { Button, TextField, Box, IconButton } from '@mui/material'
+import { Button, TextField, Box, IconButton, Typography } from '@mui/material'
 import LoginIcon from '@mui/icons-material/Login'
 import CloseIcon from '@mui/icons-material/Close'
 import { useTheme } from '@mui/material/styles'
@@ -34,7 +34,7 @@ function Login({ handleClose, onLoginSuccess }) {
       onLoginSuccess(token) // Send token up to parent
       handleClose() // Close the popup
     } catch (err) {
-      setError(err.message)
+      setError(err.msg)
     }
   }
 
@@ -92,7 +92,11 @@ function Login({ handleClose, onLoginSuccess }) {
         fullWidth
         required
       />
-      {error && <Box sx={{ color: 'red' }}>{error}</Box>}
+      {error && (
+        <Typography sx={{ color: 'red' }} variant="body2">
+          {error}
+        </Typography>
+      )}
       <Button
         type="submit"
         startIcon={<LoginIcon />}

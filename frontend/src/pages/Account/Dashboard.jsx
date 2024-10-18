@@ -1,14 +1,21 @@
-import React from 'react'
-import { Link, Navigate } from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Box, Typography, Button } from '@mui/material'
-import ThemeToggleButton from '../../components/ThemeToggleButton'
 import { isAuthenticated } from '../../services/authService'
 
-function Dashboard({ handleUnauthorizedAccess }) {
-  if (!isAuthenticated()) {
-    handleUnauthorizedAccess()
-    return <Navigate to="/" />
+function Dashboard({ handleSessionExpiration, handleUnauthorizedAccess }) {
+  const navigate = useNavigate()
+  const handleUnauthenticated = () => {
+    handleSessionExpiration() // Close the modal after login
+    navigate('/')
   }
+
+  useEffect(() => {
+    // Check if the user is authenticated
+    if (!isAuthenticated()) {
+      handleUnauthenticated() // Open login modal if not authenticated
+    }
+  }, [isAuthenticated()])
 
   return (
     <Box sx={{ p: 4 }}>

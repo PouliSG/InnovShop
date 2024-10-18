@@ -23,11 +23,10 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     const loadCart = async () => {
       const localCart = JSON.parse(localStorage.getItem('cart'))
-      if (isAuthenticated() && !localCart) {
+      if (isAuthenticated()) {
         try {
           const userCart = await getCart(token)
           setCart(userCart)
-          localStorage.setItem('cart', JSON.stringify(userCart))
         } catch (error) {
           if (error.sessionExpired) {
             handleSessionExpired() // Gérer la session expirée
@@ -38,10 +37,9 @@ export const CartProvider = ({ children }) => {
         }
       } else {
         // Si l'utilisateur n'est pas connecté, on charge le panier depuis le localStorage
-        if (!isAuthenticated) {
-          localCart ? setCart(localCart) : setCart({ products: [] })
-        }
+        localCart ? setCart(localCart) : setCart({ products: [] })
       }
+      localStorage.setItem('cart', JSON.stringify(cart))
     }
     loadCart()
   }, [token, handleSessionExpired])
@@ -139,13 +137,14 @@ export const CartProvider = ({ children }) => {
 
   // Vider le panier
   const clearCart = () => {
-    const updatedCart = { products: [] }
-    setCart(updatedCart)
+    cart.products = []
+    setCart(cart)
+    setTotalQuantity(0)
 
     if (isAuthenticated()) {
-      saveCart(token, updatedCart.products)
+      saveCart(token, cart.products)
     }
-    localStorage.setItem('cart', JSON.stringify(updatedCart))
+    localStorage.setItem('cart', JSON.stringify(cart))
   }
 
   return (

@@ -293,7 +293,14 @@ function AppContent(props) {
             <Checkout handleSessionExpiration={handleSessionExpiration} />
           }
         />
-        <Route path="/order-confirmation" element={<OrderConfirmation />} />
+        <Route
+          path="/order-confirmation"
+          element={
+            <OrderConfirmation
+              handleSessionExpiration={handleSessionExpiration}
+            />
+          }
+        />
         <Route
           path="/account"
           element={
