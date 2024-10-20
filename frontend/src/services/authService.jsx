@@ -30,7 +30,9 @@ export const register = async (userData) => {
 
 export const forgotPassword = async (email) => {
   try {
-    const response = await axios.post(`${API_URL}/forgot-password`, { email })
+    const response = await axios.post(`${API_URL}/auth/forgot-password`, {
+      email,
+    })
     return response.data
   } catch (error) {
     throw error.response.data
@@ -39,10 +41,13 @@ export const forgotPassword = async (email) => {
 
 export const resetPassword = async (token, password) => {
   try {
-    const response = await axios.post(`${API_URL}/reset-password`, {
-      token,
-      password,
-    })
+    const response = await axios.post(
+      `${API_URL}/auth/reset-password/${token}`,
+      {
+        password,
+      }
+    )
+    console.log('reset token', response.data)
     return response.data
   } catch (error) {
     throw error.response.data

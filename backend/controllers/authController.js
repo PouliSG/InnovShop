@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const nodemailer = require('nodemailer')
+const crypto = require('crypto')
 const User = require('../models/User')
 
 // Inscription d'un nouvel utilisateur
@@ -123,25 +124,26 @@ const forgotPassword = async (req, res) => {
     await user.save()
 
     // Envoi de l'e-mail de réinitialisation
-    const transporter = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: process.env.EMAIL,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    })
+    // const transporter = nodemailer.createTransport({
+    //   service: 'Gmail',
+    //   auth: {
+    //     user: process.env.EMAIL,
+    //     pass: process.env.EMAIL_PASSWORD,
+    //   },
+    // })
 
     const mailOptions = {
       to: user.email,
-      from: process.env.EMAIL,
+      from: 'do-not-reply@innovshop.com',
       subject: 'InnovShop: Réinitialisation de votre mot de passe',
       text: `Vous recevez cet e-mail car vous (ou quelqu'un d'autre) avez demandé la réinitialisation du mot de passe de votre compte.\n\n
       Veuillez cliquer sur le lien suivant ou le copier-coller dans votre navigateur pour terminer le processus:\n\n
-      http://${req.headers.host}/reset/${token}\n\n
+      http://innovshop.vercel.app/reset-password/${token}\n\n
       Si vous n'avez pas effectué cette demande, veuillez ignorer cet e-mail et votre mot de passe restera inchangé.\n`,
     }
 
-    await transporter.sendMail(mailOptions)
+    // await transporter.sendMail(mailOptions)
+    console.log('Email sent:', mailOptions)
 
     res.status(200).json({ message: 'Email sent' })
   } catch (err) {

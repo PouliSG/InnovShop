@@ -64,6 +64,8 @@ function App() {
   const [showSessionExpired, setShowSessionExpired] = useState(false)
   const [showUnauthorized, setShowUnauthorized] = useState(false)
   const [showGenericSuccess, setShowGenericSuccess] = useState(false)
+  const [showForgotSuccess, setShowForgotSuccess] = useState(false)
+  const [showResetPassword, setShowResetPassword] = useState(false)
   const [userRole, setUserRole] = useState(null)
 
   const [dataChanged, setDataChanged] = useState(false)
@@ -94,6 +96,18 @@ function App() {
     setToken(null) // Reset the token in the app state
     setShowLogoutSuccess(true) // Trigger the success alert for logout
     setTimeout(() => setShowLogoutSuccess(false), 3000) // Hide the alert after 3 seconds
+  }
+
+  const handleForgotPassword = () => {
+    setShowForgotSuccess(true) // Trigger the success alert for forgot password
+    setTimeout(() => setShowForgotSuccess(false), 3000) // Hide the alert after 3 seconds
+    handleLoginClose()
+  }
+
+  const handleResetPassword = () => {
+    setShowResetPassword(true) // Trigger the success alert for forgot password
+    setTimeout(() => setShowResetPassword(false), 3000) // Hide the alert after 3 seconds
+    handleLoginClose()
   }
 
   // Fonction pour gérer la déconnexion si le token est expiré
@@ -144,11 +158,17 @@ function App() {
                 setShowUnauthorized={setShowUnauthorized}
                 showGenericSuccess={showGenericSuccess}
                 setShowGenericSuccess={setShowGenericSuccess}
+                showForgotSuccess={showForgotSuccess}
+                showResetPassword={showResetPassword}
+                setShowForgotSuccess={setShowForgotSuccess}
+                setShowResetPassword={setShowResetPassword}
                 handleLoginOpen={handleLoginOpen}
                 handleLoginClose={handleLoginClose}
                 handleRegisterOpen={handleRegisterOpen}
                 handleRegisterClose={handleRegisterClose}
                 handleLoginSuccess={handleLoginSuccess}
+                handleForgotPassword={handleForgotPassword}
+                handleResetPassword={handleResetPassword}
                 handleLogout={handleLogout}
                 handleSessionExpiration={handleSessionExpiration}
                 handleUnauthorizedAccess={handleUnauthorizedAccess}
@@ -179,11 +199,17 @@ function AppContent(props) {
     setShowUnauthorized,
     showGenericSuccess,
     setShowGenericSuccess,
+    showForgotSuccess,
+    showResetPassword,
+    setShowForgotSuccess,
+    setShowResetPassword,
     handleLoginOpen,
     handleLoginClose,
     handleRegisterOpen,
     handleRegisterClose,
     handleLoginSuccess,
+    handleForgotPassword,
+    handleResetPassword,
     handleLogout,
     handleSessionExpiration,
     handleUnauthorizedAccess,
@@ -274,6 +300,29 @@ function AppContent(props) {
         </Alert>
       </Snackbar>
 
+      <Snackbar
+        open={showForgotSuccess}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={3000}
+        onClose={() => setShowForgotSuccess(false)}
+      >
+        <Alert severity="success" onClose={() => setShowForgotSuccess(false)}>
+          Un email contenant le lien de réinitialisation de mot de passe a été
+          envoyé.
+        </Alert>
+      </Snackbar>
+
+      <Snackbar
+        open={showResetPassword}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        autoHideDuration={3000}
+        onClose={() => setShowResetPassword(false)}
+      >
+        <Alert severity="success" onClose={() => setShowResetPassword(false)}>
+          Votre mot de passe a été réinitialisé avec succès.
+        </Alert>
+      </Snackbar>
+
       {/* Afficher le loader global */}
       <Backdrop
         open={isLoading}
@@ -284,6 +333,21 @@ function AppContent(props) {
 
       <Routes location={state?.backgroundLocation || location}>
         <Route path="/" element={<Home />} />
+        <Route
+          path="/login"
+          element={
+            <Login
+              handleSuccess={handleLoginSuccess}
+              handleForgotPassword={handleForgotPassword}
+            />
+          }
+        />
+        <Route
+          path="/reset-password/:resetToken"
+          element={
+            <Login handleSuccess={handleResetPassword} isResetPassword={true} />
+          }
+        />
         <Route path="/products/:id" element={<Product />} />
         <Route path="/products" element={<Products />} />
         <Route path="/cart" element={<Cart />} />
@@ -626,7 +690,8 @@ function AppContent(props) {
         >
           <Login
             handleClose={handleLoginClose}
-            onLoginSuccess={handleLoginSuccess}
+            handleSuccess={handleLoginSuccess}
+            handleForgotPassword={handleForgotPassword}
           />
         </Box>
       </Modal>
