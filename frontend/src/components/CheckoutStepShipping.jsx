@@ -9,8 +9,9 @@ import {
   FormControl,
   InputLabel,
 } from '@mui/material'
-import { TOKEN_KEY } from '../utils/constants'
+import { TOKEN_KEY, DataStructure } from '../utils/constants'
 import { useLoading } from '../utils/context/loadingContext'
+import ValidatedTextField from './ValidatedTextField'
 
 const CheckoutStepShipping = ({
   selectedAddressId,
@@ -19,10 +20,13 @@ const CheckoutStepShipping = ({
   setNewAddress,
   newAddress,
   handleSessionExpiration,
+  errors,
+  setErrors,
 }) => {
   const token = localStorage.getItem(TOKEN_KEY)
   const [addresses, setAddresses] = useState([])
   const { startLoading, stopLoading } = useLoading()
+
   useEffect(() => {
     const fetchAddresses = async () => {
       startLoading()
@@ -63,6 +67,31 @@ const CheckoutStepShipping = ({
     }
   }
 
+  const addressFields = DataStructure.adresse
+
+  const handleAddressChange = (e) => {
+    const { name, value } = e.target
+    setNewAddress({ ...newAddress, [name]: value })
+    setErrors({ ...errors, [name]: '' }) // Réinitialiser l'erreur du champ
+  }
+
+  const handleAddressBlur = (field) => {
+    const value = newAddress[field.name]
+    if (field.required && !value) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [field.name]: 'Ce champ est requis.',
+      }))
+    } else if (field.validation && value && !field.validation.test(value)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [field.name]: field.errorMessage,
+      }))
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, [field.name]: '' }))
+    }
+  }
+
   return (
     <Box>
       <Typography variant="h5">Adresse de livraison</Typography>
@@ -80,69 +109,21 @@ const CheckoutStepShipping = ({
 
       {selectedAddressId === 'new' && (
         <Box sx={{ mt: 2 }}>
-          <TextField
-            label="Nom de l'adresse"
-            fullWidth
-            value={newAddress.label}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, label: e.target.value })
-            }
-            sx={{ mb: 2 }} // Add margin bottom
-          />
-          <TextField
-            label="Numéro"
-            fullWidth
-            value={newAddress.number}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, number: e.target.value })
-            }
-            sx={{ mb: 2 }} // Add margin bottom
-          />
-          <TextField
-            label="Rue"
-            fullWidth
-            value={newAddress.street}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, street: e.target.value })
-            }
-            sx={{ mb: 2 }} // Add margin bottom
-          />
-          <TextField
-            label="Complément d'adresse"
-            fullWidth
-            value={newAddress.additional}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, additional: e.target.value })
-            }
-            sx={{ mb: 2 }} // Add margin bottom
-          />
-          <TextField
-            label="Ville"
-            fullWidth
-            value={newAddress.city}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, city: e.target.value })
-            }
-            sx={{ mb: 2 }} // Add margin bottom
-          />
-          <TextField
-            label="Code postal"
-            fullWidth
-            value={newAddress.zip}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, zip: e.target.value })
-            }
-            sx={{ mb: 2 }} // Add margin bottom
-          />
-          <TextField
-            label="Pays"
-            fullWidth
-            value={newAddress.country}
-            onChange={(e) =>
-              setNewAddress({ ...newAddress, country: e.target.value })
-            }
-            sx={{ mb: 2 }} // Add margin bottom
-          />
+          {addressFields.map((field) => (
+            <ValidatedTextField
+              key={field.name}
+              label={field.label}
+              name={field.name}
+              value={newAddress[field.name] || ''}
+              onChange={handleAddressChange}
+              onBlur={() => handleAddressBlur(field)}
+              fullWidth
+              required={field.required}
+              validation={field.validation}
+              errorMessage={errors[field.name]}
+              sx={{ mb: 2 }}
+            />
+          ))}
         </Box>
       )}
     </Box>

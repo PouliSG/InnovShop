@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { jwtDecode } from 'jwt-decode'
 import {
@@ -21,7 +21,9 @@ import {
   SETTINGS_KEY,
   USER_ROLE_KEY,
   EXPIRES_IN_KEY,
+  DataStructure,
 } from '../utils/constants'
+import ValidatedTextField from './ValidatedTextField'
 
 function Login({
   handleClose,
@@ -31,17 +33,33 @@ function Login({
 }) {
   const { resetToken } = useParams()
   const [email, setEmail] = useState('')
+  const [emailError, setEmailError] = useState('')
   const [password, setPassword] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
+  const [confirmPasswordError, setConfirmPasswordError] = useState('')
   const [error, setError] = useState('')
   const [isForgotPassword, setIsForgotPassword] = useState(false)
   const muiTheme = useTheme()
   const navigate = useNavigate()
   const location = useLocation()
 
+  useEffect(() => {
+    if (isForgotPassword && passwordError !== '') {
+      setPasswordError('')
+      setConfirmPasswordError('')
+      setError('')
+    }
+  }, [isForgotPassword])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (error !== '') {
+    // Vérifier s'il y a des erreurs de validation
+    if (emailError || passwordError || confirmPasswordError) {
+      alert('Veuillez corriger les erreurs avant de soumettre le formulaire.')
+      return
+    }
+    if (error && error !== '') {
       alert('Veuillez corriger les erreurs avant de soumettre le formulaire')
       return
     }
@@ -79,6 +97,9 @@ function Login({
       if (!password) {
         setError('Veuillez saisir un mot de passe valide')
         return
+      } else if (password !== confirmPassword) {
+        setError('Les mots de passe ne correspondent pas')
+        return
       } else {
         setError('')
       }
@@ -106,12 +127,12 @@ function Login({
         handleForgotPassword()
         handleClose() // Close the popup
       } catch (err) {
-        setError(err.msg)
+        setError(err.message)
       }
     }
   }
 
-  const handlepasswordMatch = (e) => {
+  const handlePasswordMatch = (e) => {
     if (password !== e.target.value) {
       setError('Les mots de passe ne correspondent pas')
     } else {
@@ -119,6 +140,10 @@ function Login({
     }
     setConfirmPassword(e.target.value)
   }
+
+  const emailField = DataStructure.utilisateur.find(
+    (field) => field.name === 'email'
+  )
 
   return (
     <Box
@@ -165,20 +190,24 @@ function Login({
         <CloseIcon />
       </IconButton>
       {!isResetPassword && (
-        <TextField
+        <ValidatedTextField
           label="Adresse email"
           variant="outlined"
+          name="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           fullWidth
           required
+          validation={emailField.validation}
+          errorMessage={emailField.errorMessage}
         />
       )}
       {!isForgotPassword && (
-        <TextField
+        <ValidatedTextField
           label="Mot de passe"
           type="password"
           variant="outlined"
+          name="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           fullWidth
@@ -196,14 +225,27 @@ function Login({
       )}
       {isResetPassword && (
         <>
-          <TextField
+          <ValidatedTextField
             label="Confirmer le mot de passe"
             type="password"
             variant="outlined"
+            name="confirmPassword"
             value={confirmPassword}
-            onChange={handlepasswordMatch}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            onBlur={() => {
+              if (password !== confirmPassword) {
+                setConfirmPasswordError(
+                  'Les mots de passe ne correspondent pas.'
+                )
+                setError('Les mots de passe ne correspondent pas.')
+              } else {
+                setConfirmPasswordError('')
+                setError('')
+              }
+            }}
             fullWidth
             required
+            errorMessage={confirmPasswordError}
           />
         </>
       )}

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   Box,
@@ -14,11 +14,13 @@ import ShoppingCartCheckoutIcon from '@mui/icons-material/ShoppingCartCheckout'
 import DeleteIcon from '@mui/icons-material/Delete'
 import { useTheme as useMUITheme } from '@mui/material/styles'
 import { CartContext } from '../utils/context/cartContext'
+import ValidatedTextField from '../components/ValidatedTextField'
 
 const Cart = () => {
   const { cart, removeFromCart, updateCartItemQuantity } =
     useContext(CartContext)
   const muiTheme = useMUITheme()
+  const [errors, setErrors] = useState({}) // Pour stocker les erreurs de validation
 
   if (cart.products.length === 0) {
     return (
@@ -36,6 +38,26 @@ const Cart = () => {
         </Button>
       </Box>
     )
+  }
+
+  const handleQuantityChange = (productId, value, maxStock) => {
+    // Validation de la quantité
+    let error = ''
+    const quantity = parseInt(value, 10)
+    if (!Number.isInteger(quantity) || quantity < 1) {
+      error = 'La quantité doit être un nombre entier positif.'
+    } else if (quantity > maxStock) {
+      error = `La quantité ne peut pas dépasser le stock disponible (${maxStock}).`
+    }
+
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [productId]: error,
+    }))
+
+    if (!error) {
+      updateCartItemQuantity(productId, quantity)
+    }
   }
 
   return (
@@ -93,21 +115,35 @@ const Cart = () => {
               <Typography variant="body2" sx={{ mr: 1 }}>
                 Qté:{' '}
               </Typography>
-              <TextField
+              <ValidatedTextField
                 type="number"
+                name={`quantity-${item.product._id}`}
                 value={item.quantity}
                 onChange={(e) =>
-                  updateCartItemQuantity(item.product._id, e.target.value)
+                  handleQuantityChange(
+                    item.product._id,
+                    e.target.value,
+                    item.product.stock
+                  )
+                }
+                onBlur={() =>
+                  handleQuantityChange(
+                    item.product._id,
+                    item.quantity,
+                    item.product.stock
+                  )
                 }
                 inputProps={{ min: 1, max: item.product.stock }}
                 sx={{ ml: 1, width: 80 }}
+                validation={/^\d+$/}
+                errorMessage={errors[item.product._id]}
               />
             </Box>
 
             {/* Prix, aligné à droite */}
             <Box sx={{ width: '15%', textAlign: 'right' }}>
               <Typography variant="h6">
-                {item.product.price * item.quantity} €
+                {(item.product.price * item.quantity).toFixed(2)} €
               </Typography>
             </Box>
 
@@ -132,10 +168,12 @@ const Cart = () => {
           Total :
         </Typography>
         <Typography variant="h5" color="secondary">
-          {cart.products.reduce(
-            (total, item) => total + item.product.price * item.quantity,
-            0
-          )}{' '}
+          {cart.products
+            .reduce(
+              (total, item) => total + item.product.price * item.quantity,
+              0
+            )
+            .toFixed(2)}{' '}
           €
         </Typography>
       </Box>

@@ -14,6 +14,7 @@ import {
 } from '@mui/material'
 import { Close as CloseIcon } from '@mui/icons-material'
 import ProductListField from './ProductListField'
+import ValidatedTextField from './ValidatedTextField'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { DataStructure, DefaultData } from '../utils/constants'
 import {
@@ -47,6 +48,8 @@ function DataFormModal({
   const [isDirty, setIsDirty] = useState(false) // Pour suivre les modifications du formulaire
   const { theme, setThemeMode } = useTheme()
   const { startLoading, stopLoading } = useLoading()
+
+  const [errors, setErrors] = useState({}) // Pour stocker les erreurs de validation
 
   var itemStructure = DataStructure[dataType]
 
@@ -123,6 +126,7 @@ function DataFormModal({
     setIsDirty(true)
     const { name, value } = e.target
     setItem({ ...item, [name]: value })
+    setErrors({ ...errors, [name]: '' }) // Réinitialiser l'erreur du champ
 
     if (dataType === 'commande' && name === 'user') {
       try {
@@ -137,8 +141,31 @@ function DataFormModal({
     }
   }
 
+  const handleBlur = (field) => {
+    const value = item[field.name]
+    if (field.required && !value) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [field.name]: 'Ce champ est requis.',
+      }))
+    } else if (field.validation && value && !field.validation.test(value)) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        [field.name]: field.errorMessage,
+      }))
+    } else {
+      setErrors((prevErrors) => ({ ...prevErrors, [field.name]: '' }))
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    // Vérifier s'il y a des erreurs de validation
+    const hasErrors = Object.values(errors).some((error) => error)
+    if (hasErrors) {
+      alert('Veuillez corriger les erreurs avant de soumettre le formulaire.')
+      return
+    }
     startLoading()
     try {
       if (id) {
@@ -230,17 +257,19 @@ function DataFormModal({
           switch (field.type) {
             case 'TextField':
               return (
-                <TextField
+                <ValidatedTextField
                   key={field.name}
                   label={field.label}
                   name={field.name}
                   value={item[field.name] || ''}
                   onChange={handleChange}
+                  onBlur={() => handleBlur(field)}
                   fullWidth
                   required={field.required}
-                  margin="normal"
                   type={field.inputType || 'text'}
-                  InputProps={field.readOnly ? { readOnly: true } : {}}
+                  inputProps={field.readOnly ? { readOnly: true } : {}}
+                  validation={field.validation}
+                  errorMessage={errors[field.name]}
                 />
               )
             case 'Select':

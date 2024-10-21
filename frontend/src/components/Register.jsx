@@ -14,6 +14,8 @@ import PersonAddIcon from '@mui/icons-material/PersonAdd'
 import { DatePicker } from '@mui/x-date-pickers/DatePicker'
 import { useTheme } from '@mui/material/styles'
 import { register } from '../services/authService'
+import { DataStructure } from '../utils/constants'
+import ValidatedTextField from './ValidatedTextField'
 
 function Register({ handleClose }) {
   const [email, setEmail] = useState('')
@@ -27,11 +29,25 @@ function Register({ handleClose }) {
   const [error, setError] = useState('')
   const muiTheme = useTheme()
 
+  // États pour les erreurs
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [confirmPasswordError, setConfirmPasswordError] = useState('')
+
   const handleSubmit = async (e) => {
     e.preventDefault()
+    // Vérifier s'il y a des erreurs de validation
+    if (emailError || passwordError || confirmPasswordError) {
+      setError(
+        'Veuillez corriger les erreurs avant de soumettre le formulaire.'
+      )
+      return
+    }
     if (password !== confirmPassword) {
       setError('Les mots de passe ne correspondent pas.')
       return
+    } else {
+      setError('')
     }
     try {
       await register({
@@ -48,6 +64,10 @@ function Register({ handleClose }) {
       setError(err.message)
     }
   }
+
+  const emailField = DataStructure.utilisateur.find(
+    (field) => field.name === 'email'
+  )
 
   return (
     <Box
@@ -88,8 +108,9 @@ function Register({ handleClose }) {
       </IconButton>
 
       {/* Firstname */}
-      <TextField
+      <ValidatedTextField
         label="Prénom"
+        name="firstname"
         variant="outlined"
         value={firstname}
         onChange={(e) => setFirstname(e.target.value)}
@@ -98,8 +119,9 @@ function Register({ handleClose }) {
       />
 
       {/* Lastname */}
-      <TextField
+      <ValidatedTextField
         label="Nom"
+        name="lastname"
         variant="outlined"
         value={lastname}
         onChange={(e) => setLastname(e.target.value)}
@@ -108,9 +130,10 @@ function Register({ handleClose }) {
       />
 
       {/* Gender */}
-      <TextField
+      <ValidatedTextField
         select
         label="Sexe"
+        name="gender"
         value={gender}
         onChange={(e) => setGender(e.target.value)}
         fullWidth
@@ -118,7 +141,7 @@ function Register({ handleClose }) {
         <MenuItem value="male">Homme</MenuItem>
         <MenuItem value="female">Femme</MenuItem>
         <MenuItem value="other">Autre</MenuItem>
-      </TextField>
+      </ValidatedTextField>
 
       {/* Birthdate */}
       <DatePicker
@@ -131,18 +154,22 @@ function Register({ handleClose }) {
       />
 
       {/* Email */}
-      <TextField
+      <ValidatedTextField
         label="Email"
+        name="email"
         variant="outlined"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         fullWidth
         required
+        validation={emailField.validation}
+        errorMessage={emailField.errorMessage}
       />
 
       {/* Password */}
-      <TextField
+      <ValidatedTextField
         label="Mot de passe"
+        name="password"
         type="password"
         variant="outlined"
         value={password}
@@ -152,14 +179,23 @@ function Register({ handleClose }) {
       />
 
       {/* Confirm Password */}
-      <TextField
+      <ValidatedTextField
         label="Confirmer le mot de passe"
+        name="confirmPassword"
         type="password"
         variant="outlined"
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
+        onBlur={() => {
+          if (password !== confirmPassword) {
+            setConfirmPasswordError('Les mots de passe ne correspondent pas.')
+          } else {
+            setConfirmPasswordError('')
+          }
+        }}
         fullWidth
         required
+        errorMessage={confirmPasswordError}
       />
 
       {/* Newsletter Opt-in */}

@@ -64,6 +64,7 @@ const Checkout = ({ handleSessionExpiration }) => {
   const { cart, clearCart } = useContext(CartContext)
   const muiTheme = useMUITheme()
   const [showAlert, setShowAlert] = useState(false)
+  const [errors, setErrors] = useState({}) // Pour stocker les erreurs de validation
 
   const handleUnauthenticated = () => {
     handleSessionExpiration() // Close the modal after login
@@ -117,6 +118,12 @@ const Checkout = ({ handleSessionExpiration }) => {
 
   const handleSaveAddress = async () => {
     if (isEditing) {
+      // Vérifier s'il y a des erreurs de validation
+      const hasErrors = Object.values(errors).some((error) => error)
+      if (hasErrors) {
+        alert('Veuillez corriger les erreurs avant de soumettre le formulaire.')
+        return
+      }
       try {
         if (selectedAddressId === 'new') {
           const savedAddress = await addUserAddress(token, newAddress)
@@ -288,6 +295,8 @@ const Checkout = ({ handleSessionExpiration }) => {
           setNewAddress={setNewAddress}
           newAddress={newAddress}
           handleSessionExpiration={handleSessionExpiration}
+          errors={errors}
+          setErrors={setErrors}
         />
       )}
       {activeStep === 2 && (

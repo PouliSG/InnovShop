@@ -73,7 +73,9 @@ function ProductListField({ products, value, onChange }) {
                 label="Quantité"
                 type="number"
                 variant="outlined"
-                inputProps={{ min: 1 }}
+                slotProps={{
+                  input: { min: 1 },
+                }}
                 value={entry.quantity}
                 onChange={(e) =>
                   handleProductChange(

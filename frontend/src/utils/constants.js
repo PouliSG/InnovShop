@@ -1,5 +1,5 @@
-export const API_URL = 'http://localhost:5000/api' // Base URL pour toutes les API
-// export const API_URL = 'https://innovshop.onrender.com/api' // Base URL pour toutes les API
+// export const API_URL = 'http://localhost:5000/api' // Base URL pour toutes les API
+export const API_URL = 'https://innovshop.onrender.com/api' // Base URL pour toutes les API
 export const TOKEN_KEY = 'auth_token' // Nom de la clé utilisée pour stocker le token dans le localStorage
 export const SETTINGS_KEY = 'settings' // Nom de la clé utilisée pour stocker les paramètres dans le localStorage
 export const TIMEOUT = 5000 // Timeout par défaut pour les requêtes HTTP
@@ -14,6 +14,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un nom de produit valide.',
     },
     {
       name: 'brand',
@@ -21,6 +23,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir une marque valide.',
     },
     {
       name: 'description',
@@ -28,6 +32,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir une description valide.',
     },
     {
       name: 'price',
@@ -35,6 +41,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'float',
       required: true,
+      validation: /^\d+(\.\d{1,2})?$/, // Regex pour un nombre avec deux décimales maximum
+      errorMessage: 'Veuillez saisir un prix valide (ex : 19.99).',
     },
     {
       name: 'category',
@@ -51,6 +59,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'integer',
       required: true,
+      validation: /^\d+$/, // Regex pour un nombre entier positif
+      errorMessage: 'Veuillez saisir une quantité valide.',
     },
     {
       name: 'image',
@@ -73,6 +83,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un nom de catégorie valide.',
     },
     {
       name: 'description',
@@ -80,6 +92,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir une description valide.',
     },
   ],
   utilisateur: [
@@ -89,6 +103,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un prénom valide.',
     },
     {
       name: 'lastname',
@@ -96,6 +112,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un nom valide.',
     },
     {
       name: 'email',
@@ -103,6 +121,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'email',
       required: true,
+      validation: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, // Regex pour l'email
+      errorMessage: 'Veuillez saisir une adresse email valide.',
     },
     {
       name: 'gender',
@@ -255,6 +275,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^\d+[a-zA-Z]?$/, // Numéro avec optionnellement une lettre (ex : 12B)
+      errorMessage: 'Veuillez saisir un numéro de voie valide.',
     },
     {
       name: 'street',
@@ -262,6 +284,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un nom de rue valide.',
     },
     {
       name: 'additional',
@@ -276,6 +300,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un nom de ville valide.',
     },
     {
       name: 'zip',
@@ -283,6 +309,8 @@ export const DataStructure = {
       type: 'TextField',
       format: 'string',
       required: true,
+      validation: /^\d{5}$/, // 5 chiffres
+      errorMessage: 'Le code postal doit être composé de 5 chiffres.',
     },
     {
       name: 'country',
@@ -291,6 +319,8 @@ export const DataStructure = {
       format: 'string',
       required: true,
       defaultValue: 'France',
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un nom de pays valide.',
     },
     {
       name: 'label',
@@ -299,6 +329,8 @@ export const DataStructure = {
       format: 'string',
       required: false,
       defaultValue: 'Domicile',
+      validation: /^.{2,}$/, // Au moins 2 caractères
+      errorMessage: 'Veuillez saisir un libellé valide.',
     },
     {
       name: 'isDefault',
